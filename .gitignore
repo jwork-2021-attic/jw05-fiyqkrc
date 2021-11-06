@@ -2,3 +2,5 @@
 .idea/
 **/*.class
 *.py
+out/
+jw05-fiyqkrc.iml
