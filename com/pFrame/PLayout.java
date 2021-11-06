@@ -79,7 +79,7 @@ public class PLayout extends PWidget {
             Pixel[][] pixels = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
             for(int i=0;i<this.getWidgetHeight();i++){
                 for(int j=0;j<this.getWidgetWidth();j++){
-                    pixels[i][j]=new Pixel(Color.gray,(char) 0xb1);
+                    pixels[i][j]=new Pixel(Color.gray,(char) 0xf0);
                 }
             }
             ArrayList<PWidget> childWidget=new ArrayList<>();
