@@ -8,7 +8,7 @@ import javax.imageio.stream.FileImageOutputStream;
 
 public class AsciiFontCreate {
     protected BufferedImage baseFonts(){
-        BufferedImage image=new BufferedImage(32,32,BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image=new BufferedImage(32,32,BufferedImage.TYPE_INT_RGB);
         for(int i=0;i<16;i++){
             for(int j=0;j<16;j++){
                 int tmp=i;
@@ -29,7 +29,7 @@ public class AsciiFontCreate {
     public BufferedImage createFonts(int scale,BufferedImage image){
         int width=image.getWidth();
         int height=image.getHeight();
-        BufferedImage res=new BufferedImage(width*scale,height*scale,BufferedImage.TYPE_INT_ARGB);
+        BufferedImage res=new BufferedImage(width*scale,height*scale,BufferedImage.TYPE_INT_RGB);
         for(int i=0;i<width;i++)
         {
             for(int j=0;j<height;j++){

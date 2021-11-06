@@ -10,7 +10,7 @@ package asciiPanel;
 public class AsciiFont {
 
     public static final AsciiFont pFrame_2x2 = new AsciiFont("resources/pFrame_2x2.png", 2, 2);
-    public static final AsciiFont pFrame_4x4 = new AsciiFont("resources/pFrame_2x2.png", 4, 4);
+    public static final AsciiFont pFrame_4x4 = new AsciiFont("resources/pFrame_4x4.png", 4, 4);
     public static final AsciiFont pFrame_6x6 = new AsciiFont("resources/pFrame_6x6.png", 6, 6);
     public static final AsciiFont pFrame_8x8 = new AsciiFont("resources/pFrame_8x8.png", 8, 8);
     public static final AsciiFont CP437_8x8 = new AsciiFont("resources/cp437_8x8.png", 8, 8);
