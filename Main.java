@@ -1,32 +1,34 @@
-import com.pFrame.widget.PFrame;
-import com.pFrame.widget.view.WorldView;
-import com.pFrame.world.World;
-
 import mazeGenerator.MazeGenerator;
 
 import java.awt.Color;
 
-import com.pFrame.controller.KeyBoardThingController;
-import com.pFrame.controller.MazeThingController;
-import com.pFrame.controller.alogrithm.DeepSearchMazeSolver;
-import com.pFrame.creature.Calabash;
-import com.pFrame.creature.Thing;
-import com.pFrame.creature.Wall;
-import com.pFrame.widget.*;
+import com.pFrame.PFrame;
+import com.pFrame.PLayout;
+import com.pFrame.Position;
+import com.pFrame.pview.PWorldView;
+import com.pFrame.pwidget.*;
+
+import game.controller.KeyBoardThingController;
+import game.controller.MazeThingController;
+import game.controller.alogrithm.DeepSearchMazeSolver;
+import game.creature.Calabash;
+import game.creature.Thing;
+import game.creature.Wall;
+import game.world.GameWorld;
 
 public class Main {
     public static void main(String[] args) {
         PHeadWidget app = new PHeadWidget(null, null, new PFrame(60, 50));
         app.getLayout().setRCNumStyle(3, 1, "1x,2,1x", "");
-        Layout layout = new Layout(app, new Position(1, 1), 1, 3);
+        PLayout layout = new PLayout(app, new Position(1, 1), 1, 3);
         layout.setColumnLayout("1x,2,1x");
         layout.setRowLayout("1x");
 
         
 
         for (int i = 0; i < 2; i++) {
-            World world = new World(400, 400);
-            WorldView worldView = new WorldView(layout, new Position(1, 2*i+1), world);
+            GameWorld world = new GameWorld(400, 400);
+            PWorldView worldView = new PWorldView(layout, new Position(1, 2*i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
@@ -49,11 +51,11 @@ public class Main {
             aim.setController(solver);
         }
 
-        Layout layout2=new Layout(app,new Position(3, 1),1,3);
+        PLayout layout2=new PLayout(app,new Position(3, 1),1,3);
         layout2.setColumnLayout("1x,2,1x");
         for (int i = 0; i < 2; i++) {
-            World world = new World(400, 400);
-            WorldView worldView = new WorldView(layout2, new Position(1, 2*i+1), world);
+            GameWorld world = new GameWorld(400, 400);
+            PWorldView worldView = new PWorldView(layout2, new Position(1, 2*i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
