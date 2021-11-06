@@ -60,7 +60,7 @@ public class PWidget {
             Pixel[][] pixels = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
             for(int i=0;i<this.getWidgetHeight();i++){
                 for(int j=0;j<this.getWidgetWidth();j++){
-                    pixels[i][j]=new Pixel(Color.gray,(char) 0xb1);
+                    pixels[i][j]=new Pixel(Color.BLUE,(char) 0xf0);
                 }
             }
             ArrayList<PWidget> childWidget=new ArrayList<>();
@@ -85,7 +85,7 @@ public class PWidget {
         }
     }
 
-    protected void update() {
+    public void update() {
         this.parent.update();
     }
 
@@ -150,7 +150,7 @@ public class PWidget {
     }
 
     public void mouseClicked(MouseEvent e, Position p){
-        
+
     }
 
     public void keyPressed(KeyEvent e){

@@ -19,7 +19,7 @@ public class PHeadWidget extends PWidget{
     }
 
     @Override
-    protected void update() {
+    public void update() {
         this.pFrame.repaint();
     }
 }

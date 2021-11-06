@@ -10,6 +10,7 @@ import com.pFrame.pwidget.*;
 
 import game.creature.Floor;
 import game.world.GameWorld;
+import log.Log;
 
 class MyWorldView extends PWorldView{
 
@@ -32,13 +33,16 @@ class MyWorldView extends PWorldView{
 
 public class CreatureCreator {
     public static void main(String[] args){
-        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(10, 10));
-        GameWorld world=new GameWorld(10, 10);
-        for(int i=0;i<10;i++){
-            for(int j=0;j<10;j++)
+        Log.setTerminalOutPut(false);
+        Log.setOutPath("log.txt");
+        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(20, 20));
+        GameWorld world=new GameWorld(20, 20);
+        for(int i=0;i<20;i++){
+            for(int j=0;j<20;j++)
                 world.put(new Floor(world),i,j);
         }
         MyWorldView myWorldView=new MyWorldView(pHeadWidget, null, world );
+        myWorldView.update();
     }
     
 }
