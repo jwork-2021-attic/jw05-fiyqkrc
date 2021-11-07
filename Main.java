@@ -19,16 +19,16 @@ import game.world.GameWorld;
 public class Main {
     public static void main(String[] args) {
         PHeadWidget app = new PHeadWidget(null, null, new PFrame(60, 50));
-        app.getLayout().setRCNumStyle(3, 1, "1x,2,1x", "");
-        PLayout layout = new PLayout(app, new Position(1, 1), 1, 3);
-        layout.setColumnLayout("1x,2,1x");
+        app.getLayout().setRCNumStyle(2, 1, "1x,1x", "");
+        PLayout layout = new PLayout(app, new Position(1, 1), 1, 2);
+        layout.setColumnLayout("1x,1x");
         layout.setRowLayout("1x");
 
         
 
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PWorldView worldView = new PWorldView(layout, new Position(1, 2*i+1), world);
+            PWorldView worldView = new PWorldView(layout, new Position(1, i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
@@ -51,11 +51,11 @@ public class Main {
             aim.setController(solver);
         }
 
-        PLayout layout2=new PLayout(app,new Position(3, 1),1,3);
-        layout2.setColumnLayout("1x,2,1x");
+        PLayout layout2=new PLayout(app,new Position(2, 1),1,2);
+        layout2.setColumnLayout("1x,1x");
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PWorldView worldView = new PWorldView(layout2, new Position(1, 2*i+1), world);
+            PWorldView worldView = new PWorldView(layout2, new Position(1, i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();

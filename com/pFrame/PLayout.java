@@ -211,7 +211,7 @@ public class PLayout extends PWidget {
         for(int i=0;i<r.length;i++){
             for(int j=0;j<c.length;j++){
                 if(this.containedWidgets[i][j]!=null){
-                    this.containedWidgets[i][j].changeWidgetSize(c[j],r[i]);
+                    this.containedWidgets[i][j].changeWidgetSize(c[j]-2,r[i]-2);
                     int pos_x=0;
                     int pos_y=0;
                     for(int a=0;a<i;a++){
@@ -220,7 +220,7 @@ public class PLayout extends PWidget {
                     for(int b=0;b<j;b++){
                         pos_y+=c[b];
                     }
-                    this.containedWidgets[i][j].setPosition(new Position(pos_x, pos_y));
+                    this.containedWidgets[i][j].setPosition(new Position(pos_x+1, pos_y+1));
                 }
             }
         }
