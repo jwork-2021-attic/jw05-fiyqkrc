@@ -7,8 +7,7 @@ import com.pFrame.PLayout;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 public class PWidget {
     protected int widgetHeight;
@@ -169,9 +168,13 @@ public class PWidget {
     public void mouseExited(MouseEvent arg0) {
     }
 
-    public void mousePressed(MouseEvent arg0) {
+    public void mousePressed(MouseEvent arg0, Position p) {
     }
 
-    public void mouseReleased(MouseEvent arg0) {  
+    public void mouseReleased(MouseEvent arg0, Position p) {  
+    }
+
+    public void mouseWheelMoved(MouseWheelEvent e){
+
     }
 }

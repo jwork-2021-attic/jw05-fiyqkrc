@@ -1,9 +1,6 @@
 package com.pFrame;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -13,7 +10,7 @@ import com.pFrame.pwidget.PWidget;
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 
-public class PFrame extends JFrame implements KeyListener, MouseListener{
+public class PFrame extends JFrame implements KeyListener, MouseListener, MouseWheelListener{
 
     private AsciiPanel terminal;
     protected PWidget headWidget;
@@ -45,6 +42,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener{
         pack();
         addKeyListener(this);
         addMouseListener(this);
+        addMouseWheelListener(this);
     }
 
     @Override
@@ -65,17 +63,26 @@ public class PFrame extends JFrame implements KeyListener, MouseListener{
 
     @Override
     public void keyTyped(KeyEvent e) {
+        if(this.focusWidget!=null){
+            this.focusWidget.keyTyped(e);
+            repaint();
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(this.focusWidget!=null)
+        if(this.focusWidget!=null){
             this.focusWidget.keyPressed(e);
-        repaint();
+            repaint();
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if(this.focusWidget!=null){
+            this.focusWidget.keyReleased(e);
+            repaint();
+        }
     }
 
     @Override
@@ -102,18 +109,51 @@ public class PFrame extends JFrame implements KeyListener, MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent arg0) {
+        this.headWidget.mouseEntered(arg0);
+        repaint();
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
+        this.headWidget.mouseExited(arg0);
+        repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent arg0) {
+        Position p=mouseToPosition(arg0);
+
+        ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p);
+        PWidget topWidget=list.get(list.size()-1);
+
+        Position realPosition=topWidget.getRealPosition();
+        Position pos=new Position(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+
+        topWidget.mousePressed(arg0, pos);
+
+        repaint();
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0) {  
+        Position p=mouseToPosition(arg0);
+
+        ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p);
+        PWidget topWidget=list.get(list.size()-1);
+
+        Position realPosition=topWidget.getRealPosition();
+        Position pos=new Position(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+
+        topWidget.mouseReleased(arg0, pos);
+
+        repaint();
     }
 
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if(this.focusWidget!=null){
+            this.focusWidget.mouseWheelMoved(e);
+            repaint();
+        }
+    }
 }
