@@ -12,7 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class GraphicItemGenerator {
-    public static PGraphicItem generateItem(String path){
+    public static PGraphicItem generateItem(String path,int width,int height){
         BufferedImage image=null;
         try {
             image=ImageIO.read(new FileInputStream(new File(path)));
@@ -23,7 +23,7 @@ public class GraphicItemGenerator {
             e.printStackTrace();
         }
         if(image!=null){
-            Pixel[][] pixels=ObjectTransFormer.transform(image, 10, 10);
+            Pixel[][] pixels=ObjectTransFormer.transform(image, width, height);
             return new PGraphicItem(pixels);
         }
         else{
