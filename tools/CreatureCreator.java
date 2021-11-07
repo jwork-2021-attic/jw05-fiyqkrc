@@ -10,6 +10,9 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pview.*;
 import com.pFrame.pwidget.*;
+
+import asciiPanel.AsciiFont;
+
 import java.awt.Color;
 
 import game.creature.Floor;
@@ -21,7 +24,7 @@ class MyWorldView extends PWorldView{
     private Pixel[][] drawBoard;
     private Pixel focusPixel;
     private Position focusPixelPosition;
-    private int scale=3;
+    private int scale=1;
 
     public MyWorldView(PWidget parent, Position p, GameWorld world) {
         super(parent, p, world);
@@ -74,17 +77,34 @@ class MyWorldView extends PWorldView{
 
 class MyColorSelectButton extends PButton{
     MyWorldView worldView;
+    Color color;
 
-    public MyColorSelectButton(PWidget parent, Position p,MyWorldView worldView) {
+    public MyColorSelectButton(PWidget parent, Position p,MyWorldView worldView,Color color) {
         super(parent, p);
         this.worldView=worldView;
+        this.color=color;
     }
     
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
         super.mouseClicked(e, p);
-        this.worldView.setColor(this.worldView.getFocusPixelPostion(), Color.ORANGE);
+        this.worldView.setColor(this.worldView.getFocusPixelPostion(), this.color);
+    }
+
+    @Override
+    public Pixel[][] displayOutput() {
+        if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
+            return null;
+        } else {
+            Pixel[][] pixels = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
+            for(int i=0;i<this.getWidgetHeight();i++){
+                for(int j=0;j<this.getWidgetWidth();j++){
+                    pixels[i][j]=new Pixel(this.color,(char) 0xf0);
+                }
+            }
+            return pixels;
+        }
     }
 }
 
@@ -106,19 +126,38 @@ public class CreatureCreator {
     public static void main(String[] args){
         Log.setTerminalOutPut(true);
         Log.setOutPath("log.txt");
-        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(200, 100));
-        pHeadWidget.getLayout().setRCNumStyle(1, 2, "", "1x,40");
-        GameWorld world=new GameWorld(200, 200);
-        for(int i=0;i<20;i++){
-            for(int j=0;j<20;j++)
+        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(60, 40, AsciiFont.pFrame_8x8));
+        pHeadWidget.getLayout().setRCNumStyle(1, 2, "", "2x,1x");
+        pHeadWidget.getLayout().setInset(false);
+        GameWorld world=new GameWorld(10, 10);
+        for(int i=0;i<10;i++){
+            for(int j=0;j<10;j++)
                 world.put(new Floor(world),i,j);
         }
         MyWorldView myWorldView=new MyWorldView(pHeadWidget, null, world );
-        PLayout pLayout=new PLayout(pHeadWidget,null,6,2);
-        pLayout.setRowLayout("1x,1x,1x,1x,1x,2x");
-        for(int i=0;i<10;i++){
-            MyColorSelectButton pButton=new MyColorSelectButton(pLayout, null,myWorldView);
+
+        PLayout pLayout=new PLayout(pHeadWidget,null,3,1,false);
+        pLayout.setRowLayout("3x,2x,2x");
+
+        PLayout pixelContainer=new PLayout(pLayout, null,4,4);
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                PButton button=new PButton(pixelContainer, null);
+            }
         }
+
+        PLayout colorContainer=new PLayout(pLayout, null,3,4,false);
+        MyColorSelectButton pButton=new MyColorSelectButton(colorContainer, null,myWorldView,Color.CYAN);
+        MyColorSelectButton pButton1=new MyColorSelectButton(colorContainer, null,myWorldView,Color.BLUE);
+        MyColorSelectButton pButton2=new MyColorSelectButton(colorContainer, null,myWorldView,Color.WHITE);
+        MyColorSelectButton pButton3=new MyColorSelectButton(colorContainer, null,myWorldView,Color.DARK_GRAY);
+        MyColorSelectButton pButton4=new MyColorSelectButton(colorContainer, null,myWorldView,Color.YELLOW);
+        MyColorSelectButton pButton5=new MyColorSelectButton(colorContainer, null,myWorldView,Color.GREEN);
+        MyColorSelectButton pButton6=new MyColorSelectButton(colorContainer, null,myWorldView,Color.RED);
+        MyColorSelectButton pButton7=new MyColorSelectButton(colorContainer, null,myWorldView,Color.MAGENTA);
+        MyColorSelectButton pButton8=new MyColorSelectButton(colorContainer, null,myWorldView,Color.ORANGE);
+        MyColorSelectButton pButton9=new MyColorSelectButton(colorContainer, null,myWorldView,Color.PINK);
+
         OutPutButton outPutButton=new OutPutButton(pLayout, null);
         myWorldView.update();
     }

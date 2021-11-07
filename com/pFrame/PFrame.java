@@ -34,12 +34,12 @@ public class PFrame extends JFrame implements KeyListener, MouseListener{
         this.headWidget=widget;
     }
 
-    public PFrame(int width,int height) {
+    public PFrame(int width,int height,AsciiFont asciiFont) {
         super();
         this.frameHeight=height;
         this.frameWidth=width;
         this.focusWidget=null;
-        terminal = new AsciiPanel(width, height, AsciiFont.pFrame_4x4);
+        terminal = new AsciiPanel(width, height, asciiFont);
         this.charWidth=terminal.getCharWidth();
         add(terminal);
         pack();

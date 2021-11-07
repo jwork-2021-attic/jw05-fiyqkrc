@@ -8,6 +8,7 @@ import game.creature.Calabash;
 import game.creature.Floor;
 import game.creature.Thing;
 import game.creature.Wall;
+import log.Log;
 
 public class GameWorld {
 
@@ -42,7 +43,10 @@ public class GameWorld {
     }
 
     public void put(Thing t, int x, int y) {
-        this.tiles[x][y].setThing(t);
+        if(x<0||x>=this.WIDTH||y<0||y>=this.WIDTH)
+            Log.ErrorLog(this, String.format("You give {%d,%d}, which is a position out of index of world.", x,y));
+        else
+            this.tiles[x][y].setThing(t);
     }
 
     public int getWidth(){

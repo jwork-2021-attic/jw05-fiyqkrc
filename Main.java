@@ -8,6 +8,7 @@ import com.pFrame.Position;
 import com.pFrame.pview.PWorldView;
 import com.pFrame.pwidget.*;
 
+import asciiPanel.AsciiFont;
 import game.controller.KeyBoardThingController;
 import game.controller.MazeThingController;
 import game.controller.alogrithm.DeepSearchMazeSolver;
@@ -18,7 +19,7 @@ import game.world.GameWorld;
 
 public class Main {
     public static void main(String[] args) {
-        PHeadWidget app = new PHeadWidget(null, null, new PFrame(350,200));
+        PHeadWidget app = new PHeadWidget(null, null, new PFrame(350,200,AsciiFont.pFrame_4x4));
         app.getLayout().setRCNumStyle(2, 1, "1x,1x", "");
         PLayout layout = new PLayout(app, new Position(1, 1), 1, 2);
         layout.setColumnLayout("1x,1x");
