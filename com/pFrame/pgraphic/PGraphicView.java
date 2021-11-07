@@ -1,4 +1,4 @@
-package com.pFrame.pview;
+package com.pFrame.pgraphic;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -11,7 +11,7 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;
 
-public class PWorldView extends PWidget implements PView {
+public class PGraphicView extends PWidget implements PView {
 
     protected Position viewPosition = new Position(0, 0);
     protected GameWorld world;
@@ -27,7 +27,7 @@ public class PWorldView extends PWidget implements PView {
         return this.viewPosition;
     }
 
-    public PWorldView(PWidget parent, Position p, GameWorld world) {
+    public PGraphicView(PWidget parent, Position p, GameWorld world) {
         super(parent, p);
         this.world = world;
         this.viewPosition = new Position(0, 0);

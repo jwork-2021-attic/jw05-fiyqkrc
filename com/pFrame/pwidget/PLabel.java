@@ -1,7 +1,9 @@
-package com.pFrame;
+package com.pFrame.pwidget;
 
-import com.pFrame.pwidget.PWidget;
 import java.awt.Color;
+
+import com.pFrame.Pixel;
+import com.pFrame.Position;
 
 public class PLabel extends PWidget {
 

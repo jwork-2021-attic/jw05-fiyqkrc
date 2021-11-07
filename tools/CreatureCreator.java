@@ -3,12 +3,11 @@ package tools;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.pFrame.PButton;
 import com.pFrame.PFrame;
 import com.pFrame.PLayout;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pview.*;
+import com.pFrame.pgraphic.*;
 import com.pFrame.pwidget.*;
 
 import asciiPanel.AsciiFont;
@@ -20,7 +19,7 @@ import game.creature.Thing;
 import game.world.GameWorld;
 import log.Log;
 
-class MyWorldView extends PWorldView{
+class MyWorldView extends PGraphicView{
     private Pixel[][] drawBoard;
     private Pixel focusPixel;
     private Position focusPixelPosition;

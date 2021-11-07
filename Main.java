@@ -5,7 +5,7 @@ import java.awt.Color;
 import com.pFrame.PFrame;
 import com.pFrame.PLayout;
 import com.pFrame.Position;
-import com.pFrame.pview.PWorldView;
+import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
 
 import asciiPanel.AsciiFont;
@@ -29,7 +29,7 @@ public class Main {
 
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PWorldView worldView = new PWorldView(layout, new Position(1, i+1), world);
+            PGraphicView worldView = new PGraphicView(layout, new Position(1, i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
@@ -56,7 +56,7 @@ public class Main {
         layout2.setColumnLayout("1x,1x");
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PWorldView worldView = new PWorldView(layout2, new Position(1, i+1), world);
+            PGraphicView worldView = new PGraphicView(layout2, new Position(1, i+1), world);
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
