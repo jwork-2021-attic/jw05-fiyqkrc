@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.pFrame.PFrame;
 import com.pFrame.PLayout;
 import com.pFrame.Position;
+import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
 
@@ -29,7 +30,7 @@ public class Main {
 
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PGraphicView worldView = new PGraphicView(layout, new Position(1, i+1), world);
+            PGraphicView worldView = new PGraphicView(layout, new Position(1, i+1), new PGraphicScene(400,400));
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
@@ -46,7 +47,7 @@ public class Main {
             Thing aim = new Calabash(new Color(200, 0, 0), 1, world);
             world.put(aim, start.getX(), start.getY());
             world.put(new Calabash(new Color(0, 200, 0), 2, world), end.getX(), end.getY());
-            worldView.setFocus(aim);
+            //worldView.setFocus(aim);
             MazeThingController solver=new MazeThingController(DeepSearchMazeSolver.class);
             solver.loadMaze(mazeArray, start, end);
             aim.setController(solver);
@@ -56,7 +57,7 @@ public class Main {
         layout2.setColumnLayout("1x,1x");
         for (int i = 0; i < 2; i++) {
             GameWorld world = new GameWorld(400, 400);
-            PGraphicView worldView = new PGraphicView(layout2, new Position(1, i+1), world);
+            PGraphicView worldView = new PGraphicView(layout2, new Position(1, i+1), new PGraphicScene(400, 400));
             int mazeDim = 400;
             MazeGenerator maze = new MazeGenerator(mazeDim);
             maze.generateMaze();
@@ -74,7 +75,7 @@ public class Main {
             aim.setController(new KeyBoardThingController());
             world.put(aim, start.getX(), start.getY());
             world.put(new Calabash(new Color(0, 200, 0), 2, world), end.getX(), end.getY());
-            worldView.setFocus(aim);
+            //worldView.setFocus(aim);
         }
 
     }

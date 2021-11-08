@@ -1,5 +1,6 @@
 package com.pFrame;
 
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -54,7 +55,10 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
             int width=pixels[0].length;
             for(int i=0;i<height;i++){
                 for(int j=0;j<width;j++){
-                    this.terminal.write(pixels[i][j].getch(),j,i,pixels[i][j].getColor());
+                    if(pixels[i][j]!=null)
+                        this.terminal.write(pixels[i][j].getch(),j,i,pixels[i][j].getColor());
+                    else
+                        this.terminal.write((char)0x00,j,i,Color.BLACK);
                 }
             }
         }

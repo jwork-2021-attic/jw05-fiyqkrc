@@ -19,4 +19,7 @@ public class Pixel {
         return this.ch;
     }
     
+    public Pixel copy(){
+        return new Pixel(color, ch);
+    }
 }

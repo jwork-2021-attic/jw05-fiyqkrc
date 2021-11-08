@@ -17,6 +17,10 @@ public class PGraphicItem {
         return this.p;
     }
 
+    public void setPosition(Position pos){
+        this.p=pos;
+    }
+
     public PGraphicItem(File file){
         Log.ErrorLog(this, "this method :'PGraphicItem(String path)' need finish ");
 
@@ -37,7 +41,6 @@ public class PGraphicItem {
 
     public Pixel[][] getPixels(){
         return graphic;
-
     }
 
     public int getHeight() {
@@ -46,6 +49,10 @@ public class PGraphicItem {
 
     public int getWidth() {
         return width;
+    }
+
+    public boolean includePosition(Position pos){
+        return (pos.getX()>this.p.getX()&&pos.getX()<this.p.getX()+this.height)&&(pos.getY()>this.p.getY()&&pos.getY()<this.p.getY()+width);
     }
 
 }

@@ -14,9 +14,7 @@ import asciiPanel.AsciiFont;
 
 import java.awt.Color;
 
-import game.creature.Floor;
-import game.creature.Thing;
-import game.world.GameWorld;
+import imageTransFormer.GraphicItemGenerator;
 import log.Log;
 
 class MyWorldView extends PGraphicView{
@@ -25,7 +23,7 @@ class MyWorldView extends PGraphicView{
     private Position focusPixelPosition;
     private int scale=1;
 
-    public MyWorldView(PWidget parent, Position p, GameWorld world) {
+    public MyWorldView(PWidget parent, Position p, PGraphicScene world) {
         super(parent, p, world);
         this.drawBoard=new Pixel[10][10];
         this.focusPixel=drawBoard[0][0];
@@ -49,7 +47,7 @@ class MyWorldView extends PGraphicView{
         drawBoard[r][c]=new Pixel(color,(char) 0xf0);
         for(int i=0;i<this.scale;i++){
             for(int j=0;j<this.scale;j++){
-                this.world.put(new Thing(color, (char)0xf0, this.world), r*scale+i, c*scale+j);
+                //this.world.put(new Thing(color, (char)0xf0, this.world), r*scale+i, c*scale+j);
             }
         }
         this.update();
@@ -128,12 +126,12 @@ public class CreatureCreator {
         PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(60, 40, AsciiFont.pFrame_8x8));
         pHeadWidget.getLayout().setRCNumStyle(1, 2, "", "2x,1x");
         pHeadWidget.getLayout().setInset(false);
-        GameWorld world=new GameWorld(10, 10);
-        for(int i=0;i<10;i++){
-            for(int j=0;j<10;j++)
-                world.put(new Floor(world),i,j);
-        }
-        MyWorldView myWorldView=new MyWorldView(pHeadWidget, null, world );
+
+        PGraphicScene scene=new PGraphicScene(100, 100);
+        MyWorldView myWorldView=new MyWorldView(pHeadWidget, null, scene);
+        PGraphicItem item=GraphicItemGenerator.generateItem("/home/fiyqkrc/Icon-120.png", 10, 10);
+        scene.addItem(item);
+        myWorldView.setFocus(item);
 
         PLayout pLayout=new PLayout(pHeadWidget,null,3,1,false);
         pLayout.setRowLayout("3x,2x,2x");
