@@ -3,19 +3,17 @@ package com.pFrame.pgraphic;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import game.creature.Thing;
-import game.world.GameWorld;
-import log.Log;
-
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;
 
+import log.Log;
+
 public class PGraphicView extends PWidget implements PView {
 
     protected Position viewPosition = new Position(0, 0);
-    protected GameWorld world;
-    protected Thing focus;
+    protected PGraphicScene scene;
+    protected PGraphicItem focus;
 
     @Override
     public void setViewPosition(Position p) {
@@ -27,9 +25,9 @@ public class PGraphicView extends PWidget implements PView {
         return this.viewPosition;
     }
 
-    public PGraphicView(PWidget parent, Position p, GameWorld world) {
+    public PGraphicView(PWidget parent, Position p, PGraphicScene world) {
         super(parent, p);
-        this.world = world;
+        this.scene = world;
         this.viewPosition = new Position(0, 0);
         this.focus = null;
     }
@@ -37,28 +35,19 @@ public class PGraphicView extends PWidget implements PView {
     @Override
     public Pixel[][] displayOutput() {
         adjustViewPosition();
-        Pixel pixels[][] = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
-
-        for (int x = 0; x < this.getWidgetHeight(); x++) {
-            for (int y = 0; y < this.getWidgetWidth(); y++) {
-                pixels[x][y] = new Pixel(
-                        world.get(this.getViewPosition().getX() + x, this.getViewPosition().getY() + y).getColor(),
-                        world.get(this.getViewPosition().getX() + x, this.getViewPosition().getY() + y).getGlyph());
-            }
-        }
-        return pixels;
+        return this.scene.displayOutput(this.getViewPosition(), this.getWidgetWidth(), this.getWidgetHeight());
     }
 
     @Override
-    public Thing getFocus() {
+    public PGraphicItem getFocus() {
         return focus;
     }
 
     @Override
-    public void setFocus(Thing thing) {
+    public void setFocus(PGraphicItem thing) {
         this.focus = thing;
-        this.viewPosition = new Position(thing.getX() - this.getWidgetHeight() / 2,
-                thing.getY() - this.getWidgetWidth() / 2);
+        this.viewPosition = new Position(thing.getPosition().getX() - this.getWidgetHeight() / 2,
+                thing.getPosition().getY() - this.getWidgetWidth() / 2);
     }
 
     protected void adjustViewPosition() {
@@ -93,10 +82,7 @@ public class PGraphicView extends PWidget implements PView {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
-        if (this.focus != null && this.focus.getController() != null) {
-            this.focus.getController().respondToUserInput(e);
-        }
+        super.keyPressed(e);
     }
 
     @Override

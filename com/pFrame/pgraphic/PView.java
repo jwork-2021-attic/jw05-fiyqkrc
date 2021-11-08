@@ -2,16 +2,14 @@ package com.pFrame.pgraphic;
 
 import com.pFrame.Position;
 
-import game.creature.Thing;
-
 public interface PView {
 
     public void setViewPosition(Position p);
 
     public Position getViewPosition();
 
-    public Thing getFocus();
+    public PGraphicItem getFocus();
 
-    public void setFocus(Thing thing);
+    public void setFocus(PGraphicItem thing);
 
 }

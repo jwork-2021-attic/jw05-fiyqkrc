@@ -1,7 +1,11 @@
 package com.pFrame.pgraphic;
 
+import java.io.File;
+
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+
+import log.Log;
 
 public class PGraphicItem {
     protected int width;
@@ -13,7 +17,8 @@ public class PGraphicItem {
         return this.p;
     }
 
-    public PGraphicItem(String path){
+    public PGraphicItem(File file){
+        Log.ErrorLog(this, "this method :'PGraphicItem(String path)' need finish ");
 
     }
 

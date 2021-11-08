@@ -24,6 +24,11 @@ public class PGraphicScene {
         return null;
     }
 
+    public Pixel[][] displayOutput(Position p,int width,int height){
+        return null;
+        
+    }
+
     public boolean addItem(PGraphicItem item){
         return false;
     }
