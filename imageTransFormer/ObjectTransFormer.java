@@ -2,6 +2,9 @@ package imageTransFormer;
 
 import java.awt.Color;
 import java.awt.image.*;
+import java.util.Map;
+import java.util.HashMap;
+
 import com.pFrame.Pixel;
 
 import log.Log;
@@ -47,6 +50,7 @@ public class ObjectTransFormer {
             Log.WarningLog(ObjectTransFormer.class, "something error the file to transform may too small");
             return null;
         }
+        Map<String, Integer> colorMap=new HashMap<>();
         int r=0;
         int g=0;
         int b=0;
@@ -54,25 +58,57 @@ public class ObjectTransFormer {
         int count=0;
         for(int i=0;i<width;i++){
             for(int j=0;j<height;j++){
+                
                 int rgb=image.getRGB(y+i, x+j);
-                r+=(rgb>>16)&0xff;
-                g+=(rgb>>8)&0xff;
-                b+=rgb&0xff;
-                ascii+=(rgb>>24)&0xff;
-                count++;
+                if(((rgb>>24)&0xff)>64)
+                {
+                    r+=(rgb>>16)&0xff;
+                    g+=(rgb>>8)&0xff;
+                    b+=rgb&0xff;
+                    ascii+=(rgb>>24)&0xff;
+                    String colorStr=String.format("%s-%s-%s", ((rgb>>16)&0xff)>>4,((rgb>>8)&0xff)>>4,(rgb&0xff)>>4);
+                    if(colorMap.containsKey(colorStr)){
+                        colorMap.put(colorStr, colorMap.get(colorStr)+1);
+                    }
+                    else{
+                        colorMap.put(colorStr, 1);
+                    }
+                    count++;
+                }
             }
         }
-        r=r/count;
-        g=g/count;
-        b=b/count;
-        ascii=ascii/count;
-        if(ascii<=64){
+        if(count>0){
+            r=r/count;
+            g=g/count;
+            b=b/count;
+            ascii=ascii/count;
+        }
+
+
+        if(count<=width*height/4){
             ascii=0;
             return null;
         }
         else{
-            int newRgb=(ascii<<24)+(r<<16)+(g<<8)+b;
-            return new Pixel(new Color(newRgb),(char)0xf0);
+            int maxcount=0;
+            String maxColor="";
+            for(String key:colorMap.keySet()){
+                //Log.InfoLog(ObjectTransFormer.class, String.format("%s %d", key,colorMap.get(key)));
+                if(colorMap.get(key)>maxcount){
+                    maxcount=colorMap.get(key);
+                    maxColor=key;
+                }
+            }
+            if(maxcount>=0 && maxcount!=0){
+                //Log.InfoLog(ObjectTransFormer.class,maxColor);
+                String[] rgbstr=maxColor.split("-");
+                int newRgb=((ascii<<24)+(Integer.valueOf(rgbstr[0])<<20)+(Integer.valueOf(rgbstr[1])<<12)+(Integer.valueOf(rgbstr[2])<<4));
+                return Pixel.getPixel(new Color(newRgb),(char)0xf0);
+            }
+            else{
+                int newRgb=(ascii<<24)+(r<<16)+(g<<8)+b;
+                return Pixel.getPixel(new Color(newRgb),(char)0xf0);
+            }
         }
         
     }

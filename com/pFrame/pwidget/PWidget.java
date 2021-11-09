@@ -1,6 +1,5 @@
 package com.pFrame.pwidget;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import com.pFrame.PLayout;
@@ -15,6 +14,18 @@ public class PWidget {
     protected Position position;
     protected PLayout layout;
     protected PWidget parent;
+    protected PWidget background;
+
+    public void addBackground(PWidget background){
+        this.background=background;
+        this.background.setPosition(Position.getPosition(0, 0));
+        this.background.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
+        this.background.setParent(this);
+    }
+
+    public PWidget getBackground(){
+        return this.background;
+    }
 
     public PWidget(PWidget parent, Position p) {
         this.parent = parent;
@@ -23,7 +34,7 @@ public class PWidget {
         else{
             this.widgetHeight=0;
             this.widgetWidth=0;
-            this.position=new Position(0, 0);
+            this.position=Position.getPosition(0, 0);
         }
     }
 
@@ -31,7 +42,7 @@ public class PWidget {
         if(this.layout!=null)
             this.layout.autoSetPosition(widget, p);
         else{
-            widget.setPosition(new Position(0, 0));
+            widget.setPosition(Position.getPosition(0, 0));
             widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
         }
     }
@@ -56,29 +67,18 @@ public class PWidget {
         if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
             return null;
         } else {
-            Pixel[][] pixels = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
-            for(int i=0;i<this.getWidgetHeight();i++){
-                for(int j=0;j<this.getWidgetWidth();j++){
-                    pixels[i][j]=new Pixel(Color.GRAY,(char) 0xf0);
-                }
+            Pixel[][] pixels=Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
+            if(this.background==null){
+            }
+            else{
+                pixels=Pixel.pixelsAdd(pixels, this.background.displayOutput(),this.background.getPosition());
             }
             ArrayList<PWidget> childWidget=new ArrayList<>();
             if(this.layout!=null)
                 childWidget.add(this.layout);
             for (PWidget widget : childWidget) {
                 Pixel[][] childPixels = widget.displayOutput();
-                if (childPixels != null) {
-                    Position pos = widget.getPosition();
-                    int x_base = pos.getX();
-                    int y_base = pos.getY();
-                    int width = widget.getWidgetWidth();
-                    int height = widget.getWidgetHeight();
-                    for (int i = 0; i < height; i++) {
-                        for (int j = 0; j < width; j++) {
-                            pixels[x_base + i][y_base + j] = childPixels[i][j];
-                        }
-                    }
-                }
+                Pixel.pixelsAdd(pixels, childPixels, widget.getPosition());
             }
             return pixels;
         }
@@ -142,7 +142,7 @@ public class PWidget {
 
     public Position getRealPosition(){
         if(this.parent!=null)
-            return new Position(this.getPosition().getX()+this.getParentWidget().getRealPosition().getX(), this.getPosition().getY()+this.getParentWidget().getRealPosition().getY());
+            return Position.getPosition(this.getPosition().getX()+this.getParentWidget().getRealPosition().getX(), this.getPosition().getY()+this.getParentWidget().getRealPosition().getY());
         else{
             return this.getPosition();
         }

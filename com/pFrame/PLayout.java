@@ -1,6 +1,5 @@
 package com.pFrame;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import com.pFrame.pwidget.PWidget;
@@ -98,11 +97,11 @@ public class PLayout extends PWidget {
         if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
             return null;
         } else {
-            Pixel[][] pixels = new Pixel[this.getWidgetHeight()][this.getWidgetWidth()];
-            for(int i=0;i<this.getWidgetHeight();i++){
-                for(int j=0;j<this.getWidgetWidth();j++){
-                    pixels[i][j]=new Pixel(Color.gray,(char) 0xf0);
-                }
+            Pixel[][] pixels=Pixel.emptyPixels(this.getWidgetWidth(), this.getWidgetHeight());
+            if(this.background==null){
+            }
+            else{
+                pixels=this.background.displayOutput();
             }
             ArrayList<PWidget> childWidget=new ArrayList<>();
             for(int i=0;i<this.getRowNum();i++){
@@ -113,18 +112,7 @@ public class PLayout extends PWidget {
             }
             for (PWidget widget : childWidget) {
                 Pixel[][] childPixels = widget.displayOutput();
-                if (childPixels != null) {
-                    Position pos = widget.getPosition();
-                    int x_base = pos.getX();
-                    int y_base = pos.getY();
-                    int width = widget.getWidgetWidth();
-                    int height = widget.getWidgetHeight();
-                    for (int i = 0; i < height; i++) {
-                        for (int j = 0; j < width; j++) {
-                            pixels[x_base + i][y_base + j] = childPixels[i][j];
-                        }
-                    }
-                }
+                Pixel.pixelsAdd(pixels, childPixels, widget.getPosition());
             }
             return pixels;
         }
@@ -245,11 +233,11 @@ public class PLayout extends PWidget {
 
                     if(this.hasInset==true){
                         this.containedWidgets[i][j].changeWidgetSize(c[j]-2,r[i]-2);
-                        this.containedWidgets[i][j].setPosition(new Position(pos_x+1, pos_y+1));
+                        this.containedWidgets[i][j].setPosition(Position.getPosition(pos_x+1, pos_y+1));
                     }
                     else{
                         this.containedWidgets[i][j].changeWidgetSize(c[j],r[i]);
-                        this.containedWidgets[i][j].setPosition(new Position(pos_x, pos_y));
+                        this.containedWidgets[i][j].setPosition(Position.getPosition(pos_x, pos_y));
                     }
                 }
             }
@@ -320,7 +308,7 @@ public class PLayout extends PWidget {
                 if(this.containedWidgets[i][j]!=null){
                     PWidget w=this.containedWidgets[i][j];
                     if(PWidget.WidgetRange.inRange(w.getPosition(), w.getWidgetWidth(), w.getWidgetHeight(), p)==true)
-                        res.addAll(this.containedWidgets[i][j].getWidgetsAt(new Position(p.getX()-w.getPosition().getX(), p.getY()-w.getPosition().getY())));
+                        res.addAll(this.containedWidgets[i][j].getWidgetsAt(Position.getPosition(p.getX()-w.getPosition().getX(), p.getY()-w.getPosition().getY())));
                 }
             }
         }

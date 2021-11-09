@@ -82,14 +82,14 @@ public class DeepSearchMazeSolver implements MazeSolver {
 
     private ArrayList<Position> detectRoad(Position p) {
         ArrayList<Position> res = new ArrayList<>();
-        if (positionValid(new Position(p.getX(), p.getY() + 1)))
-            res.add(new Position(p.getX(), p.getY() + 1));
-        if (positionValid(new Position(p.getX() + 1, p.getY())))
-            res.add(new Position(p.getX() + 1, p.getY()));
-        if (positionValid(new Position(p.getX(), p.getY() - 1)))
-            res.add(new Position(p.getX(), p.getY() - 1));
-        if (positionValid(new Position(p.getX() - 1, p.getY())))
-            res.add(new Position(p.getX() - 1, p.getY()));
+        if (positionValid(Position.getPosition(p.getX(), p.getY() + 1)))
+            res.add(Position.getPosition(p.getX(), p.getY() + 1));
+        if (positionValid(Position.getPosition(p.getX() + 1, p.getY())))
+            res.add(Position.getPosition(p.getX() + 1, p.getY()));
+        if (positionValid(Position.getPosition(p.getX(), p.getY() - 1)))
+            res.add(Position.getPosition(p.getX(), p.getY() - 1));
+        if (positionValid(Position.getPosition(p.getX() - 1, p.getY())))
+            res.add(Position.getPosition(p.getX() - 1, p.getY()));
         return res;
     }
 
@@ -124,12 +124,12 @@ public class DeepSearchMazeSolver implements MazeSolver {
         int maze_height=mazeRawArray.length;
         int x=0;
         int y=0;
-        Position p=new Position(0, 0);
+        Position p=Position.getPosition(0, 0);
         boolean success=false;
         while(!success){
             x=((new Random()).nextInt(1010000))%maze_height;
             y=((new Random()).nextInt(1024000))%maze_width;
-            p= new Position(x, y);
+            p= Position.getPosition(x, y);
             if (mazeRawArray[p.getX()][p.getY()] == true)
                 success=true;
             else

@@ -11,7 +11,7 @@ import log.Log;
 
 public class PGraphicView extends PWidget implements PView {
 
-    protected Position viewPosition = new Position(0, 0);
+    protected Position viewPosition = Position.getPosition(0, 0);
     protected PGraphicScene scene;
     protected PGraphicItem focus;
 
@@ -28,7 +28,7 @@ public class PGraphicView extends PWidget implements PView {
     public PGraphicView(PWidget parent, Position p, PGraphicScene world) {
         super(parent, p);
         this.scene = world;
-        this.viewPosition = new Position(0, 0);
+        this.viewPosition = Position.getPosition(0, 0);
         this.focus = null;
     }
 
@@ -46,7 +46,7 @@ public class PGraphicView extends PWidget implements PView {
     @Override
     public void setFocus(PGraphicItem thing) {
         this.focus = thing;
-        this.viewPosition = new Position(thing.getPosition().getX() - this.getWidgetHeight() / 2,
+        this.viewPosition = Position.getPosition(thing.getPosition().getX() - this.getWidgetHeight() / 2,
                 thing.getPosition().getY() - this.getWidgetWidth() / 2);
     }
 
@@ -76,7 +76,7 @@ public class PGraphicView extends PWidget implements PView {
             } else {
                 resY = viewPosition.getY();
             }
-            this.viewPosition = new Position(resX, resY);
+            this.viewPosition = Position.getPosition(resX, resY);
         }
     }
 

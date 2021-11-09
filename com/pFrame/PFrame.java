@@ -98,7 +98,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
         this.focusWidget=list.get(list.size()-1);
 
         Position realPosition=this.focusWidget.getRealPosition();
-        Position pos=new Position(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
 
         this.focusWidget.mouseClicked(arg0, pos);
 
@@ -108,7 +108,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     protected Position mouseToPosition(MouseEvent e){
         int x=e.getX();
         int y=e.getY();
-        return new Position((y-this.getInsets().top)/this.charWidth,(x-this.getInsets().left)/this.charWidth);
+        return Position.getPosition((y-this.getInsets().top)/this.charWidth,(x-this.getInsets().left)/this.charWidth);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
         PWidget topWidget=list.get(list.size()-1);
 
         Position realPosition=topWidget.getRealPosition();
-        Position pos=new Position(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
 
         topWidget.mousePressed(arg0, pos);
 
@@ -146,7 +146,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
         PWidget topWidget=list.get(list.size()-1);
 
         Position realPosition=topWidget.getRealPosition();
-        Position pos=new Position(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
 
         topWidget.mouseReleased(arg0, pos);
 

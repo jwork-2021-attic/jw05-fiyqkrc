@@ -36,7 +36,7 @@ public class PGraphicItem {
             this.width=0;
             this.height=0;
         }
-        p=new Position(0, 0);
+        p=Position.getPosition(0, 0);
     }
 
     public Pixel[][] getPixels(){

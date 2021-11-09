@@ -30,4 +30,22 @@ public class GraphicItemGenerator {
             return null;
         }
     }
+    public static PGraphicItem generateItem(File file,int width,int height){
+        BufferedImage image=null;
+        try {
+            image=ImageIO.read(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            System.out.println("file not exist");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(image!=null){
+            Pixel[][] pixels=ObjectTransFormer.transform(image, width, height);
+            return new PGraphicItem(pixels);
+        }
+        else{
+            return null;
+        }
+    }
 }

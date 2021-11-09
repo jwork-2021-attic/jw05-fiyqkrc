@@ -70,8 +70,8 @@ public class GameWorld {
 
     public static void main(String[] args){
         GameWorld world=new GameWorld(40, 40);
-        System.out.println(world.positionValid(new Position(20, 20)));
+        System.out.println(world.positionValid(Position.getPosition(20, 20)));
         world.put(new Calabash(new Color(20,20,20), 1, world),10,10);
-        System.out.println(world.positionValid(new Position(10, 10)));
+        System.out.println(world.positionValid(Position.getPosition(10, 10)));
     }
 }

@@ -23,8 +23,12 @@ public class PButton extends PWidget {
         super.mouseClicked(e, p);
     }
 
+    
     @Override
     public Pixel[][] displayOutput() {
-        return this.textLabel.displayOutput();
+        Pixel[][] pixels=super.displayOutput();
+        return Pixel.pixelsAdd(pixels, this.textLabel.displayOutput(), this.textLabel.getPosition());
     }
+    
+
 }
