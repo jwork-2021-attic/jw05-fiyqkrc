@@ -10,8 +10,9 @@ import com.pFrame.pwidget.PWidget;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
+import log.Log;
 
-public class PFrame extends JFrame implements KeyListener, MouseListener, MouseWheelListener{
+public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener{
 
     private AsciiPanel terminal;
     protected PWidget headWidget;
@@ -19,6 +20,8 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     protected int frameWidth;
     protected int frameHeight;
     protected int charWidth;
+
+    
 
     public int getFrameWidth(){
         return this.frameWidth;
@@ -69,7 +72,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     public void keyTyped(KeyEvent e) {
         if(this.focusWidget!=null){
             this.focusWidget.keyTyped(e);
-            repaint();
+            //repaint();
         }
     }
 
@@ -77,7 +80,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     public void keyPressed(KeyEvent e) {
         if(this.focusWidget!=null){
             this.focusWidget.keyPressed(e);
-            repaint();
+            //repaint();
         }
     }
 
@@ -85,7 +88,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     public void keyReleased(KeyEvent e) {
         if(this.focusWidget!=null){
             this.focusWidget.keyReleased(e);
-            repaint();
+            //repaint();
         }
     }
 
@@ -102,7 +105,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
 
         this.focusWidget.mouseClicked(arg0, pos);
 
-        repaint();
+        //repaint();
     }
 
     protected Position mouseToPosition(MouseEvent e){
@@ -114,13 +117,13 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
     @Override
     public void mouseEntered(MouseEvent arg0) {
         this.headWidget.mouseEntered(arg0);
-        repaint();
+        //repaint();
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
         this.headWidget.mouseExited(arg0);
-        repaint();
+        //repaint();
     }
 
     @Override
@@ -135,7 +138,7 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
 
         topWidget.mousePressed(arg0, pos);
 
-        repaint();
+        //repaint();
     }
 
     @Override
@@ -150,14 +153,30 @@ public class PFrame extends JFrame implements KeyListener, MouseListener, MouseW
 
         topWidget.mouseReleased(arg0, pos);
 
-        repaint();
+        //repaint();
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if(this.focusWidget!=null){
             this.focusWidget.mouseWheelMoved(e);
-            repaint();
+            //repaint();
         }
+    }
+
+    @Override
+    public void run() {
+        int i=0;
+        while(true){
+            try {
+                this.repaint();
+                Thread.sleep(50);
+                i++;
+                //Log.ErrorLog(this, String.format("flash windows %d times",i));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
     }
 }

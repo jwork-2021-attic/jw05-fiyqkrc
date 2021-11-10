@@ -121,6 +121,7 @@ class OutPutButton extends PButton{
 
 public class CreatureCreator {
     public static void main(String[] args){
+        Log.setLogLevel(Log.Error);
         Log.setTerminalOutPut(true);
         Log.setOutPath("log.txt");
         PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(600, 400, AsciiFont.pFrame_2x2));
@@ -139,10 +140,11 @@ public class CreatureCreator {
 
         for(int i=0;i<25;i++){
             PButton pButton=new PButton(layout, null);
-            pButton.addBackground(myWorldView);
+            pButton.setText("ABC", 1, Color.RED);
         }
 
         myWorldView.update();
+        pHeadWidget.startRepaintThread();
     }
     
 }

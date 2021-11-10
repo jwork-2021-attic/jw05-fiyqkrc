@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pFrame.pgraphic.PGraphicItem;
+import com.pFrame.pgraphic.PImage;
+import com.pFrame.pgraphic.PMovie;
+
 public class Pixel {
     private Color color;
     private char ch;
@@ -12,6 +16,10 @@ public class Pixel {
 
     private Pixel(Color color, char ch){
         this.ch=ch;
+        this.color=color;
+    }
+
+    public void setColor(Color color){
         this.color=color;
     }
 
@@ -80,5 +88,98 @@ public class Pixel {
             for(int j=0;j<width;j++)
                 pixels[i][j]=null;
         return pixels;
+    }
+
+    static public Pixel[][] valueOf(PGraphicItem item){
+        return item.getPixels();
+    }
+
+    static public Pixel[][] valueOf(PImage item){
+        return null;
+        //TODO;
+    }
+
+    static public Pixel[][] valueOfThisTime(PMovie movie){
+        return null;
+        //TODO
+    }
+
+    static public Pixel[][][] allValuesOf(PMovie movie){
+        //TODO
+        return null;
+    }
+
+    static public Pixel[][] subPixels(Pixel[][] pixels,Position p,int width,int height){
+        Pixel[][] res=Pixel.emptyPixels(width, height);
+        if(pixels==null)
+            return null;
+        int h=pixels.length;
+        int w=pixels[0].length;
+        for(int i=0;i<height;i++)
+            for(int j=0;j<width;j++){
+                if((p.getX()+i<h&&p.getX()+i>=0)&&(p.getY()+j<w&&p.getY()+j>0)){
+                    res[i][j]=pixels[p.getX()+i][p.getY()+j];
+                }
+            }
+        return res;
+    }
+
+    static public Pixel[][] pixelsScaleLarger(Pixel[][] pixels,int scale){
+        if(pixels==null||scale==1)
+            return Pixel.pixelsCopy(pixels);
+        else{
+            int originHeight=pixels.length;
+            int originWidth=pixels[0].length;
+            Pixel[][] res= Pixel.emptyPixels(originWidth*scale, originHeight*scale);
+            for(int i=0;i<originHeight;i++){
+                for(int j=0;j<originWidth;j++){
+                    for(int a=0;a<scale;a++){
+                        for(int b=0;b<scale;b++){
+                            res[i*scale+a][j*scale+b]=pixels[i][j];
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+    }
+
+    static public Pixel[][] pixelsCopy(Pixel[][] pixels){
+        if(pixels==null)    
+            return null;
+        else{
+            int width=pixels[0].length;
+            int height=pixels.length;
+            Pixel[][] res=Pixel.emptyPixels(width, height);
+            for(int i=0;i<height;i++)
+                for(int j=0;j<width;j++){
+                    res[i][j]=pixels[i][j];
+                }
+            return res;
+        }
+    }
+
+    static public Pixel[][] pixelsSetColor(Pixel[][] pixels,Color color){
+        if(pixels==null||color==null)
+            return null;
+        else{
+            int w=pixels[0].length;
+            int h=pixels.length;
+            for(int i=0;i<h;i++)
+                for(int j=0;j<w;j++){
+                    if(pixels[i][j]!=null)
+                        pixels[i][j].setColor(color);
+                }
+            return pixels;
+        }
+    }
+
+    static public PGraphicItem toItem(Pixel[][] pixels){
+        return new PGraphicItem(pixels);
+    }
+
+    static public PImage toImage(Pixel[][] pixels){
+        return new PImage();
+        //TODO
     }
 }

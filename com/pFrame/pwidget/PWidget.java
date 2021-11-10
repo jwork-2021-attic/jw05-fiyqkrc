@@ -100,6 +100,12 @@ public class PWidget {
     public void changeWidgetSize(int width, int height) {
         this.widgetHeight = height;
         this.widgetWidth = width;
+        this.sizeChanged();
+
+    }
+
+    protected void sizeChanged(){
+
     }
 
     public void setPosition(Position position) {

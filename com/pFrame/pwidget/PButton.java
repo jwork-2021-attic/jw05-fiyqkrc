@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import java.awt.Color;
 
 import log.Log;
 
@@ -12,8 +13,10 @@ public class PButton extends PWidget {
     PLabel textLabel;
 
     public PButton(PWidget parent, Position p) {
+        
         super(parent, p);
         this.textLabel=new PLabel(this, null);
+        
     }
     
 
@@ -30,5 +33,8 @@ public class PButton extends PWidget {
         return Pixel.pixelsAdd(pixels, this.textLabel.displayOutput(), this.textLabel.getPosition());
     }
     
+    public void setText(String text,int size,Color color){
+        this.textLabel.setText(text, size, color);
+    }
 
 }
