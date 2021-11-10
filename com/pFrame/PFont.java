@@ -26,12 +26,11 @@ public class PFont {
             Pixel[][] res= Pixel.subPixels(fontImagePixels, Position.getPosition(ch/16*8,(ch%16)*8), 8, 8);
             for(int i=0;i<fontBaseSize;i++){
                 for(int j=0;j<fontBaseSize;j++){
-                    if((res[i][j].getColor().getRGB()&0x00ffffff)==0x00000000){
+                    if(res[i][j]!=null&&(res[i][j].getColor().getRGB()&0x00ffffff)==0x00000000){
                         res[i][j]=null;
                     }
                 }
             }
-            System.out.print("\n\n");
             fontsPixels[ch]=res;
             return res;
         }

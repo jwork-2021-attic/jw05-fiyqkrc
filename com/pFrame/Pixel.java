@@ -35,6 +35,7 @@ public class Pixel {
         return new Pixel(color, ch);
     }
 
+    @Deprecated
     static private Pixel findPixel(Color color,char ch){
         if(PixelsPool.containsKey(color)){
             Map<Character, Pixel> map=PixelsPool.get(color);
@@ -179,7 +180,7 @@ public class Pixel {
     }
 
     static public PImage toImage(Pixel[][] pixels){
-        return new PImage();
+        return new PImage(null,null);
         //TODO
     }
 }

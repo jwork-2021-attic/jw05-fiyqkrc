@@ -2,6 +2,7 @@ package tools;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import com.pFrame.PFrame;
 import com.pFrame.PLayout;
@@ -134,16 +135,18 @@ public class CreatureCreator {
         scene.addItem(item);
         //myWorldView.setFocus(item);
 
-        pHeadWidget.addBackground(myWorldView);
+        PImage image=new PImage(null,null,new File("/home/fiyqkrc/Icon-120.png"));
+
+        pHeadWidget.addBackground(image);
 
         PLayout layout=new PLayout(pHeadWidget, null,5,5,true);
 
         for(int i=0;i<25;i++){
             PButton pButton=new PButton(layout, null);
-            pButton.setText("ABC", 1, Color.RED);
+            pButton.setText("Hello World,nice to meet you!", 1, Color.RED);
         }
 
-        myWorldView.update();
+        //myWorldView.update();
         pHeadWidget.startRepaintThread();
     }
     

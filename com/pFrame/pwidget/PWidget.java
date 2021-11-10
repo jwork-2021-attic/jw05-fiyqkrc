@@ -85,7 +85,8 @@ public class PWidget {
     }
 
     public void update() {
-        this.parent.update();
+        if(this.parent!=null)
+            this.parent.update();
     }
 
     public int getWidgetHeight() {

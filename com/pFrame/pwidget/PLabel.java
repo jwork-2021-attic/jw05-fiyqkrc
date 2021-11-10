@@ -54,11 +54,11 @@ public class PLabel extends PWidget {
                 for (int j = 0; j < charsInLine; j++) {
                     if (chIndex < this.text.length()){
                         Pixel[][] fontPixels=Pixel.pixelsCopy(PFont.getCharByPixels(this.text.charAt(chIndex)));
+                        fontPixels=Pixel.pixelsScaleLarger(fontPixels, this.fontScale);
                         fontPixels=Pixel.pixelsSetColor(fontPixels,this.color);
                         Pixel.pixelsAdd(this.content,fontPixels,Position.getPosition(PFont.fontBaseSize * i * fontScale,PFont.fontBaseSize * j * fontScale));
                         chIndex++;
                     }
-
                 }
             }
         }

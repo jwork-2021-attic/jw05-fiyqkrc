@@ -10,7 +10,6 @@ import com.pFrame.pwidget.PWidget;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import log.Log;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener{
 
@@ -166,13 +165,10 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void run() {
-        int i=0;
         while(true){
             try {
                 this.repaint();
                 Thread.sleep(50);
-                i++;
-                //Log.ErrorLog(this, String.format("flash windows %d times",i));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
