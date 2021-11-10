@@ -37,8 +37,11 @@ public class PImage extends PWidget{
     }
     
     public void load(File file){
-        if(this.getWidgetHeight()!=0&&this.getWidgetWidth()!=0)
+        if(this.getWidgetHeight()!=0&&this.getWidgetWidth()!=0){
+            System.out.printf("%d %d\n",this.getWidgetHeight(),this.getWidgetWidth());
             this.content=Pixel.valueOf(GraphicItemGenerator.generateItem(file, this.getWidgetWidth(), this.getWidgetHeight()));
+        
+        }
     }
 
     @Override

@@ -135,7 +135,7 @@ public class CreatureCreator {
         scene.addItem(item);
         //myWorldView.setFocus(item);
 
-        PImage image=new PImage(null,null,new File("/home/fiyqkrc/Icon-120.png"));
+        PImage image=new PImage(null,null,new File("/home/fiyqkrc/output/2-3.png"));
 
         pHeadWidget.addBackground(image);
 
