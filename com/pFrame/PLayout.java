@@ -55,7 +55,7 @@ public class PLayout extends PWidget {
         this.columnnum = columnnum;
         this.rowStyle = "";
         this.columnStyle = "";
-        this.hasInset=true;
+        this.hasInset=false;
         containedWidgets = new PWidget[rownum][columnnum];
         for (int i = 0; i < rownum; i++)
             for (int j = 0; j < columnnum; j++)

@@ -7,8 +7,6 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;
 
-import log.Log;
-
 public class PGraphicView extends PWidget implements PView {
 
     protected Position viewPosition = Position.getPosition(0, 0);
@@ -52,7 +50,7 @@ public class PGraphicView extends PWidget implements PView {
 
     protected void adjustViewPosition() {
         if (this.getFocus() == null) {
-            Log.WarningLog(this, "focus thing not be set,so not exec adjustViewPosition");
+            //Log.WarningLog(this, "focus thing not be set,so not exec adjustViewPosition");
             return;
         } else {
             Position focusPosition = this.getFocus().getPosition();
