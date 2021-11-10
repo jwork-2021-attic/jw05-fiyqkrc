@@ -17,6 +17,10 @@ public class MazeGenerator {
         dimension = dim;
     }
 
+    public int[][] getMaze(){
+        return maze;
+    }
+
     public void generateMaze() {
         stack.push(new Node(0,0));
         while (!stack.empty()) {

@@ -2,6 +2,8 @@ package worldGenerate;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 import com.pFrame.PFrame;
@@ -23,6 +25,7 @@ public class WorldGenerate {
     private int room_min_height;
     private int room_max_width;
     private int room_min_width;
+    private MazeGenerator mazeGenerator;
 
     private int[][] world;
     private ArrayList<Room> roomsArray;
@@ -47,9 +50,43 @@ public class WorldGenerate {
     }
 
     public int[][] generate() {
-        this.rooms_generate();
+        // this.rooms_generate();
         this.maze_generate();
+        this.oddDotRemove();
+        this.rooms_generate();
         return this.world;
+    }
+
+    public void oddDotRemove() {
+        int count = 0;
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++) {
+                if (world[i][j] == 1)
+                    count++;
+            }
+        int remove_count = count*2/4;
+        Queue<Position> p = new LinkedList<>();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                ArrayList<Position> list = this.nonemptyPositionAround(Position.getPosition(i, j));
+                if (list.size() == 1 && isNonEmptyOrOutBound(Position.getPosition(i, j))) {
+                    p.add(Position.getPosition(i, j));
+                }
+            }
+        }
+        while (remove_count > 0) {
+            Position position = p.poll();
+            if (isNonEmptyOrOutBound(position) && this.nonemptyPositionAround(position).size() <= 1) {
+                if (this.nonemptyPositionAround(position).size() < 1) {
+                    tagOnePixel(position, 0);
+                    remove_count--;
+                } else {
+                    p.add(nonemptyPositionAround(position).get(0));
+                    tagOnePixel(position, 0);
+                    remove_count--;
+                }
+            }
+        }
     }
 
     private void rooms_generate() {
@@ -86,7 +123,7 @@ public class WorldGenerate {
             if (vaild) {
                 for (int a = 0; a < random_height; a++) {
                     for (int b = 0; b < random_width; b++) {
-                        world[pos.getX() + a][pos.getY() + b] = 1;
+                        world[pos.getX() + a][pos.getY() + b] = 2;
                     }
                 }
                 roomsArray.add(new Room(pos, random_width, random_height));
@@ -95,68 +132,84 @@ public class WorldGenerate {
     }
 
     private void maze_generate() {
-        
+        mazeGenerator = new MazeGenerator(height);
+
+        mazeGenerator.generateMaze();
+        this.world = mazeGenerator.getMaze();
     }
 
-    ArrayList<Position> emptyPositionAround(Position p){
-        ArrayList<Position> list=new ArrayList<>();
-        if(isEmptyOrOutBound(leftPosition(p)))
+    ArrayList<Position> nonemptyPositionAround(Position p) {
+        ArrayList<Position> list = new ArrayList<>();
+        if (isNonEmptyOrOutBound(leftPosition(p)))
             list.add(leftPosition(p));
-        if(isEmptyOrOutBound(upPosition(p)))
+        if (isNonEmptyOrOutBound(upPosition(p)))
             list.add(upPosition(p));
-        if(isEmptyOrOutBound(downPosition(p)))
+        if (isNonEmptyOrOutBound(downPosition(p)))
             list.add(downPosition(p));
-        if(isEmptyOrOutBound(rightPosition(p)))
+        if (isNonEmptyOrOutBound(rightPosition(p)))
             list.add(rightPosition(p));
         return list;
     }
 
-    boolean isEmpty(Position p){
-        if(isOutBound(p))
+    ArrayList<Position> emptyPositionAround(Position p) {
+        ArrayList<Position> list = new ArrayList<>();
+        if (isEmptyOrOutBound(leftPosition(p)))
+            list.add(leftPosition(p));
+        if (isEmptyOrOutBound(upPosition(p)))
+            list.add(upPosition(p));
+        if (isEmptyOrOutBound(downPosition(p)))
+            list.add(downPosition(p));
+        if (isEmptyOrOutBound(rightPosition(p)))
+            list.add(rightPosition(p));
+        return list;
+    }
+
+    boolean isEmpty(Position p) {
+        if (isOutBound(p))
             return false;
         else
-            return (this.world[p.getX()][p.getY()]==0);
+            return (this.world[p.getX()][p.getY()] == 0);
     }
 
-    void tagOnePixel(Position p,int x){
-        world[p.getX()][p.getY()]=x;
-        System.out.println(p);
+    void tagOnePixel(Position p, int x) {
+        world[p.getX()][p.getY()] = x;
     }
 
-    boolean isEmptyAround(Position p){
-        return isEmptyOrOutBound(upPosition(p))&&isEmptyOrOutBound(downPosition(p))&&isEmptyOrOutBound(leftPosition(p))&&isEmptyOrOutBound(rightPosition(p));
+    boolean isEmptyAround(Position p) {
+        return isEmptyOrOutBound(upPosition(p)) && isEmptyOrOutBound(downPosition(p))
+                && isEmptyOrOutBound(leftPosition(p)) && isEmptyOrOutBound(rightPosition(p));
     }
 
-    Position upPosition(Position p){
-        return Position.getPosition(p.getX()-1, p.getY());
+    Position upPosition(Position p) {
+        return Position.getPosition(p.getX() - 1, p.getY());
     }
 
-    Position downPosition(Position p){
-        return Position.getPosition(p.getX()+1, p.getY());
+    Position downPosition(Position p) {
+        return Position.getPosition(p.getX() + 1, p.getY());
     }
 
-    Position leftPosition(Position p){
-        return Position.getPosition(p.getX(), p.getY()-1);
+    Position leftPosition(Position p) {
+        return Position.getPosition(p.getX(), p.getY() - 1);
     }
 
-    Position rightPosition(Position p){
-        return Position.getPosition(p.getX(), p.getY()+1);
+    Position rightPosition(Position p) {
+        return Position.getPosition(p.getX(), p.getY() + 1);
     }
 
-    Position upPosition(Position p,int x){
-        return Position.getPosition(p.getX()-x, p.getY());
+    Position upPosition(Position p, int x) {
+        return Position.getPosition(p.getX() - x, p.getY());
     }
 
-    Position downPosition(Position p,int x){
-        return Position.getPosition(p.getX()+x, p.getY());
+    Position downPosition(Position p, int x) {
+        return Position.getPosition(p.getX() + x, p.getY());
     }
 
-    Position leftPosition(Position p,int x){
-        return Position.getPosition(p.getX(), p.getY()-x);
+    Position leftPosition(Position p, int x) {
+        return Position.getPosition(p.getX(), p.getY() - x);
     }
 
-    Position rightPosition(Position p,int x){
-        return Position.getPosition(p.getX(), p.getY()+x);
+    Position rightPosition(Position p, int x) {
+        return Position.getPosition(p.getX(), p.getY() + x);
     }
 
     boolean isEmptyOrOutBound(Position p) {
@@ -165,6 +218,11 @@ public class WorldGenerate {
         } else {
             return (this.world[p.getX()][p.getY()] == 0);
         }
+    }
+
+    boolean isNonEmptyOrOutBound(Position p) {
+
+        return !isOutBound(p) && (this.world[p.getX()][p.getY()] != 0);
     }
 
     boolean isOutBound(Position p) {
@@ -212,11 +270,12 @@ public class WorldGenerate {
     }
 
     public static void main(String[] args) {
-        WorldGenerate generate = new WorldGenerate(200, 200, 20000, 20, 10, 20, 10);
+        WorldGenerate generate = new WorldGenerate(40, 40, 2000000, 20, 4, 20, 4);
         PGraphicItem item = generate.toPGraphicItem(generate.generate());
+        PGraphicItem item2=new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(),5));
         PHeadWidget pHeadWidget = new PHeadWidget(null, null, new PFrame(300, 250, AsciiFont.pFrame_4x4));
         PGraphicScene scene = new PGraphicScene(250, 250);
-        scene.addItem(item, Position.getPosition(0, 0));
+        scene.addItem(item2, Position.getPosition(0, 0));
         PGraphicView view = new PGraphicView(pHeadWidget, null, scene);
         view.setViewPosition(Position.getPosition(0, 0));
         pHeadWidget.startRepaintThread();
