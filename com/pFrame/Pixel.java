@@ -70,8 +70,7 @@ public class Pixel {
     }
 
     static public Pixel[][] valueOf(PImage item){
-        return null;
-        //TODO;
+        return item.getPixels();
     }
 
     static public Pixel[][] valueOfThisTime(PMovie movie){
