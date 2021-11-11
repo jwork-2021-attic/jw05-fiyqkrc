@@ -1,5 +1,6 @@
 package game.role.creature;
 
+
 import com.pFrame.Position;
 import game.controller.CreatureController;
 import game.role.Controlable;
