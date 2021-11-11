@@ -32,6 +32,8 @@ public class WorldGenerate{
     private int[][] world;
     private ArrayList<Room> roomsArray;
     private ArrayList<Position> oddNodes;
+    private Position start;
+    private Room aim;
 
     public ArrayList<Room> getRoomsArray(){
         return this.roomsArray;
@@ -66,7 +68,26 @@ public class WorldGenerate{
         this.oddDotRemove();
         this.rooms_generate();
         this.rooms_link();
+        this.generateStartAndEndNode();
         return this.world;
+    }
+
+    private void generateStartAndEndNode(){
+        Room curRoom=roomsArray.get(0);
+        Position curPos=oddNodes.get(0);
+        int maxDistance=0;
+        for(Room room:roomsArray)
+            for(Position pos:oddNodes){
+                if(((pos.getX()-room.pos.getX())*(pos.getX()-room.pos.getX())+(pos.getY()-room.pos.getY())*(pos.getY()-room.pos.getY()))>maxDistance){
+                    curPos=pos;
+                    curRoom=room;
+                    maxDistance=((pos.getX()-room.pos.getX())*(pos.getX()-room.pos.getX())+(pos.getY()-room.pos.getY())*(pos.getY()-room.pos.getY()));
+                }
+            }
+        this.start=curPos;
+        this.aim=curRoom;
+        world[this.start.getX()][start.getY()]=5;
+        world[aim.pos.getX()][aim.pos.getY()]=6;
     }
 
     private Room getUnLinkedRoom(){
@@ -434,6 +455,13 @@ public class WorldGenerate{
                         break;
                     case 4:
                         pixels[i][j] = Pixel.getPixel(Color.ORANGE, (char) 0xf0);
+                        break;
+                    case 5:
+                        pixels[i][j] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
+                        break;
+                    case 6:
+                        pixels[i][j] = Pixel.getPixel(Color.RED, (char)0xf0);
+                        break;
                     default:
                         break;
                     }
