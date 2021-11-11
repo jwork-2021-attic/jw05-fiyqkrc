@@ -2,7 +2,6 @@ package game.role.creature;
 
 import java.io.File;
 
-import com.pFrame.Pixel;
 import com.pFrame.Position;
 
 import game.controller.CreatureController;

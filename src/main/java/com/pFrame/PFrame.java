@@ -103,7 +103,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void mouseClicked(MouseEvent arg0) {
-        if (focusWidgetFixed == true) {
+        if (focusWidgetFixed) {
             if (focusWidget != null) {
                 Position p = mouseToPosition(arg0);
                 this.focusWidget.mouseClicked(arg0,
@@ -207,11 +207,10 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         while (true) {
             try {
                 this.repaint();
-                Thread.sleep(50);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
     }
 }

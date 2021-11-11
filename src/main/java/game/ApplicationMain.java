@@ -12,7 +12,7 @@ import game.world.World;
 
 public class ApplicationMain {
     public static void main(String[] args){
-        World world=new World(800, 800);
+        World world=new World(200, 200);
         PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(300, 200, AsciiFont.pFrame_4x4));
         PGraphicView view=new PGraphicView(null, Position.getPosition(1, 2), world);
         pHeadWidget.addBackground(view);
