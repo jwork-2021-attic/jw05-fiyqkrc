@@ -1,13 +1,11 @@
 package game.role.creature;
 
-import java.io.File;
-
-import com.pFrame.Pixel;
 import com.pFrame.Position;
-
 import game.controller.CreatureController;
 import game.role.Controlable;
 import game.role.Thing;
+
+import java.io.File;
 
 public class Creature extends Thing implements Controlable {
 
@@ -46,6 +44,5 @@ public class Creature extends Thing implements Controlable {
         this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
     }
 
-    
 
 }

@@ -1,8 +1,8 @@
 package game.world;
 
-import game.role.OldThing;
+import game.role.Thing;
 
-public class Tile<T extends OldThing> {
+public class Tile<T extends Thing> {
 
     private T thing;
     private int xPos;
