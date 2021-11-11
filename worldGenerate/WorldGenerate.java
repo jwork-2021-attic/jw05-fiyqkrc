@@ -431,7 +431,7 @@ public class WorldGenerate{
         }
     }
 
-    PGraphicItem toPGraphicItem(int[][] world) {
+    public PGraphicItem toPGraphicItem() {
         if (world == null)
             return null;
         else {
@@ -473,7 +473,8 @@ public class WorldGenerate{
 
     public static void main(String[] args) {
         WorldGenerate generate = new WorldGenerate(40, 40, 2000000, 20, 2, 20, 2);
-        PGraphicItem item = generate.toPGraphicItem(generate.generate());
+        generate.generate();
+        PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));
         PHeadWidget pHeadWidget = new PHeadWidget(null, null, new PFrame(300, 250, AsciiFont.pFrame_4x4));
         PGraphicScene scene = new PGraphicScene(250, 250);

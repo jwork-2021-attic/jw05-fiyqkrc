@@ -6,11 +6,11 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 
 public class PGraphicScene{
-    private int width;
-    private int height;
-    private ArrayList<PGraphicItem> Items;
-    private PImage backImage;
-    private Pixel[][] pixels;
+    protected int width;
+    protected int height;
+    protected ArrayList<PGraphicItem> Items;
+    protected PImage backImage;
+    protected Pixel[][] pixels;
 
     public ArrayList<PGraphicItem> getItems(){
         return Items;
