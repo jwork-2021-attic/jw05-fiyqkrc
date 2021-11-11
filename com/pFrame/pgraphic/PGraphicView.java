@@ -2,7 +2,9 @@ package com.pFrame.pgraphic;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
+import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;
@@ -12,6 +14,17 @@ public class PGraphicView extends PWidget implements PView {
     protected Position viewPosition = Position.getPosition(0, 0);
     protected PGraphicScene scene;
     protected PGraphicItem focus;
+    protected ObjectUserInteractive controlThing;
+
+    public void setItemController(ObjectUserInteractive thing) {
+        this.controlThing = thing;
+        getMouseAndKeyMonitor(this);
+    }
+
+    public void freeItemController() {
+        this.controlThing = null;
+        freeMouseAndKeyMonitor();
+    }
 
     @Override
     public void setViewPosition(Position p) {
@@ -50,7 +63,8 @@ public class PGraphicView extends PWidget implements PView {
 
     protected void adjustViewPosition() {
         if (this.getFocus() == null) {
-            //Log.WarningLog(this, "focus thing not be set,so not exec adjustViewPosition");
+            // Log.WarningLog(this, "focus thing not be set,so not exec
+            // adjustViewPosition");
             return;
         } else {
             Position focusPosition = this.getFocus().getPosition();
@@ -81,11 +95,73 @@ public class PGraphicView extends PWidget implements PView {
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
+        if (this.controlThing != null) {
+            controlThing.keyPressed(e);
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
-        System.out.printf("%s\n",p);
         super.mouseClicked(e, p);
+        if (this.controlThing != null) {
+            controlThing.mouseClicked(e, p);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+        super.keyReleased(e);
+        if (this.controlThing != null) {
+            controlThing.keyReleased(e);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        super.keyTyped(e);
+        if (this.controlThing != null) {
+            controlThing.keyTyped(e);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+        super.mouseEntered(arg0);
+        if (this.controlThing != null) {
+            controlThing.mouseEntered(arg0);
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+        super.mouseExited(arg0);
+        if (this.controlThing != null) {
+            controlThing.mouseExited(arg0);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0, Position p) {
+        super.mousePressed(arg0, p);
+        if (this.controlThing != null) {
+            controlThing.mousePressed(arg0, p);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0, Position p) {
+        super.mouseReleased(arg0, p);
+        if (this.controlThing != null) {
+            controlThing.mouseReleased(arg0, p);
+        }
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        super.mouseWheelMoved(e);
+        if (this.controlThing != null) {
+            controlThing.mouseWheelMoved(e);
+        }
     }
 }

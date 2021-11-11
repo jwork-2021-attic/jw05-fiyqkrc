@@ -190,7 +190,10 @@ public class Pixel {
             Pixel[][] pixels = new Pixel[height][width];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    pixels[i][j] = Pixel.getPixel(new Color(bufferimage.getRGB(j, i)), (char) 0xf0);
+                    if(bufferimage.getRGB(j, i)>>24==0)
+                        pixels[i][j]=null;
+                    else
+                        pixels[i][j] = Pixel.getPixel(new Color(bufferimage.getRGB(j, i)), (char) 0xf0);
                 }
             }
             return pixels;

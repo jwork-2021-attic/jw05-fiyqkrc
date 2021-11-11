@@ -11,36 +11,46 @@ import com.pFrame.pwidget.PWidget;
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 
-public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener{
+public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
     private AsciiPanel terminal;
     protected PWidget headWidget;
-    protected PWidget focusWidget;
+    protected ObjectUserInteractive focusWidget;
     protected int frameWidth;
     protected int frameHeight;
     protected int charWidth;
 
-    
+    protected boolean focusWidgetFixed = false;
 
-    public int getFrameWidth(){
+    public void setFixedFocus(ObjectUserInteractive controlable) {
+        focusWidget = controlable;
+        focusWidgetFixed = true;
+    }
+
+    public void freeFixedFocus() {
+        focusWidget = null;
+        focusWidgetFixed = false;
+    }
+
+    public int getFrameWidth() {
         return this.frameWidth;
     }
 
-    public int getFrameHeight(){
+    public int getFrameHeight() {
         return this.frameHeight;
     }
 
-    public void setHeadWidget(PWidget widget){
-        this.headWidget=widget;
+    public void setHeadWidget(PWidget widget) {
+        this.headWidget = widget;
     }
 
-    public PFrame(int width,int height,AsciiFont asciiFont) {
+    public PFrame(int width, int height, AsciiFont asciiFont) {
         super();
-        this.frameHeight=height;
-        this.frameWidth=width;
-        this.focusWidget=null;
+        this.frameHeight = height;
+        this.frameWidth = width;
+        this.focusWidget = null;
         terminal = new AsciiPanel(width, height, asciiFont);
-        this.charWidth=terminal.getCharWidth();
+        this.charWidth = terminal.getCharWidth();
         add(terminal);
         pack();
         addKeyListener(this);
@@ -51,16 +61,16 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     @Override
     public void repaint() {
         terminal.clear();
-        Pixel[][] pixels=this.headWidget.displayOutput();
-        if(pixels!=null){
-            int height=pixels.length;
-            int width=pixels[0].length;
-            for(int i=0;i<height;i++){
-                for(int j=0;j<width;j++){
-                    if(pixels[i][j]!=null)
-                        this.terminal.write(pixels[i][j].getch(),j,i,pixels[i][j].getColor());
+        Pixel[][] pixels = this.headWidget.displayOutput();
+        if (pixels != null) {
+            int height = pixels.length;
+            int width = pixels[0].length;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if (pixels[i][j] != null)
+                        this.terminal.write(pixels[i][j].getch(), j, i, pixels[i][j].getColor());
                     else
-                        this.terminal.write((char)0x00,j,i,Color.BLACK);
+                        this.terminal.write((char) 0x00, j, i, Color.BLACK);
                 }
             }
         }
@@ -69,103 +79,132 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(this.focusWidget!=null){
+        if (this.focusWidget != null) {
             this.focusWidget.keyTyped(e);
-            //repaint();
+            // repaint();
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(this.focusWidget!=null){
+        if (this.focusWidget != null) {
             this.focusWidget.keyPressed(e);
-            //repaint();
+            // repaint();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(this.focusWidget!=null){
+        if (this.focusWidget != null) {
             this.focusWidget.keyReleased(e);
-            //repaint();
+            // repaint();
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent arg0) {
+        if (focusWidgetFixed == true) {
+            if (focusWidget != null) {
+                Position p = mouseToPosition(arg0);
+                this.focusWidget.mouseClicked(arg0,
+                        Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
+                                p.getY() - focusWidget.getRealPosition().getY()));
 
-        Position p=mouseToPosition(arg0);
+            }
+        } else {
 
-        ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p);
-        this.focusWidget=list.get(list.size()-1);
+            Position p = mouseToPosition(arg0);
 
-        Position realPosition=this.focusWidget.getRealPosition();
-        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
+            ArrayList<PWidget> list = this.headWidget.getWidgetsAt(p);
+            this.focusWidget = list.get(list.size() - 1);
 
-        this.focusWidget.mouseClicked(arg0, pos);
+            Position realPosition = this.focusWidget.getRealPosition();
+            Position pos = Position.getPosition(p.getX() - realPosition.getX(), p.getY() - realPosition.getY());
 
-        //repaint();
+            this.focusWidget.mouseClicked(arg0, pos);
+        }
+
+        // repaint();
     }
 
-    protected Position mouseToPosition(MouseEvent e){
-        int x=e.getX();
-        int y=e.getY();
-        return Position.getPosition((y-this.getInsets().top)/this.charWidth,(x-this.getInsets().left)/this.charWidth);
+    protected Position mouseToPosition(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        return Position.getPosition((y - this.getInsets().top) / this.charWidth,
+                (x - this.getInsets().left) / this.charWidth);
     }
 
     @Override
     public void mouseEntered(MouseEvent arg0) {
         this.headWidget.mouseEntered(arg0);
-        //repaint();
+        // repaint();
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
         this.headWidget.mouseExited(arg0);
-        //repaint();
+        // repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent arg0) {
-        Position p=mouseToPosition(arg0);
+        /*
+         * Position p=mouseToPosition(arg0);
+         * 
+         * ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p); PWidget
+         * topWidget=list.get(list.size()-1);
+         * 
+         * Position realPosition=topWidget.getRealPosition(); Position
+         * pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.
+         * getY());
+         * 
+         * topWidget.mousePressed(arg0, pos);
+         */
 
-        ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p);
-        PWidget topWidget=list.get(list.size()-1);
+        if (this.focusWidget != null) {
+            Position p = mouseToPosition(arg0);
+            this.focusWidget.mousePressed(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
+                    p.getY() - focusWidget.getRealPosition().getY()));
+        }
 
-        Position realPosition=topWidget.getRealPosition();
-        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
-
-        topWidget.mousePressed(arg0, pos);
-
-        //repaint();
+        // repaint();
     }
 
     @Override
-    public void mouseReleased(MouseEvent arg0) {  
-        Position p=mouseToPosition(arg0);
+    public void mouseReleased(MouseEvent arg0) {
+        /*
+         * Position p=mouseToPosition(arg0);
+         * 
+         * ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p); PWidget
+         * topWidget=list.get(list.size()-1);
+         * 
+         * Position realPosition=topWidget.getRealPosition(); Position
+         * pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.
+         * getY());
+         * 
+         * topWidget.mouseReleased(arg0, pos);
+         */
 
-        ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p);
-        PWidget topWidget=list.get(list.size()-1);
+        if (this.focusWidget != null) {
 
-        Position realPosition=topWidget.getRealPosition();
-        Position pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.getY());
-
-        topWidget.mouseReleased(arg0, pos);
-
-        //repaint();
+            Position p = mouseToPosition(arg0);
+            this.focusWidget.mouseReleased(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
+                    p.getY() - focusWidget.getRealPosition().getY()));
+        }
+        // repaint();
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(this.focusWidget!=null){
+        if (this.focusWidget != null) {
             this.focusWidget.mouseWheelMoved(e);
-            //repaint();
+            // repaint();
         }
     }
 
     @Override
     public void run() {
-        while(true){
+        while (true) {
             try {
                 this.repaint();
                 Thread.sleep(50);
@@ -173,6 +212,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
                 e.printStackTrace();
             }
         }
-        
+
     }
 }

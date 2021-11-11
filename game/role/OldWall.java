@@ -1,11 +1,11 @@
-package game.creature;
+package game.role;
 
 import asciiPanel.AsciiPanel;
 import game.world.GameWorld;
 
-public class Wall extends Thing {
+public class OldWall extends OldThing {
 
-    public Wall(GameWorld world) {
+    public OldWall(GameWorld world) {
         super(AsciiPanel.cyan, (char) 0xf0, world);
     }
 

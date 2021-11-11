@@ -17,7 +17,7 @@ import com.pFrame.pwidget.PHeadWidget;
 import asciiPanel.AsciiFont;
 import mazeGenerator.MazeGenerator;
 
-public class WorldGenerate{
+public class WorldGenerate {
     private int width;
     private int height;
     private int max_rooms_generate_trys;
@@ -35,11 +35,19 @@ public class WorldGenerate{
     private Position start;
     private Room aim;
 
-    public ArrayList<Room> getRoomsArray(){
+    public Room getAim() {
+        return aim;
+    }
+
+    public Position getStart() {
+        return start;
+    }
+
+    public ArrayList<Room> getRoomsArray() {
         return this.roomsArray;
     }
 
-    public ArrayList<Position> getOddNodes(){
+    public ArrayList<Position> getOddNodes() {
         return this.oddNodes;
     }
 
@@ -54,7 +62,7 @@ public class WorldGenerate{
         this.room_min_width = room_min_width;
 
         roomsArray = new ArrayList<>();
-        oddNodes=new ArrayList<>();
+        oddNodes = new ArrayList<>();
         this.world = new int[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -72,69 +80,71 @@ public class WorldGenerate{
         return this.world;
     }
 
-    private void generateStartAndEndNode(){
-        Room curRoom=roomsArray.get(0);
-        Position curPos=oddNodes.get(0);
-        int maxDistance=0;
-        for(Room room:roomsArray)
-            for(Position pos:oddNodes){
-                if(((pos.getX()-room.pos.getX())*(pos.getX()-room.pos.getX())+(pos.getY()-room.pos.getY())*(pos.getY()-room.pos.getY()))>maxDistance){
-                    curPos=pos;
-                    curRoom=room;
-                    maxDistance=((pos.getX()-room.pos.getX())*(pos.getX()-room.pos.getX())+(pos.getY()-room.pos.getY())*(pos.getY()-room.pos.getY()));
+    private void generateStartAndEndNode() {
+        Room curRoom = roomsArray.get(0);
+        Position curPos = oddNodes.get(0);
+        int maxDistance = 0;
+        for (Room room : roomsArray)
+            for (Position pos : oddNodes) {
+                if (((pos.getX() - room.pos.getX()) * (pos.getX() - room.pos.getX())
+                        + (pos.getY() - room.pos.getY()) * (pos.getY() - room.pos.getY())) > maxDistance) {
+                    curPos = pos;
+                    curRoom = room;
+                    maxDistance = ((pos.getX() - room.pos.getX()) * (pos.getX() - room.pos.getX())
+                            + (pos.getY() - room.pos.getY()) * (pos.getY() - room.pos.getY()));
                 }
             }
-        this.start=curPos;
-        this.aim=curRoom;
-        world[this.start.getX()][start.getY()]=5;
-        world[aim.pos.getX()][aim.pos.getY()]=6;
+        this.start = curPos;
+        this.aim = curRoom;
+        world[this.start.getX()][start.getY()] = 5;
+        world[aim.pos.getX()][aim.pos.getY()] = 6;
     }
 
-    private Room getUnLinkedRoom(){
-        for(Room room:roomsArray){
-            if(room.linkToRoad==false)
+    private Room getUnLinkedRoom() {
+        for (Room room : roomsArray) {
+            if (room.linkToRoad == false)
                 return room;
         }
         return null;
     }
 
     private void rooms_link() {
-        Room current=getUnLinkedRoom();
-        int failed_count=0;
-        while (current!=null) {
+        Room current = getUnLinkedRoom();
+        int failed_count = 0;
+        while (current != null) {
             ArrayList<LinkNode> linkNodes = this.findLinkNode(current);
             if (linkNodes.size() == 0) {
                 this.roomLarger(current);
             } else {
                 for (LinkNode node : linkNodes) {
-                    if (node.linkRoad == true && current.linkToRoad==false) {
-                        world[node.node.getX()][node.node.getY()]=4;
-                        current.linkToRoad=true;
+                    if (node.linkRoad == true && current.linkToRoad == false) {
+                        world[node.node.getX()][node.node.getY()] = 4;
+                        current.linkToRoad = true;
                     }
-                    if(node.linkRoad==true&&node.linkedRoom!=null&&!current.linkedRooms.contains(node.linkedRoom)){
-                        world[node.node.getX()][node.node.getY()]=4;
-                        current.linkToRoad=true;
+                    if (node.linkRoad == true && node.linkedRoom != null
+                            && !current.linkedRooms.contains(node.linkedRoom)) {
+                        world[node.node.getX()][node.node.getY()] = 4;
+                        current.linkToRoad = true;
                         current.linkedRooms.add(node.linkedRoom);
-                    }
-                    else if(node.linkedRoom!=null&&node.linkedRoom.linkToRoad==true&&!current.linkedRooms.contains(node.linkedRoom)){
-                        world[node.node.getX()][node.node.getY()]=4;
+                    } else if (node.linkedRoom != null && node.linkedRoom.linkToRoad == true
+                            && !current.linkedRooms.contains(node.linkedRoom)) {
+                        world[node.node.getX()][node.node.getY()] = 4;
                         current.linkedRooms.add(node.linkedRoom);
-                        current.linkToRoad=true;
+                        current.linkToRoad = true;
                     }
                 }
             }
-            if(current.linkToRoad==false){
+            if (current.linkToRoad == false) {
                 roomsArray.remove(current);
                 roomsArray.add(current);
                 failed_count++;
-                current=getUnLinkedRoom();
-                if(failed_count>=roomsArray.size()){
+                current = getUnLinkedRoom();
+                if (failed_count >= roomsArray.size()) {
                     roomLarger(current);
                 }
-            }
-            else{
-                failed_count=0;
-                current=getUnLinkedRoom();
+            } else {
+                failed_count = 0;
+                current = getUnLinkedRoom();
             }
         }
     }
@@ -142,20 +152,18 @@ public class WorldGenerate{
     private void roomLarger(Room room) {
         if (isOutBound(Position.getPosition(room.pos.getX() - 1, room.pos.getY() - 1))) {
             if (isOutBound(Position.getPosition(room.pos.getX() + room.height, room.pos.getY() + room.width))) {
-                if(isOutBound(Position.getPosition(room.pos.getX()+room.height, room.pos.getY()-1))){
-                    if(isOutBound(Position.getPosition(room.pos.getX()-1, room.pos.getY()+room.width))){
+                if (isOutBound(Position.getPosition(room.pos.getX() + room.height, room.pos.getY() - 1))) {
+                    if (isOutBound(Position.getPosition(room.pos.getX() - 1, room.pos.getY() + room.width))) {
 
-                    }
-                    else{
+                    } else {
                         room.height++;
                         room.width++;
-                        room.pos=Position.getPosition(room.pos.getX()-1, room.pos.getY());
+                        room.pos = Position.getPosition(room.pos.getX() - 1, room.pos.getY());
                     }
-                }
-                else{
+                } else {
                     room.height++;
                     room.width++;
-                    room.pos=Position.getPosition(room.pos.getX(), room.pos.getY()-1);
+                    room.pos = Position.getPosition(room.pos.getX(), room.pos.getY() - 1);
                 }
 
             } else {
@@ -208,7 +216,7 @@ public class WorldGenerate{
         }
 
         this.oddNodes.clear();
-        for(Position position:p){
+        for (Position position : p) {
             this.oddNodes.add(position);
         }
     }
@@ -230,19 +238,20 @@ public class WorldGenerate{
                         if (nonemptyList.size() >= 2) {
                             LinkNode node = new LinkNode(Position.getPosition(roomPos.getX() + a, roomPos.getY() + b),
                                     null, false);
-                            boolean nonemptyListContainsSelfRoom=false;
+                            boolean nonemptyListContainsSelfRoom = false;
                             for (Position nonemptyNode : nonemptyList) {
                                 if (world[nonemptyNode.getX()][nonemptyNode.getY()] == 1) {
                                     node.linkRoad = true;
-                                }
-                                else if (world[nonemptyNode.getX()][nonemptyNode.getY()] == 2 || world[nonemptyNode.getX()][nonemptyNode.getY()] == 3) {
+                                } else if (world[nonemptyNode.getX()][nonemptyNode.getY()] == 2
+                                        || world[nonemptyNode.getX()][nonemptyNode.getY()] == 3) {
                                     if (positionInRoom(Position.getPosition(nonemptyNode.getX(), nonemptyNode.getY()),
                                             room)) {
-                                        nonemptyListContainsSelfRoom=true;
+                                        nonemptyListContainsSelfRoom = true;
                                     } else {
                                         for (Room r : roomsArray) {
                                             if (positionInRoom(
-                                                    Position.getPosition(nonemptyNode.getX(), nonemptyNode.getY()), r)) {
+                                                    Position.getPosition(nonemptyNode.getX(), nonemptyNode.getY()),
+                                                    r)) {
                                                 node.linkedRoom = r;
                                                 break;
                                             }
@@ -250,7 +259,7 @@ public class WorldGenerate{
                                     }
                                 }
                             }
-                            if(nonemptyListContainsSelfRoom==true)
+                            if (nonemptyListContainsSelfRoom == true)
                                 res.add(node);
                         }
                     }
@@ -409,8 +418,8 @@ public class WorldGenerate{
         Position pos;
         int width;
         int height;
-        boolean linkToRoad=false;
-        ArrayList<Room> linkedRooms=new ArrayList<>();
+        boolean linkToRoad = false;
+        ArrayList<Room> linkedRooms = new ArrayList<>();
 
         Room(Position pos, int width, int height) {
             this.pos = pos;
@@ -460,7 +469,7 @@ public class WorldGenerate{
                         pixels[i][j] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
                         break;
                     case 6:
-                        pixels[i][j] = Pixel.getPixel(Color.RED, (char)0xf0);
+                        pixels[i][j] = Pixel.getPixel(Color.RED, (char) 0xf0);
                         break;
                     default:
                         break;
@@ -481,8 +490,8 @@ public class WorldGenerate{
         scene.addItem(item2, Position.getPosition(0, 0));
         PGraphicView view = new PGraphicView(pHeadWidget, null, scene);
         view.setViewPosition(Position.getPosition(0, 0));
-        generate.item=item2;
-        generate.scene=scene;
+        generate.item = item2;
+        generate.scene = scene;
         pHeadWidget.startRepaintThread();
     }
 }

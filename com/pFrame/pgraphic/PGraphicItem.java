@@ -25,6 +25,37 @@ public class PGraphicItem {
         this.p = pos;
     }
 
+    public PGraphicItem(String path, int width, int height) {
+        File file = new File(path);
+        if (PGraphicItem.items.containsKey(file.getName())) {
+            PGraphicItem modal = PGraphicItem.items.get(file.getName());
+            if (width == modal.width && height == modal.height) {
+                this.graphic = Pixel.pixelsCopy(modal.getPixels());
+                this.height = modal.height;
+                this.width = modal.width;
+            } else {
+                this.graphic = Pixel.valueOf(ObjectTransFormer.toBufferedImage(Pixel.toBufferedImage(modal.getPixels())
+                        .getScaledInstance(width, height, BufferedImage.SCALE_SMOOTH)));
+                this.height = height;
+                this.width = width;
+            }
+            this.p = Position.getPosition(0, 0);
+        } else {
+
+            PGraphicItem item = GraphicItemGenerator.generateItem(file, width, height);
+            this.graphic = item.getPixels();
+            if (this.graphic != null) {
+                this.height = this.graphic.length;
+                this.width = this.graphic[0].length;
+            } else {
+                this.width = 0;
+                this.height = 0;
+            }
+            p = Position.getPosition(0, 0);
+            PGraphicItem.items.put(file.getName(), this);
+        }
+    }
+
     public PGraphicItem(File file, int width, int height) {
 
         if (PGraphicItem.items.containsKey(file.getName())) {

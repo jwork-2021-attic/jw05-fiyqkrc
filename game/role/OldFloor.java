@@ -1,12 +1,12 @@
-package game.creature;
+package game.role;
 
 import java.awt.Color;
 
 import game.world.GameWorld;
 
-public class Floor extends Thing {
+public class OldFloor extends OldThing {
 
-    public Floor(GameWorld world) {
+    public OldFloor(GameWorld world) {
         super(Color.GRAY, (char) 0 , world);
     }
 

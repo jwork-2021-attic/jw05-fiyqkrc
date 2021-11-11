@@ -1,12 +1,12 @@
-package game.creature;
+package game.role;
 
 import java.awt.Color;
 
 import game.world.GameWorld;
 
-public class Creature extends Thing {
+public class OldCreature extends OldThing {
 
-    Creature(Color color, char glyph, GameWorld world) {
+    OldCreature(Color color, char glyph, GameWorld world) {
         super(color, glyph, world);
     }
 

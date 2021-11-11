@@ -13,12 +13,11 @@ public class PButton extends PWidget {
     PLabel textLabel;
 
     public PButton(PWidget parent, Position p) {
-        
+
         super(parent, p);
-        this.textLabel=new PLabel(this, null);
-        
+        this.textLabel = new PLabel(this, null);
+
     }
-    
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
@@ -26,14 +25,13 @@ public class PButton extends PWidget {
         super.mouseClicked(e, p);
     }
 
-    
     @Override
     public Pixel[][] displayOutput() {
-        Pixel[][] pixels=super.displayOutput();
+        Pixel[][] pixels = super.displayOutput();
         return Pixel.pixelsAdd(pixels, this.textLabel.displayOutput(), this.textLabel.getPosition());
     }
-    
-    public void setText(String text,int size,Color color){
+
+    public void setText(String text, int size, Color color) {
         this.textLabel.setText(text, size, color);
     }
 

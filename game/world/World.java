@@ -18,6 +18,10 @@ public class World extends PGraphicScene{
         createWorld();
     }
 
+    public Position getStartPosition(){
+        return worldGenerator.getStart();
+    }
+
     private void generateWorld(){
         boolean success=false;
         int tryTimes=0;

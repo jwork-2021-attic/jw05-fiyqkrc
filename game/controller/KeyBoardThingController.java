@@ -1,26 +1,95 @@
 package game.controller;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
-import game.creature.Direction;
-import game.creature.Thing;
+import com.pFrame.ObjectUserInteractive;
+import com.pFrame.Position;
 
-public class KeyBoardThingController extends ThingController{
+import game.role.Controlable;
+import game.role.Direction;
 
-    @Override
+public class KeyBoardThingController extends CreatureController implements ObjectUserInteractive {
+
+    public KeyBoardThingController() {
+        super();
+    }
+
+    public void setThing(Controlable controlable) {
+        this.controlable = controlable;
+    }
+
     public void respondToUserInput(KeyEvent key) {
-        Thing aim=this.thing;
-        switch(key.getKeyChar()){
-            case 'w':aim.move(Direction.Up, 1);break;
-            case 'a':aim.move(Direction.Left, 1);break;
-            case 'd':aim.move(Direction.Right,1);break;
-            case 's':aim.move(Direction.Down, 1);break;
-            default: System.out.println("Undefined keycode:"+String.valueOf(key.getKeyChar()));break;
+        Controlable aim = this.controlable;
+        switch (key.getKeyChar()) {
+        case 'w':
+            aim.move(Direction.Up);
+            break;
+        case 'a':
+            aim.move(Direction.Left);
+            break;
+        case 'd':
+            aim.move(Direction.Right);
+            break;
+        case 's':
+            aim.move(Direction.Down);
+            break;
+        default:
+            System.out.println("Undefined keycode:" + String.valueOf(key.getKeyChar()));
+            break;
         }
     }
 
-    public KeyBoardThingController(){
-        super();
+    @Override
+    public void mouseClicked(MouseEvent e, Position p) {
+
     }
-    
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        respondToUserInput(e);
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0, Position p) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0, Position p) {
+
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+
+    }
+
+    @Override
+    public Position getRealPosition() {
+        return null;
+    }
+
 }

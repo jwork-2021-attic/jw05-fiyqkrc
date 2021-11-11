@@ -13,22 +13,22 @@ public class PLayout extends PWidget {
     protected PWidget[][] containedWidgets;
     protected boolean hasInset;
 
-    public void setInset(boolean selection){
-        this.hasInset=selection;
+    public void setInset(boolean selection) {
+        this.hasInset = selection;
         this.updateWidgetsLayout();
     }
 
-    public void setRCNum(int x,int y){
-        this.rownum=x;
-        this.columnnum=y;
+    public void setRCNum(int x, int y) {
+        this.rownum = x;
+        this.columnnum = y;
         this.containedWidgets = new PWidget[rownum][columnnum];
     }
 
-    public void setRCNumStyle(int x,int y,String xstyle,String ystyle){
-        this.rownum=x;
-        this.rowStyle=xstyle;
-        this.columnStyle=ystyle;
-        this.columnnum=y;
+    public void setRCNumStyle(int x, int y, String xstyle, String ystyle) {
+        this.rownum = x;
+        this.rowStyle = xstyle;
+        this.columnStyle = ystyle;
+        this.columnnum = y;
         this.containedWidgets = new PWidget[rownum][columnnum];
     }
 
@@ -55,7 +55,7 @@ public class PLayout extends PWidget {
         this.columnnum = columnnum;
         this.rowStyle = "";
         this.columnStyle = "";
-        this.hasInset=false;
+        this.hasInset = false;
         containedWidgets = new PWidget[rownum][columnnum];
         for (int i = 0; i < rownum; i++)
             for (int j = 0; j < columnnum; j++)
@@ -63,14 +63,14 @@ public class PLayout extends PWidget {
         this.updateWidgetsLayout();
     }
 
-    public PLayout(PWidget parent, Position p, int rownum, int columnnum,boolean hasInset) {
+    public PLayout(PWidget parent, Position p, int rownum, int columnnum, boolean hasInset) {
         super(parent, p);
         this.setLayout(this);
         this.rownum = rownum;
         this.columnnum = columnnum;
         this.rowStyle = "";
         this.columnStyle = "";
-        this.hasInset=hasInset;
+        this.hasInset = hasInset;
         containedWidgets = new PWidget[rownum][columnnum];
         for (int i = 0; i < rownum; i++)
             for (int j = 0; j < columnnum; j++)
@@ -97,16 +97,15 @@ public class PLayout extends PWidget {
         if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
             return null;
         } else {
-            Pixel[][] pixels=Pixel.emptyPixels(this.getWidgetWidth(), this.getWidgetHeight());
-            if(this.background==null){
+            Pixel[][] pixels = Pixel.emptyPixels(this.getWidgetWidth(), this.getWidgetHeight());
+            if (this.background == null) {
+            } else {
+                pixels = this.background.displayOutput();
             }
-            else{
-                pixels=this.background.displayOutput();
-            }
-            ArrayList<PWidget> childWidget=new ArrayList<>();
-            for(int i=0;i<this.getRowNum();i++){
-                for(int j=0;j<this.getColumnNum();j++){
-                    if(this.containedWidgets[i][j]!=null)
+            ArrayList<PWidget> childWidget = new ArrayList<>();
+            for (int i = 0; i < this.getRowNum(); i++) {
+                for (int j = 0; j < this.getColumnNum(); j++) {
+                    if (this.containedWidgets[i][j] != null)
                         childWidget.add(this.containedWidgets[i][j]);
                 }
             }
@@ -126,38 +125,39 @@ public class PLayout extends PWidget {
             for (int i = 0; i < this.getRowNum(); i++) {
                 row[i] = this.getWidgetHeight() / this.getRowNum();
             }
-            r=row;
+            r = row;
         } else {
             String[] row = this.getRowStyle().split(",");
-            int[] rowRes=new int[this.getRowNum()];
+            int[] rowRes = new int[this.getRowNum()];
             if (row.length < this.getRowNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                this.setRowLayout("");;
+                this.setRowLayout("");
+                ;
                 this.updateWidgetsLayout();
-                return ;
+                return;
             } else {
                 try {
-                    int numSec=0;
-                    int numSum=0;
+                    int numSec = 0;
+                    int numSum = 0;
                     for (int i = 0; i < this.getRowNum(); i++) {
                         if (row[i].endsWith("x")) {
-                            row[i]=row[i].substring(0, row[i].length()-1);
-                            numSec+=Integer.valueOf(row[i]);
+                            row[i] = row[i].substring(0, row[i].length() - 1);
+                            numSec += Integer.valueOf(row[i]);
                         } else {
-                            numSum+=Integer.valueOf(row[i]);
-                            rowRes[i]=Integer.valueOf(row[i]);
-                            row[i]="";
+                            numSum += Integer.valueOf(row[i]);
+                            rowRes[i] = Integer.valueOf(row[i]);
+                            row[i] = "";
                         }
                     }
-                    if(numSum>=this.getWidgetHeight()){
+                    if (numSum >= this.getWidgetHeight()) {
                         Log.ErrorLog(this, "fixed rows too big!");
                         this.setRowLayout("");
                         this.updateWidgetsLayout();
                         return;
                     }
-                    for(int i=0;i<this.getRowNum();i++){
-                        if(row[i]!=""){
-                            rowRes[i]=Integer.valueOf(row[i])*(this.getWidgetHeight()-numSum)/numSec;
+                    for (int i = 0; i < this.getRowNum(); i++) {
+                        if (row[i] != "") {
+                            rowRes[i] = Integer.valueOf(row[i]) * (this.getWidgetHeight() - numSum) / numSec;
                         }
                     }
                 } catch (Exception e) {
@@ -167,7 +167,7 @@ public class PLayout extends PWidget {
                     return;
                 }
             }
-            r=rowRes;
+            r = rowRes;
         }
 
         if (this.getColumnStyle() == "") {
@@ -175,38 +175,39 @@ public class PLayout extends PWidget {
             for (int i = 0; i < this.getColumnNum(); i++) {
                 row[i] = this.getWidgetWidth() / this.getColumnNum();
             }
-            c=row;
+            c = row;
         } else {
             String[] row = this.getColumnStyle().split(",");
-            int[] rowRes=new int[this.getColumnNum()];
+            int[] rowRes = new int[this.getColumnNum()];
             if (row.length < this.getColumnNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                this.setColumnLayout("");;
+                this.setColumnLayout("");
+                ;
                 this.updateWidgetsLayout();
-                return ;
+                return;
             } else {
                 try {
-                    int numSec=0;
-                    int numSum=0;
+                    int numSec = 0;
+                    int numSum = 0;
                     for (int i = 0; i < this.getColumnNum(); i++) {
                         if (row[i].endsWith("x")) {
-                            row[i]=row[i].substring(0, row[i].length()-1);
-                            numSec+=Integer.valueOf(row[i]);
+                            row[i] = row[i].substring(0, row[i].length() - 1);
+                            numSec += Integer.valueOf(row[i]);
                         } else {
-                            numSum+=Integer.valueOf(row[i]);
-                            rowRes[i]=Integer.valueOf(row[i]);
-                            row[i]="";
+                            numSum += Integer.valueOf(row[i]);
+                            rowRes[i] = Integer.valueOf(row[i]);
+                            row[i] = "";
                         }
                     }
-                    if(numSum>=this.getWidgetWidth()){
+                    if (numSum >= this.getWidgetWidth()) {
                         Log.ErrorLog(this, "fixed rows too big!");
                         this.setColumnLayout("");
                         this.updateWidgetsLayout();
                         return;
                     }
-                    for(int i=0;i<this.getColumnNum();i++){
-                        if(row[i]!=""){
-                            rowRes[i]=Integer.valueOf(row[i])*(this.getWidgetWidth()-numSum)/numSec;
+                    for (int i = 0; i < this.getColumnNum(); i++) {
+                        if (row[i] != "") {
+                            rowRes[i] = Integer.valueOf(row[i]) * (this.getWidgetWidth() - numSum) / numSec;
                         }
                     }
                 } catch (Exception e) {
@@ -216,27 +217,26 @@ public class PLayout extends PWidget {
                     return;
                 }
             }
-            c=rowRes;
+            c = rowRes;
         }
-        for(int i=0;i<r.length;i++){
-            for(int j=0;j<c.length;j++){
-                if(this.containedWidgets[i][j]!=null){
+        for (int i = 0; i < r.length; i++) {
+            for (int j = 0; j < c.length; j++) {
+                if (this.containedWidgets[i][j] != null) {
 
-                    int pos_x=0;
-                    int pos_y=0;
-                    for(int a=0;a<i;a++){
-                        pos_x+=r[a];
+                    int pos_x = 0;
+                    int pos_y = 0;
+                    for (int a = 0; a < i; a++) {
+                        pos_x += r[a];
                     }
-                    for(int b=0;b<j;b++){
-                        pos_y+=c[b];
+                    for (int b = 0; b < j; b++) {
+                        pos_y += c[b];
                     }
 
-                    if(this.hasInset==true){
-                        this.containedWidgets[i][j].changeWidgetSize(c[j]-2,r[i]-2);
-                        this.containedWidgets[i][j].setPosition(Position.getPosition(pos_x+1, pos_y+1));
-                    }
-                    else{
-                        this.containedWidgets[i][j].changeWidgetSize(c[j],r[i]);
+                    if (this.hasInset == true) {
+                        this.containedWidgets[i][j].changeWidgetSize(c[j] - 2, r[i] - 2);
+                        this.containedWidgets[i][j].setPosition(Position.getPosition(pos_x + 1, pos_y + 1));
+                    } else {
+                        this.containedWidgets[i][j].changeWidgetSize(c[j], r[i]);
                         this.containedWidgets[i][j].setPosition(Position.getPosition(pos_x, pos_y));
                     }
                 }
@@ -255,43 +255,42 @@ public class PLayout extends PWidget {
     }
 
     public void autoSetPosition(PWidget widget, Position p) {
-        boolean operation=false;
+        boolean operation = false;
         if (p == null) {
-            for(int i=0;i<this.getRowNum();i++){
-                for(int j=0;j<this.getColumnNum();j++){
-                    if(this.containedWidgets[i][j]==null){
-                        this.containedWidgets[i][j]=widget;
-                        operation=true;
+            for (int i = 0; i < this.getRowNum(); i++) {
+                for (int j = 0; j < this.getColumnNum(); j++) {
+                    if (this.containedWidgets[i][j] == null) {
+                        this.containedWidgets[i][j] = widget;
+                        operation = true;
                         break;
                     }
                 }
-                if(operation==true)
+                if (operation == true)
                     break;
             }
         } else {
-            if(p.getX()<=this.getRowNum() && p.getY()<=this.getColumnNum() && p.getX()>=1 && p.getY()>=1 && this.containedWidgets[p.getX()-1][p.getY()-1]==null){
-                this.containedWidgets[p.getX()-1][p.getY()-1]=widget;
-                operation=true;
-            }
-            else{
+            if (p.getX() <= this.getRowNum() && p.getY() <= this.getColumnNum() && p.getX() >= 1 && p.getY() >= 1
+                    && this.containedWidgets[p.getX() - 1][p.getY() - 1] == null) {
+                this.containedWidgets[p.getX() - 1][p.getY() - 1] = widget;
+                operation = true;
+            } else {
                 Log.ErrorLog(this, "something else has been put on position ,add widget to layout failed");
             }
         }
-        if(!operation){
+        if (!operation) {
             Log.ErrorLog(this, "add widget to layout failed");
-        }
-        else{
+        } else {
             this.updateWidgetsLayout();
         }
     }
 
     @Override
     public ArrayList<PWidget> getChildWidget() {
-        ArrayList<PWidget> res=new ArrayList<>();
+        ArrayList<PWidget> res = new ArrayList<>();
         res.add(this);
-        for(int i=0;i<this.getRowNum();i++){
-            for(int j=0;j<this.getColumnNum();j++){
-                if(this.containedWidgets[i][j]!=null){
+        for (int i = 0; i < this.getRowNum(); i++) {
+            for (int j = 0; j < this.getColumnNum(); j++) {
+                if (this.containedWidgets[i][j] != null) {
                     res.addAll(this.containedWidgets[i][j].getChildWidget());
                 }
             }
@@ -301,19 +300,19 @@ public class PLayout extends PWidget {
 
     @Override
     public ArrayList<PWidget> getWidgetsAt(Position p) {
-        ArrayList<PWidget> res=new ArrayList<>();
+        ArrayList<PWidget> res = new ArrayList<>();
         res.add(this);
-        for(int i=0;i<this.getRowNum();i++){
-            for(int j=0;j<this.getColumnNum();j++){
-                if(this.containedWidgets[i][j]!=null){
-                    PWidget w=this.containedWidgets[i][j];
-                    if(PWidget.WidgetRange.inRange(w.getPosition(), w.getWidgetWidth(), w.getWidgetHeight(), p)==true)
-                        res.addAll(this.containedWidgets[i][j].getWidgetsAt(Position.getPosition(p.getX()-w.getPosition().getX(), p.getY()-w.getPosition().getY())));
+        for (int i = 0; i < this.getRowNum(); i++) {
+            for (int j = 0; j < this.getColumnNum(); j++) {
+                if (this.containedWidgets[i][j] != null) {
+                    PWidget w = this.containedWidgets[i][j];
+                    if (PWidget.WidgetRange.inRange(w.getPosition(), w.getWidgetWidth(), w.getWidgetHeight(),
+                            p) == true)
+                        res.addAll(this.containedWidgets[i][j].getWidgetsAt(Position
+                                .getPosition(p.getX() - w.getPosition().getX(), p.getY() - w.getPosition().getY())));
                 }
             }
         }
         return res;
     }
 }
-
-

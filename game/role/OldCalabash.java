@@ -1,14 +1,14 @@
-package game.creature;
+package game.role;
 
 import java.awt.Color;
 
 import game.world.GameWorld;
 
-public class Calabash extends Creature implements Comparable<Calabash> {
+public class OldCalabash extends OldCreature implements Comparable<OldCalabash> {
 
     private int rank;
 
-    public Calabash(Color color, int rank, GameWorld world) {
+    public OldCalabash(Color color, int rank, GameWorld world) {
         super(color, (char) 0xf0, world);
         this.rank = rank;
     }
@@ -23,11 +23,11 @@ public class Calabash extends Creature implements Comparable<Calabash> {
     }
 
     @Override
-    public int compareTo(Calabash o) {
+    public int compareTo(OldCalabash o) {
         return Integer.valueOf(this.rank).compareTo(Integer.valueOf(o.rank));
     }
 
-    public void swap(Calabash another) {
+    public void swap(OldCalabash another) {
         int x = this.getX();
         int y = this.getY();
         this.moveTo(another.getX(), another.getY());
