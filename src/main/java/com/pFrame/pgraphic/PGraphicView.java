@@ -11,7 +11,7 @@ import com.pFrame.pwidget.PWidget;
 
 public class PGraphicView extends PWidget implements PView {
 
-    protected Position viewPosition = Position.getPosition(0, 0);
+    protected Position viewPosition;
     protected PGraphicScene scene;
     protected PGraphicItem focus;
     protected ObjectUserInteractive controlThing;
@@ -65,26 +65,25 @@ public class PGraphicView extends PWidget implements PView {
         if (this.getFocus() == null) {
             // Log.WarningLog(this, "focus thing not be set,so not exec
             // adjustViewPosition");
-            return;
         } else {
             Position focusPosition = this.getFocus().getPosition();
             Position viewPosition = this.getViewPosition();
             int absX = focusPosition.getX() - viewPosition.getX();
             int absY = focusPosition.getY() - viewPosition.getY();
-            int resX = 0;
-            int resY = 0;
+            int resX;
+            int resY;
             if (absX < this.getWidgetHeight() / 5) {
-                resX = viewPosition.getX() - 1;
+                resX = viewPosition.getX() - (this.getWidgetHeight()/5-absX);
             } else if (absX > this.getWidgetHeight() * 4 / 5) {
-                resX = viewPosition.getX() + 1;
+                resX = viewPosition.getX() + (absX-this.getWidgetHeight()*4/5);
             } else {
                 resX = viewPosition.getX();
             }
 
             if (absY < this.getWidgetWidth() / 5) {
-                resY = viewPosition.getY() - 1;
+                resY = viewPosition.getY() - (this.getWidgetWidth()/5-absY);
             } else if (absY > this.getWidgetWidth() * 4 / 5) {
-                resY = viewPosition.getY() + 1;
+                resY = viewPosition.getY() + (absY-this.getWidgetWidth()*4/5);
             } else {
                 resY = viewPosition.getY();
             }

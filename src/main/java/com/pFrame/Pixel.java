@@ -36,6 +36,14 @@ public class Pixel {
         return new Pixel(color, ch);
     }
 
+
+    /**
+     * add the pixel of dest to src
+     * @param src the src pixel array
+     * @param dest the dest pixel array
+     * @param position  the start position of copy
+     * @return  return the src pixel array after add operation
+     */
     static public Pixel[][] pixelsAdd(Pixel[][] src, Pixel[][] dest, Position position) {
         if (src == null) {
             return null;
