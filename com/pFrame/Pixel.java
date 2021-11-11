@@ -1,8 +1,6 @@
 package com.pFrame;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PImage;
@@ -11,8 +9,6 @@ import com.pFrame.pgraphic.PMovie;
 public class Pixel {
     private Color color;
     private char ch;
-
-    static private Map<Color, Map<Character, Pixel>> PixelsPool=new HashMap<>(); 
 
     private Pixel(Color color, char ch){
         this.ch=ch;
@@ -33,28 +29,6 @@ public class Pixel {
     
     public Pixel copy(){
         return new Pixel(color, ch);
-    }
-
-    @Deprecated
-    static private Pixel findPixel(Color color,char ch){
-        if(PixelsPool.containsKey(color)){
-            Map<Character, Pixel> map=PixelsPool.get(color);
-            if(map.containsKey(ch)){
-                return map.get(ch);
-            }
-            else{
-                Pixel pixel=new Pixel(color, ch);
-                map.put(ch, pixel);
-                return pixel;
-            }
-        }
-        else{
-            Map<Character, Pixel> map=new HashMap<>();
-            Pixel pixel=new Pixel(color, ch);
-            PixelsPool.put(color, map);
-            map.put(ch,pixel);
-            return pixel;
-        }
     }
 
     public static Pixel getPixel(Color color, char ch){
