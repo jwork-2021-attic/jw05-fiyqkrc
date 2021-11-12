@@ -17,10 +17,17 @@ public class PImage extends PWidget {
         return this.content;
     }
 
-    public PImage(PWidget parent, Position p) {
-        super(parent, p);
-        this.content = null;
-        this.file = null;
+    public PImage(PWidget parent, Position p,String path){
+        super(parent,p);
+        this.content=null;
+        this.file=new File(path);
+        this.load(file);
+    }
+
+    public  PImage(PWidget parent,Position p,Pixel[][] pixels){
+        super(parent,p);
+        this.content=pixels;
+        this.file=null;
     }
 
     public PImage(PWidget parent, Position p, File file) {
@@ -32,16 +39,18 @@ public class PImage extends PWidget {
 
     @Override
     protected void sizeChanged() {
-        if (this.file != null)
+        if (this.file != null) {
             this.load(file);
+        }
+        else if(this.content!=null){
+            this.content=Pixel.getPixelsScaleInstance(this.content,this.getWidgetWidth(),this.getWidgetHeight());
+        }
     }
 
     public void load(File file) {
-        if (this.getWidgetHeight() != 0 && this.getWidgetWidth() != 0) {
-            System.out.printf("%d %d\n", this.getWidgetHeight(), this.getWidgetWidth());
+        if (file!=null && this.getWidgetHeight() != 0 && this.getWidgetWidth() != 0) {
             this.content = Pixel
                     .valueOf(GraphicItemGenerator.generateItem(file, this.getWidgetWidth(), this.getWidgetHeight()));
-
         }
     }
 

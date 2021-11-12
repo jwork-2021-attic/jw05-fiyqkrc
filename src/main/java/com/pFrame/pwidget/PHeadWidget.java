@@ -1,5 +1,6 @@
 package com.pFrame.pwidget;
 
+import com.pFrame.ObjectUserInteractive;
 import com.pFrame.PFrame;
 import com.pFrame.PLayout;
 import com.pFrame.Position;
@@ -38,13 +39,34 @@ public class PHeadWidget extends PWidget {
         thread.start();
     }
 
+
     @Override
-    public void getMouseAndKeyMonitor(PWidget widget) {
-        pFrame.setFixedFocus(widget);
+    public void addKeyListener(ObjectUserInteractive widget) {
+        this.pFrame.setKeyListener(widget);
     }
 
     @Override
-    public void freeMouseAndKeyMonitor() {
-        pFrame.freeFixedFocus();
+    public void freeKeyListener() {
+        this.pFrame.freeKeyListener();
+    }
+
+    @Override
+    public void addMouseListener(ObjectUserInteractive widget) {
+        this.pFrame.setMouseListener(widget);
+    }
+
+    @Override
+    public void freeMouseListener() {
+        this.pFrame.freeMouseListener();
+    }
+
+    @Override
+    public void addMouseWheelListener(ObjectUserInteractive widget) {
+        this.pFrame.setMouseWheelListener(widget);
+    }
+
+    @Override
+    public void freeMouseWheelListener() {
+        this.pFrame.freeMouseWheelListener();
     }
 }

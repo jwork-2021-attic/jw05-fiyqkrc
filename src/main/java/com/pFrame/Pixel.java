@@ -5,7 +5,10 @@ import java.awt.Color;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PImage;
 import com.pFrame.pgraphic.PMovie;
+import imageTransFormer.ObjectTransFormer;
+
 import java.awt.image.*;
+import java.nio.Buffer;
 
 public class Pixel {
     private Color color;
@@ -24,7 +27,7 @@ public class Pixel {
         return this.color;
     }
 
-    public char getch() {
+    public char getCh() {
         return this.ch;
     }
 
@@ -106,6 +109,12 @@ public class Pixel {
         return res;
     }
 
+    static  public Pixel[][] getPixelsScaleInstance(Pixel[][] pixels,int width,int height){
+        BufferedImage image=Pixel.toBufferedImage(pixels);
+        BufferedImage scaledImage= ObjectTransFormer.toBufferedImage(image.getScaledInstance(width,height,BufferedImage.SCALE_SMOOTH));
+        return Pixel.valueOf(scaledImage);
+    }
+
     static public Pixel[][] pixelsScaleLarger(Pixel[][] pixels, int scale) {
         if (pixels == null || scale == 1)
             return Pixel.pixelsCopy(pixels);
@@ -134,9 +143,7 @@ public class Pixel {
             int height = pixels.length;
             Pixel[][] res = Pixel.emptyPixels(width, height);
             for (int i = 0; i < height; i++)
-                for (int j = 0; j < width; j++) {
-                    res[i][j] = pixels[i][j];
-                }
+                System.arraycopy(pixels[i], 0, res[i], 0, width);
             return res;
         }
     }
@@ -161,7 +168,7 @@ public class Pixel {
     }
 
     static public PImage toImage(Pixel[][] pixels) {
-        return new PImage(null, null);
+        return new PImage(null, null,pixels);
         // TODO
     }
 

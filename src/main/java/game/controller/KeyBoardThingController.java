@@ -89,7 +89,7 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public Position getRealPosition() {
-        return null;
+        return Position.getPosition(0,0);
     }
 
 }

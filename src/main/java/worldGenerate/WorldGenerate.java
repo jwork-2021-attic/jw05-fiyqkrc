@@ -102,7 +102,7 @@ public class WorldGenerate {
 
     private Room getUnLinkedRoom() {
         for (Room room : roomsArray) {
-            if (room.linkToRoad == false)
+            if (!room.linkToRoad)
                 return room;
         }
         return null;
@@ -117,16 +117,16 @@ public class WorldGenerate {
                 this.roomLarger(current);
             } else {
                 for (LinkNode node : linkNodes) {
-                    if (node.linkRoad == true && current.linkToRoad == false) {
+                    if (node.linkRoad && !current.linkToRoad) {
                         world[node.node.getX()][node.node.getY()] = 4;
                         current.linkToRoad = true;
                     }
-                    if (node.linkRoad == true && node.linkedRoom != null
+                    if (node.linkRoad && node.linkedRoom != null
                             && !current.linkedRooms.contains(node.linkedRoom)) {
                         world[node.node.getX()][node.node.getY()] = 4;
                         current.linkToRoad = true;
                         current.linkedRooms.add(node.linkedRoom);
-                    } else if (node.linkedRoom != null && node.linkedRoom.linkToRoad == true
+                    } else if (node.linkedRoom != null && node.linkedRoom.linkToRoad
                             && !current.linkedRooms.contains(node.linkedRoom)) {
                         world[node.node.getX()][node.node.getY()] = 4;
                         current.linkedRooms.add(node.linkedRoom);
@@ -134,7 +134,7 @@ public class WorldGenerate {
                     }
                 }
             }
-            if (current.linkToRoad == false) {
+            if (!current.linkToRoad) {
                 roomsArray.remove(current);
                 roomsArray.add(current);
                 failed_count++;
@@ -216,9 +216,7 @@ public class WorldGenerate {
         }
 
         this.oddNodes.clear();
-        for (Position position : p) {
-            this.oddNodes.add(position);
-        }
+        this.oddNodes.addAll(p);
     }
 
     private ArrayList<LinkNode> findLinkNode(Room room) {
@@ -259,7 +257,7 @@ public class WorldGenerate {
                                     }
                                 }
                             }
-                            if (nonemptyListContainsSelfRoom == true)
+                            if (nonemptyListContainsSelfRoom)
                                 res.add(node);
                         }
                     }
@@ -450,29 +448,15 @@ public class WorldGenerate {
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     switch (world[i][j]) {
-                    case 0:
-                        pixels[i][j] = Pixel.getPixel(Color.BLACK, (char) 0xf0);
-                        break;
-                    case 1:
-                        pixels[i][j] = Pixel.getPixel(Color.CYAN, (char) 0xf0);
-                        break;
-                    case 2:
-                        pixels[i][j] = Pixel.getPixel(Color.GRAY, (char) 0xf0);
-                        break;
-                    case 3:
-                        pixels[i][j] = Pixel.getPixel(Color.LIGHT_GRAY, (char) 0xf0);
-                        break;
-                    case 4:
-                        pixels[i][j] = Pixel.getPixel(Color.ORANGE, (char) 0xf0);
-                        break;
-                    case 5:
-                        pixels[i][j] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
-                        break;
-                    case 6:
-                        pixels[i][j] = Pixel.getPixel(Color.RED, (char) 0xf0);
-                        break;
-                    default:
-                        break;
+                        case 0 -> pixels[i][j] = Pixel.getPixel(Color.BLACK, (char) 0xf0);
+                        case 1 -> pixels[i][j] = Pixel.getPixel(Color.CYAN, (char) 0xf0);
+                        case 2 -> pixels[i][j] = Pixel.getPixel(Color.GRAY, (char) 0xf0);
+                        case 3 -> pixels[i][j] = Pixel.getPixel(Color.LIGHT_GRAY, (char) 0xf0);
+                        case 4 -> pixels[i][j] = Pixel.getPixel(Color.ORANGE, (char) 0xf0);
+                        case 5 -> pixels[i][j] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
+                        case 6 -> pixels[i][j] = Pixel.getPixel(Color.RED, (char) 0xf0);
+                        default -> {
+                        }
                     }
                 }
             }

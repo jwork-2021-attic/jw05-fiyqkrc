@@ -3,6 +3,8 @@ package game;
 import com.pFrame.PFrame;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicView;
+import com.pFrame.pgraphic.PImage;
+import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 
 import asciiPanel.AsciiFont;
@@ -25,6 +27,14 @@ public class ApplicationMain {
         view.setFocus(calabash);
         view.setItemController(controller);
         world.addItem(calabash);
+
+        PImage startButtonBack=new PImage(null,null,ApplicationMain.class.getClassLoader().getResource("image/startButton.png").getFile());
+        pHeadWidget.getLayout().setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
+        PButton startButton=new PButton(pHeadWidget,Position.getPosition(2,2));
+        startButton.addBackground(startButtonBack);
+
+
+
         pHeadWidget.startRepaintThread();
     }
 }

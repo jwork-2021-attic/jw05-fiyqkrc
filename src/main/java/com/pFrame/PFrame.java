@@ -15,21 +15,39 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     private AsciiPanel terminal;
     protected PWidget headWidget;
+
+    protected ObjectUserInteractive keyListener;
+    protected ObjectUserInteractive mouseListener;
+    protected ObjectUserInteractive mouseWheelListener;
+
     protected ObjectUserInteractive focusWidget;
+
     protected int frameWidth;
     protected int frameHeight;
     protected int charWidth;
 
-    protected boolean focusWidgetFixed = false;
-
-    public void setFixedFocus(ObjectUserInteractive controlable) {
-        focusWidget = controlable;
-        focusWidgetFixed = true;
+    public void setKeyListener(ObjectUserInteractive keyListener){
+        this.keyListener=keyListener;
     }
 
-    public void freeFixedFocus() {
-        focusWidget = null;
-        focusWidgetFixed = false;
+    public void freeKeyListener(){
+        this.keyListener=null;
+    }
+
+    public void setMouseListener(ObjectUserInteractive mouseListener){
+        this.mouseListener=mouseListener;
+    }
+
+    public void freeMouseListener(){
+        this.mouseListener=null;
+    }
+
+    public void setMouseWheelListener(ObjectUserInteractive mouseWheelListener){
+        this.mouseWheelListener=mouseWheelListener;
+    }
+
+    public void freeMouseWheelListener(){
+        this.mouseWheelListener=null;
     }
 
     public int getFrameWidth() {
@@ -68,7 +86,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     if (pixels[i][j] != null)
-                        this.terminal.write(pixels[i][j].getch(), j, i, pixels[i][j].getColor());
+                        this.terminal.write(pixels[i][j].getCh(), j, i, pixels[i][j].getColor());
                     else
                         this.terminal.write((char) 0x00, j, i, Color.BLACK);
                 }
@@ -79,41 +97,43 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(this.keyListener!=null){
+            this.keyListener.keyTyped(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyTyped(e);
-            // repaint();
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(this.keyListener!=null){
+            this.keyListener.keyPressed(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyPressed(e);
-            // repaint();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(this.keyListener!=null){
+            this.keyListener.keyReleased(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyReleased(e);
-            // repaint();
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent arg0) {
-        if (focusWidgetFixed) {
-            if (focusWidget != null) {
-                Position p = mouseToPosition(arg0);
-                this.focusWidget.mouseClicked(arg0,
-                        Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
-                                p.getY() - focusWidget.getRealPosition().getY()));
+        Position p = mouseToPosition(arg0);
+        if (this.mouseListener != null) {
+            this.mouseListener.mouseClicked(arg0,
+                    Position.getPosition(p.getX() - mouseListener.getRealPosition().getX(),
+                            p.getY() - mouseListener.getRealPosition().getY()));
 
-            }
         } else {
-
-            Position p = mouseToPosition(arg0);
 
             ArrayList<PWidget> list = this.headWidget.getWidgetsAt(p);
             this.focusWidget = list.get(list.size() - 1);
@@ -123,8 +143,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
             this.focusWidget.mouseClicked(arg0, pos);
         }
-
-        // repaint();
     }
 
     protected Position mouseToPosition(MouseEvent e) {
@@ -137,68 +155,42 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     @Override
     public void mouseEntered(MouseEvent arg0) {
         this.headWidget.mouseEntered(arg0);
-        // repaint();
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
         this.headWidget.mouseExited(arg0);
-        // repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent arg0) {
-        /*
-         * Position p=mouseToPosition(arg0);
-         * 
-         * ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p); PWidget
-         * topWidget=list.get(list.size()-1);
-         * 
-         * Position realPosition=topWidget.getRealPosition(); Position
-         * pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.
-         * getY());
-         * 
-         * topWidget.mousePressed(arg0, pos);
-         */
-
-        if (this.focusWidget != null) {
-            Position p = mouseToPosition(arg0);
+        Position p = mouseToPosition(arg0);
+        if (this.mouseListener != null) {
+            this.mouseListener.mousePressed(arg0, Position.getPosition(p.getX() - mouseListener.getRealPosition().getX(),
+                    p.getY() - mouseListener.getRealPosition().getY()));
+        } else if (this.focusWidget != null) {
             this.focusWidget.mousePressed(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
                     p.getY() - focusWidget.getRealPosition().getY()));
         }
-
-        // repaint();
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0) {
-        /*
-         * Position p=mouseToPosition(arg0);
-         * 
-         * ArrayList<PWidget> list=this.headWidget.getWidgetsAt(p); PWidget
-         * topWidget=list.get(list.size()-1);
-         * 
-         * Position realPosition=topWidget.getRealPosition(); Position
-         * pos=Position.getPosition(p.getX()-realPosition.getX(),p.getY()-realPosition.
-         * getY());
-         * 
-         * topWidget.mouseReleased(arg0, pos);
-         */
-
-        if (this.focusWidget != null) {
-
-            Position p = mouseToPosition(arg0);
-            this.focusWidget.mouseReleased(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
-                    p.getY() - focusWidget.getRealPosition().getY()));
+        Position p = mouseToPosition(arg0);
+        if (this.mouseListener != null) {
+            this.mouseListener.mouseReleased(arg0, Position.getPosition(p.getX() - mouseListener.getRealPosition().getX(),
+                    p.getY() - mouseListener.getRealPosition().getY()));
+        } else if (this.focusWidget != null) {
+            this.focusWidget.mouseReleased(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(), p.getY() - focusWidget.getRealPosition().getY()));
         }
-        // repaint();
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (this.focusWidget != null) {
+        if (this.mouseWheelListener != null) {
+            this.mouseWheelListener.mouseWheelMoved(e);
+        } else if (this.focusWidget != null) {
             this.focusWidget.mouseWheelMoved(e);
-            // repaint();
         }
     }
 
@@ -207,7 +199,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         while (true) {
             try {
                 this.repaint();
-                Thread.sleep(200);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

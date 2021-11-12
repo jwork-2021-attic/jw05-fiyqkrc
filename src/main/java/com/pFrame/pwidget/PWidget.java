@@ -185,11 +185,27 @@ public class PWidget implements ObjectUserInteractive {
 
     }
 
-    public void getMouseAndKeyMonitor(PWidget widget) {
-        this.parent.getMouseAndKeyMonitor(widget);
+    public void addKeyListener(ObjectUserInteractive widget){
+        this.parent.addKeyListener(widget);
     }
 
-    public void freeMouseAndKeyMonitor() {
-        this.parent.freeMouseAndKeyMonitor();
+    public void freeKeyListener(){
+        this.parent.freeKeyListener();
+    }
+
+    public void addMouseListener(ObjectUserInteractive widget){
+        this.parent.addMouseListener(widget);
+    }
+
+    public void freeMouseListener(){
+        this.parent.freeMouseListener();
+    }
+
+    public void addMouseWheelListener(ObjectUserInteractive widget){
+        this.parent.addMouseWheelListener(widget);
+    }
+
+    public void freeMouseWheelListener(){
+        this.parent.freeMouseWheelListener();
     }
 }

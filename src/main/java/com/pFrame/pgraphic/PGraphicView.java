@@ -18,12 +18,12 @@ public class PGraphicView extends PWidget implements PView {
 
     public void setItemController(ObjectUserInteractive thing) {
         this.controlThing = thing;
-        getMouseAndKeyMonitor(this);
+        addKeyListener(thing);
     }
 
     public void freeItemController() {
         this.controlThing = null;
-        freeMouseAndKeyMonitor();
+        freeKeyListener();
     }
 
     @Override
