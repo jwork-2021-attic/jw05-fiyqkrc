@@ -22,6 +22,13 @@ public class PButton extends PWidget {
     }
 
     @Override
+    protected void sizeChanged() {
+        super.sizeChanged();
+        if(textLabel!=null)
+            this.textLabel.changeWidgetSize(this.widgetWidth,this.widgetHeight);
+    }
+
+    @Override
     public void mouseClicked(MouseEvent e, Position p) {
         Log.InfoLog(this, "be click");
         super.mouseClicked(e, p);

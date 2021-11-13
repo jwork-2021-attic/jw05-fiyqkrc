@@ -1,5 +1,7 @@
 package com.pFrame.pwidget;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import com.pFrame.ObjectUserInteractive;
@@ -53,14 +55,23 @@ public class PWidget implements ObjectUserInteractive {
             else{
                 widget.setPosition(Position.getPosition(0,0));
             }
-            System.out.println(widget.getClass().getName());
             this.childWidgets.add(widget);
             //widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
         }
     }
 
     public void resetLayout(PLayout layout){
+        for(PWidget widget:childWidgets){
+            if(widget==this.layout) {
+                childWidgets.remove(widget);
+                childWidgets.add(layout);
+            }
+        }
         this.layout=layout;
+        if(layout!=null) {
+            this.layout.setPosition(Position.getPosition(0, 0));
+            this.layout.changeWidgetSize(this.widgetWidth, this.widgetHeight);
+        }
     }
 
     protected void setLayout(PLayout layout) {
@@ -96,6 +107,7 @@ public class PWidget implements ObjectUserInteractive {
                 pixels=Pixel.pixelsAdd(pixels,this.layout.displayOutput(),this.layout.getPosition());
             }*/
             for(PWidget widget:this.childWidgets){
+
                 Pixel.pixelsAdd(pixels,widget.displayOutput(),widget.getPosition());
             }
             return pixels;
@@ -118,7 +130,12 @@ public class PWidget implements ObjectUserInteractive {
     }
 
     protected void sizeChanged() {
-
+        if(this.background!=null){
+            this.background.changeWidgetSize(this.widgetWidth,this.widgetHeight);
+        }
+        if(this.layout!=null){
+            this.layout.changeWidgetSize(this.widgetWidth,this.widgetHeight);
+        }
     }
 
     public void setPosition(Position position) {
@@ -144,14 +161,12 @@ public class PWidget implements ObjectUserInteractive {
         res.add(this);
         if (this.layout != null)
             res.addAll(this.layout.getWidgetsAt(p));
-        for(PWidget widget:this.childWidgets){
-            if(widget!=layout)
-                if(WidgetRange.inRange(widget.position,widget.widgetWidth,widget.widgetHeight,p)){
+        for(PWidget widget:this.childWidgets) {
+            if (widget != layout)
+                if (WidgetRange.inRange(widget.position, widget.widgetWidth, widget.widgetHeight, p)) {
                     res.add(widget);
                 }
         }
-        for(PWidget widget:res)
-            System.out.println(widget.toString());
         return res;
     }
 
@@ -177,7 +192,24 @@ public class PWidget implements ObjectUserInteractive {
         }
     }
 
-    public void mouseClicked(MouseEvent e, Position p) {
+    protected Method clickMethod;
+    protected Object clickMethodObject;
+
+    public void setClickFunc(Object object,Method method){
+        clickMethod=method;
+        clickMethodObject=object;
+    }
+
+    public void mouseClicked(MouseEvent mouseEvent, Position p) {
+        if(clickMethod!=null&&clickMethodObject!=null) {
+            try {
+                clickMethod.invoke(clickMethodObject, null);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void keyPressed(KeyEvent e) {

@@ -39,6 +39,7 @@ public class PImage extends PWidget {
 
     @Override
     protected void sizeChanged() {
+        super.sizeChanged();
         if (this.file != null) {
             this.load(file);
         }

@@ -22,6 +22,7 @@ public class PLayout extends PWidget {
         this.rownum = x;
         this.columnnum = y;
         this.containedWidgets = new PWidget[rownum][columnnum];
+        updateWidgetsLayout();
     }
 
     public void setRCNumStyle(int x, int y, String xstyle, String ystyle) {
@@ -30,6 +31,7 @@ public class PLayout extends PWidget {
         this.columnStyle = ystyle;
         this.columnnum = y;
         this.containedWidgets = new PWidget[rownum][columnnum];
+        updateWidgetsLayout();
     }
 
     public int getRowNum() {
@@ -90,6 +92,12 @@ public class PLayout extends PWidget {
     }
 
     @Override
+    protected void sizeChanged() {
+        super.sizeChanged();
+        updateWidgetsLayout();
+    }
+
+    @Override
     public void addChildWidget(PWidget widget, Position p) {
         if (this.layout != null)
             this.layout.addChildWidget(widget, p);
@@ -121,10 +129,10 @@ public class PLayout extends PWidget {
         return pixels;
     }
 
-    protected void updateWidgetsLayout() {
+    public void updateWidgetsLayout() {
         int r[];
         int c[];
-        if (this.getRowStyle() == "") {
+        if (this.getRowStyle() == "" || this.getRowStyle()==null) {
             int[] row = new int[this.getRowNum()];
             for (int i = 0; i < this.getRowNum(); i++) {
                 row[i] = this.getWidgetHeight() / this.getRowNum();
@@ -174,7 +182,7 @@ public class PLayout extends PWidget {
             r = rowRes;
         }
 
-        if (this.getColumnStyle() == "") {
+        if (this.getColumnStyle() == "" || this.getColumnStyle()==null) {
             int[] row = new int[this.getColumnNum()];
             for (int i = 0; i < this.getColumnNum(); i++) {
                 row[i] = this.getWidgetWidth() / this.getColumnNum();
