@@ -50,7 +50,6 @@ public class PLayout extends PWidget {
 
     public PLayout(PWidget parent, Position p, int rownum, int columnnum) {
         super(parent, p);
-        this.setLayout(this);
         this.rownum = rownum;
         this.columnnum = columnnum;
         this.rowStyle = "";
@@ -65,7 +64,6 @@ public class PLayout extends PWidget {
 
     public PLayout(PWidget parent, Position p, int rownum, int columnnum, boolean hasInset) {
         super(parent, p);
-        this.setLayout(this);
         this.rownum = rownum;
         this.columnnum = columnnum;
         this.rowStyle = "";
@@ -80,7 +78,6 @@ public class PLayout extends PWidget {
 
     public PLayout(PWidget parent, Position p) {
         super(parent, p);
-        this.setLayout(this);
         this.rownum = 1;
         this.columnnum = 1;
         this.rowStyle = "";
@@ -93,28 +90,35 @@ public class PLayout extends PWidget {
     }
 
     @Override
-    public Pixel[][] displayOutput() {
-        if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
-            return null;
-        } else {
-            Pixel[][] pixels = Pixel.emptyPixels(this.getWidgetWidth(), this.getWidgetHeight());
-            if (this.background == null) {
-            } else {
-                pixels = this.background.displayOutput();
-            }
-            ArrayList<PWidget> childWidget = new ArrayList<>();
-            for (int i = 0; i < this.getRowNum(); i++) {
-                for (int j = 0; j < this.getColumnNum(); j++) {
-                    if (this.containedWidgets[i][j] != null)
-                        childWidget.add(this.containedWidgets[i][j]);
-                }
-            }
-            for (PWidget widget : childWidget) {
-                Pixel[][] childPixels = widget.displayOutput();
-                Pixel.pixelsAdd(pixels, childPixels, widget.getPosition());
-            }
-            return pixels;
+    public void addChildWidget(PWidget widget, Position p) {
+        if (this.layout != null)
+            this.layout.addChildWidget(widget, p);
+            //this.layout.autoSetPosition(widget, p);
+        else {
+            widget.setParent(this);
+            this.autoSetPosition(widget, p);
+            //widget.setPosition(p);
+            //this.childWidgets.add(widget);
+            //widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
         }
+    }
+
+    @Override
+    public Pixel[][] displayOutput() {
+        Pixel[][] pixels = super.displayOutput();
+
+        ArrayList<PWidget> childWidget = new ArrayList<>();
+        for (int i = 0; i < this.getRowNum(); i++) {
+            for (int j = 0; j < this.getColumnNum(); j++) {
+                if (this.containedWidgets[i][j] != null)
+                    childWidget.add(this.containedWidgets[i][j]);
+            }
+        }
+        for (PWidget widget : childWidget) {
+            Pixel[][] childPixels = widget.displayOutput();
+            Pixel.pixelsAdd(pixels, childPixels, widget.getPosition());
+        }
+        return pixels;
     }
 
     protected void updateWidgetsLayout() {

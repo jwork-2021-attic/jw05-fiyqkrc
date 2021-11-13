@@ -17,6 +17,8 @@ public class PWidget implements ObjectUserInteractive {
     protected PWidget parent;
     protected PWidget background;
 
+    protected ArrayList<PWidget> childWidgets;
+
     public void addBackground(PWidget background) {
         this.background = background;
         this.background.setPosition(Position.getPosition(0, 0));
@@ -30,6 +32,7 @@ public class PWidget implements ObjectUserInteractive {
 
     public PWidget(PWidget parent, Position p) {
         this.parent = parent;
+        this.childWidgets=new ArrayList<>();
         if (this.parent != null)
             this.parent.addChildWidget(this, p);
         else {
@@ -39,13 +42,25 @@ public class PWidget implements ObjectUserInteractive {
         }
     }
 
-    protected void addChildWidget(PWidget widget, Position p) {
+    public void addChildWidget(PWidget widget, Position p) {
         if (this.layout != null)
-            this.layout.autoSetPosition(widget, p);
+            this.layout.addChildWidget(widget,p);
+            //this.layout.autoSetPosition(widget, p);
         else {
-            widget.setPosition(Position.getPosition(0, 0));
-            widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
+            widget.setParent(this);
+            if(p==null)
+                widget.setPosition(p);
+            else{
+                widget.setPosition(Position.getPosition(0,0));
+            }
+            System.out.println(widget.getClass().getName());
+            this.childWidgets.add(widget);
+            //widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
         }
+    }
+
+    public void resetLayout(PLayout layout){
+        this.layout=layout;
     }
 
     protected void setLayout(PLayout layout) {
@@ -56,7 +71,7 @@ public class PWidget implements ObjectUserInteractive {
         return this.layout;
     }
 
-    protected void setParent(PWidget widget) {
+    public void setParent(PWidget widget) {
         this.parent = widget;
     }
 
@@ -70,23 +85,21 @@ public class PWidget implements ObjectUserInteractive {
         } else {
             Pixel[][] pixels = Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
             if (this.background == null) {
+                //do nothing
             } else {
                 pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
+            }/*
+            if(this.layout==null){
+                //do nothing
             }
-            ArrayList<PWidget> childWidget = new ArrayList<>();
-            if (this.layout != null)
-                childWidget.add(this.layout);
-            for (PWidget widget : childWidget) {
-                Pixel[][] childPixels = widget.displayOutput();
-                Pixel.pixelsAdd(pixels, childPixels, widget.getPosition());
+            else{
+                pixels=Pixel.pixelsAdd(pixels,this.layout.displayOutput(),this.layout.getPosition());
+            }*/
+            for(PWidget widget:this.childWidgets){
+                Pixel.pixelsAdd(pixels,widget.displayOutput(),widget.getPosition());
             }
             return pixels;
         }
-    }
-
-    public void update() {
-        if (this.parent != null)
-            this.parent.update();
     }
 
     public int getWidgetHeight() {
@@ -102,7 +115,6 @@ public class PWidget implements ObjectUserInteractive {
         this.widgetHeight = height;
         this.widgetWidth = width;
         this.sizeChanged();
-
     }
 
     protected void sizeChanged() {
@@ -123,6 +135,7 @@ public class PWidget implements ObjectUserInteractive {
         res.add(this);
         if (this.layout != null)
             res.addAll(this.layout.getChildWidget());
+        res.addAll(childWidgets);
         return res;
     }
 
@@ -131,6 +144,14 @@ public class PWidget implements ObjectUserInteractive {
         res.add(this);
         if (this.layout != null)
             res.addAll(this.layout.getWidgetsAt(p));
+        for(PWidget widget:this.childWidgets){
+            if(widget!=layout)
+                if(WidgetRange.inRange(widget.position,widget.widgetWidth,widget.widgetHeight,p)){
+                    res.add(widget);
+                }
+        }
+        for(PWidget widget:res)
+            System.out.println(widget.toString());
         return res;
     }
 

@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import java.awt.Color;
+import java.util.ArrayList;
 
 import log.Log;
 
@@ -15,7 +16,8 @@ public class PButton extends PWidget {
     public PButton(PWidget parent, Position p) {
 
         super(parent, p);
-        this.textLabel = new PLabel(this, null);
+        this.textLabel = new PLabel(this, Position.getPosition(0,0));
+        this.textLabel.changeWidgetSize(this.widgetWidth,this.widgetHeight);
 
     }
 
@@ -35,4 +37,15 @@ public class PButton extends PWidget {
         this.textLabel.setText(text, size, color);
     }
 
+    @Override
+    public ArrayList<PWidget> getWidgetsAt(Position p) {
+        ArrayList<PWidget> res=new  ArrayList<PWidget>();
+        res.add(this);
+        return res;
+    }
+
+    @Override
+    public ArrayList<PWidget> getChildWidget() {
+        return getWidgetsAt(null);
+    }
 }
