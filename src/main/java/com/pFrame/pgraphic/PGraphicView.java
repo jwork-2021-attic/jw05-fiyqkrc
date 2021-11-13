@@ -46,7 +46,10 @@ public class PGraphicView extends PWidget implements PView {
     @Override
     public Pixel[][] displayOutput() {
         adjustViewPosition();
-        return this.scene.displayOutput(this.getViewPosition(), this.getWidgetWidth(), this.getWidgetHeight());
+        if(scene!=null)
+            return this.scene.displayOutput(this.getViewPosition(), this.getWidgetWidth(), this.getWidgetHeight());
+        else
+            return Pixel.emptyPixels(widgetWidth,widgetHeight);
     }
 
     @Override

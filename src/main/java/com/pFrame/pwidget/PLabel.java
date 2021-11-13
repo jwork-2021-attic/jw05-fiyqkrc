@@ -45,10 +45,8 @@ public class PLabel extends PWidget {
 
     protected void updateDraw() {
         if (this.content != null && this.fontScale != 0 && this.color != null) {
-            int line = (1 >= (this.getWidgetHeight() / (PFont.fontBaseSize * this.fontScale))) ? 1
-                    : this.getWidgetHeight() / (PFont.fontBaseSize * this.fontScale);
-            int charsInLine = (1 >= (this.getWidgetWidth() / (PFont.fontBaseSize * this.fontScale))) ? 1
-                    : this.getWidgetWidth() / (PFont.fontBaseSize * this.fontScale);
+            int line = Math.max(1, (this.getWidgetHeight() / (PFont.fontBaseSize * this.fontScale)));
+            int charsInLine = Math.max(1, (this.getWidgetWidth() / (PFont.fontBaseSize * this.fontScale)));
             int chIndex = 0;
             for (int i = 0; i < line; i++) {
                 for (int j = 0; j < charsInLine; j++) {

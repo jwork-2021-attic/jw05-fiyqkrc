@@ -69,11 +69,15 @@ public class Pixel {
     }
 
     static public Pixel[][] emptyPixels(int width, int height) {
-        Pixel[][] pixels = new Pixel[height][width];
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++)
-                pixels[i][j] = null;
-        return pixels;
+        if(width>0&&height>0) {
+            Pixel[][] pixels = new Pixel[height][width];
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    pixels[i][j] = null;
+            return pixels;
+        }
+        else
+            return null;
     }
 
     static public Pixel[][] valueOf(PGraphicItem item) {

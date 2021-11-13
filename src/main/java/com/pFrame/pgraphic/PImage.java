@@ -1,5 +1,6 @@
 package com.pFrame.pgraphic;
 
+import java.awt.*;
 import java.io.File;
 
 import com.pFrame.Pixel;
@@ -10,11 +11,18 @@ import imageTransFormer.GraphicItemGenerator;
 
 public class PImage extends PWidget {
 
+
     protected Pixel[][] content;
     protected File file;
 
     public Pixel[][] getPixels() {
         return this.content;
+    }
+
+    public static PImage getPureImage(Color color){
+        Pixel[][] pixels=Pixel.emptyPixels(1,1);
+        pixels[0][0]=Pixel.getPixel(color,(char)0xf0);
+        return new PImage(null,null,pixels);
     }
 
     public PImage(PWidget parent, Position p,String path){
@@ -43,7 +51,7 @@ public class PImage extends PWidget {
         if (this.file != null) {
             this.load(file);
         }
-        else if(this.content!=null){
+        else if(this.content!=null&&this.widgetHeight!=0&&this.widgetWidth!=0){
             this.content=Pixel.getPixelsScaleInstance(this.content,this.getWidgetWidth(),this.getWidgetHeight());
         }
     }
