@@ -16,8 +16,8 @@ import java.util.Objects;
 
 public class ApplicationMain {
     public static void main(String[] args){
-        World world=new World(200, 200);
-        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(300, 200, AsciiFont.pFrame_4x4));
+        World world=new World(8000, 8000);
+        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(600, 400, AsciiFont.pFrame_2x2));
         PGraphicView view=new PGraphicView(null, Position.getPosition(1, 2), world);
         pHeadWidget.addBackground(view);
         Operational calabash =new Operational(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/icons/0-0.png")).getFile(), 10, 10);

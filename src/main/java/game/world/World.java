@@ -12,7 +12,7 @@ import worldGenerate.WorldGenerate;
 public class World extends PGraphicScene {
     private int[][] worldArray;
     private WorldGenerate worldGenerator;
-    private int tileWidth = 10;
+    private int tileWidth = 32;
 
     Pixel[][] mazePixels;
 
@@ -32,7 +32,7 @@ public class World extends PGraphicScene {
         int tryTimes = 0;
         while (tryTimes <= 3 && !success) {
             try {
-                worldGenerator = new WorldGenerate(this.width / tileWidth, this.height / tileWidth, 2000000,
+                worldGenerator = new WorldGenerate(this.width / (tileWidth*2), this.height /( tileWidth*2), 2000000,
                         20, 2,
                         20, 2
                 );
@@ -46,16 +46,20 @@ public class World extends PGraphicScene {
     }
 
     private void createWorld() {
-        for (int i = 0; i < height / tileWidth; i++) {
-            for (int j = 0; j < width / tileWidth; j++) {
+        for (int i = 0; i < height / (tileWidth*4); i++) {
+            for (int j = 0; j < width / (tileWidth*4); j++) {
                 File srcpath = switch (worldArray[i][j]) {
                     case 0 -> new File(this.getClass().getClassLoader().getResource("image/wall.png").getFile());
                     case 1, 6, 5, 4, 3, 2 -> new File(this.getClass().getClassLoader().getResource("image/floor.png").getFile());
                     default -> null;
                 };
                 assert srcpath != null;
-                PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
-                Pixel.pixelsAdd(this.mazePixels, tile.getPixels(), Position.getPosition(i * tileWidth, j * tileWidth));
+                for(int a=0;a<2;a++){
+                    for(int b=0;b<2;b++){
+                        PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
+                        Pixel.pixelsAdd(this.mazePixels, tile.getPixels(), Position.getPosition((2*i+a) * tileWidth, (2*j+b) * tileWidth));
+                    }
+                }
             }
         }
     }

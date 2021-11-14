@@ -465,7 +465,7 @@ public class WorldGenerate {
     }
 
     public static void main(String[] args) {
-        WorldGenerate generate = new WorldGenerate(40, 40, 2000000, 20, 2, 20, 2);
+        WorldGenerate generate = new WorldGenerate(80, 80, 2000000, 20, 2, 20, 2);
         generate.generate();
         PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));

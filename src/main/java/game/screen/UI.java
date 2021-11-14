@@ -40,7 +40,7 @@ public class UI {
     PLayout settingPage;
 
     public void createUI(){
-        this.ui=new PHeadWidget(null,null,new PFrame(400,250, AsciiFont.pFrame_4x4));
+        this.ui=new PHeadWidget(null,null,new PFrame(800,500, AsciiFont.pFrame_2x2));
 
         this.startPage=new PLayout(null,null,3,3,false);
         this.startPage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
@@ -88,6 +88,7 @@ public class UI {
 
     public void setWorld(World world){
         PGraphicView view=new PGraphicView(null,null,world);
+        view.setViewPosition(Position.getPosition(0,0));
         this.gamePage.addBackground(view);
     }
 
@@ -103,7 +104,7 @@ public class UI {
     public static  void main(String[] args){
         UI ui=new UI();
         ui.createUI();
-        World world=new World(200,200);
+        World world=new World(4000,4000);
         ui.setWorld(world);
         ui.sendMessage("message test");
         Calabash calabash=new Calabash(UI.class.getClassLoader().getResource("image/icons/0-0.png").getFile(),10,10);
