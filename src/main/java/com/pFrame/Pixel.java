@@ -4,11 +4,9 @@ import java.awt.Color;
 
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PImage;
-import com.pFrame.pgraphic.PMovie;
 import imageTransFormer.ObjectTransFormer;
 
 import java.awt.image.*;
-import java.nio.Buffer;
 
 public class Pixel {
     private Color color;
@@ -86,16 +84,6 @@ public class Pixel {
 
     static public Pixel[][] valueOf(PImage item) {
         return item.getPixels();
-    }
-
-    static public Pixel[][] valueOfThisTime(PMovie movie) {
-        return null;
-        // TODO
-    }
-
-    static public Pixel[][][] allValuesOf(PMovie movie) {
-        // TODO
-        return null;
     }
 
     static public Pixel[][] subPixels(Pixel[][] pixels, Position p, int width, int height) {

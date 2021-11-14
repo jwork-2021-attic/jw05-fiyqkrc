@@ -45,5 +45,4 @@ public class Creature extends Thing implements Controlable {
         this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
     }
 
-
 }

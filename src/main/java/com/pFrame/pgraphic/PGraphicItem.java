@@ -16,6 +16,15 @@ public class PGraphicItem {
     protected Pixel[][] graphic;
     protected Position p;
     static protected HashMap<String, PGraphicItem> items = new HashMap<>();
+    protected PGraphicScene parentScene;
+
+    public void setParentScene(PGraphicScene scene){
+        this.parentScene=scene;
+    }
+
+    public void removeParentScene(){
+        this.parentScene=null;
+    }
 
     public Position getPosition() {
         return this.p;

@@ -11,6 +11,7 @@ import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;
 import com.pFrame.pwidget.PWidget;
+import game.role.creature.calabash.Calabash;
 import game.world.World;
 import log.Log;
 
@@ -40,9 +41,6 @@ public class UI {
 
     public void createUI(){
         this.ui=new PHeadWidget(null,null,new PFrame(400,250, AsciiFont.pFrame_4x4));
-
-
-
 
         this.startPage=new PLayout(null,null,3,3,false);
         this.startPage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
@@ -107,7 +105,8 @@ public class UI {
         ui.createUI();
         World world=new World(200,200);
         ui.setWorld(world);
-        ui.sendMessage("message tested , ahsdjdjfirrkddfjgkgkgdkkkkdjfkfflgl");
+        ui.sendMessage("message test");
+        Calabash calabash=new Calabash(UI.class.getClassLoader().getResource("image/icons/0-0.png").getFile(),10,10);
     }
 
     public void setCoinValue(int n){

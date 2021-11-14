@@ -83,17 +83,23 @@ public class PGraphicScene {
     }
 
     public boolean removeItem(PGraphicItem item) {
-        return this.Items.remove(item);
+        boolean res=this.Items.remove(item);
+        if(res){
+            item.removeParentScene();
+        }
+        return res;
     }
 
     public boolean addItem(PGraphicItem item) {
         this.Items.add(item);
+        item.setParentScene(this);
         return true;
     }
 
     public boolean addItem(PGraphicItem item, Position p) {
         item.setPosition(p);
         this.Items.add(item);
+        item.setParentScene(this);
         return true;
     }
 

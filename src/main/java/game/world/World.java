@@ -6,6 +6,7 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
+import game.role.Thing;
 import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
@@ -80,5 +81,12 @@ public class World extends PGraphicScene {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean addItem(PGraphicItem item) {
+        if(item instanceof Thing)
+            ((Thing) item).whenBeAddedToScene();
+        return super.addItem(item);
     }
 }

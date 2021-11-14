@@ -3,6 +3,7 @@ package game.role;
 import java.io.File;
 
 import com.pFrame.pgraphic.PGraphicItem;
+import game.controller.CreatureController;
 import game.world.Tile;
 
 public class Thing extends PGraphicItem{
@@ -18,5 +19,9 @@ public class Thing extends PGraphicItem{
 
     public void setTile(Tile<? extends Thing> tile){
         this.tile=tile;
+    }
+
+    public void whenBeAddedToScene(){
+
     }
 }
