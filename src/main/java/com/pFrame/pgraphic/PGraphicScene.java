@@ -61,6 +61,10 @@ public class PGraphicScene {
         return pix;
     }
 
+    public void repaintItem(PGraphicItem item){
+
+    }
+
     protected void updatePixels() {
         if (this.backImage != null) {
             // TODO
@@ -103,25 +107,5 @@ public class PGraphicScene {
         return true;
     }
 
-    public Pixel[][] getPixels(int x, int y, int width, int height) {
-        this.updatePixels();
-        Pixel[][] res = new Pixel[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                res[i][j] = this.pixels[x + i][y + j];
-            }
-        }
-        return res;
-    }
 
-    public Pixel[][] getPixels(Position p, int width, int height) {
-        this.updatePixels();
-        Pixel[][] res = new Pixel[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                res[i][j] = this.pixels[p.getX() + i][p.getY() + j];
-            }
-        }
-        return res;
-    }
 }

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 import java.io.IOException;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -100,7 +101,7 @@ public class AsciiPanel extends JPanel {
      */
     public static Color brightWhite = new Color(255, 255, 255);
 
-    private Image offscreenBuffer;
+    private BufferedImage offscreenBuffer;
     private Graphics offscreenGraphics;
     private int widthInCharacters;
     private int heightInCharacters;
@@ -362,27 +363,46 @@ public class AsciiPanel extends JPanel {
     public void paint(Graphics g) {
         if (g == null)
             throw new NullPointerException();
-
         for (int x = 0; x < widthInCharacters; x++) {
             for (int y = 0; y < heightInCharacters; y++) {
                 if (oldBackgroundColors[x][y] == backgroundColors[x][y]
                         && oldForegroundColors[x][y] == foregroundColors[x][y] && oldChars[x][y] == chars[x][y])
                     continue;
-
-                Color bg = backgroundColors[x][y];
-                Color fg = foregroundColors[x][y];
-
-                LookupOp op = setColors(bg, fg);
-                BufferedImage img = op.filter(glyphs[chars[x][y]], null);
-                offscreenGraphics.drawImage(img, x * charWidth, y * charHeight, null);
-
+                for(int i=0;i<charWidth;i++){
+                    for(int j=0;j<charHeight;j++){
+                        if(glyphs[chars[x][y]].getRGB(i,j)==0xff000000)
+                            offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,0xff000000);
+                        else
+                            offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,foregroundColors[x][y].getRGB()+(foregroundColors[x][y].getAlpha()<<24));
+                    }
+                }
                 oldBackgroundColors[x][y] = backgroundColors[x][y];
                 oldForegroundColors[x][y] = foregroundColors[x][y];
                 oldChars[x][y] = chars[x][y];
             }
         }
 
+
+
         g.drawImage(offscreenBuffer, 0, 0, this);
+
+
+
+    }
+
+    class DrawThread implements Runnable{
+        Color bg;
+        Color fg;
+        Graphics graphics;
+
+        DrawThread(){
+
+        }
+
+        @Override
+        public void run() {
+
+        }
     }
 
     private void loadGlyphs() {

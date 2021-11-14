@@ -2,7 +2,9 @@ package com.pFrame;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.awt.image.DataBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JFrame;
 
@@ -78,7 +80,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void repaint() {
-        terminal.clear();
         Pixel[][] pixels = this.headWidget.displayOutput();
         if (pixels != null) {
             int height = pixels.length;
@@ -198,6 +199,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     public void run() {
         while (true) {
             try {
+
                 this.repaint();
                 Thread.sleep(50);
             } catch (InterruptedException e) {

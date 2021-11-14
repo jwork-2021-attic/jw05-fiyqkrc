@@ -32,6 +32,8 @@ public class PGraphicItem {
 
     public void setPosition(Position pos) {
         this.p = pos;
+        if(this.parentScene!=null)
+            this.parentScene.repaintItem(this);
     }
 
     public PGraphicItem(String path, int width, int height) {

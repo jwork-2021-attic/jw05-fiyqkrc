@@ -63,10 +63,17 @@ public class World extends PGraphicScene {
             }
         }
     }
-
+/*
+    @Override
+    public Pixel[][] displayOutput(Position p, int width, int height) {
+        Pixel[][] pix=super.displayOutput(p, width, height);
+        pix=Pixel.pixelsAdd(pix,Pixel.subPixels(mazePixels,p,width,height),Position.getPosition(0,0));
+        return pix;
+    }
+*/
     @Override
     protected void updatePixels() {
-        this.pixels = Pixel.pixelsCopy(this.mazePixels);
+        this.pixels = Pixel.pixelsCopy(mazePixels);
         if (this.backImage != null) {
             // TODO
         }
