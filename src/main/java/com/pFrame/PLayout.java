@@ -143,9 +143,10 @@ public class PLayout extends PWidget {
             int[] rowRes = new int[this.getRowNum()];
             if (row.length < this.getRowNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                this.setRowLayout("");
-                ;
+                String Style=getColumnStyle();
+                rowStyle="";
                 this.updateWidgetsLayout();
+                rowStyle=Style;
                 return;
             } else {
                 try {
@@ -163,8 +164,10 @@ public class PLayout extends PWidget {
                     }
                     if (numSum >= this.getWidgetHeight()) {
                         Log.ErrorLog(this, "fixed rows too big!");
-                        this.setRowLayout("");
+                        String Style=getColumnStyle();
+                        rowStyle="";
                         this.updateWidgetsLayout();
+                        rowStyle=Style;
                         return;
                     }
                     for (int i = 0; i < this.getRowNum(); i++) {
@@ -174,8 +177,10 @@ public class PLayout extends PWidget {
                     }
                 } catch (Exception e) {
                     Log.ErrorLog(this, "read rowstyle failed");
-                    this.setRowLayout("");
+                    String Style=getColumnStyle();
+                    rowStyle="";
                     this.updateWidgetsLayout();
+                    rowStyle=Style;
                     return;
                 }
             }
@@ -193,9 +198,10 @@ public class PLayout extends PWidget {
             int[] rowRes = new int[this.getColumnNum()];
             if (row.length < this.getColumnNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                this.setColumnLayout("");
-                ;
+                String Style=getColumnStyle();
+                columnStyle="";
                 this.updateWidgetsLayout();
+                columnStyle=Style;
                 return;
             } else {
                 try {
@@ -213,8 +219,10 @@ public class PLayout extends PWidget {
                     }
                     if (numSum >= this.getWidgetWidth()) {
                         Log.ErrorLog(this, "fixed rows too big!");
-                        this.setColumnLayout("");
+                        String Style=getColumnStyle();
+                        columnStyle="";
                         this.updateWidgetsLayout();
+                        columnStyle=Style;
                         return;
                     }
                     for (int i = 0; i < this.getColumnNum(); i++) {
@@ -224,8 +232,10 @@ public class PLayout extends PWidget {
                     }
                 } catch (Exception e) {
                     Log.ErrorLog(this, "read rowstyle failed");
-                    this.setColumnLayout("");
+                    String Style=columnStyle;
+                    columnStyle="";
                     this.updateWidgetsLayout();
+                    columnStyle=Style;
                     return;
                 }
             }

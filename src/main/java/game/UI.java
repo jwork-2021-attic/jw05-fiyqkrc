@@ -10,6 +10,7 @@ import com.pFrame.pgraphic.PImage;
 import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;
+import com.pFrame.pwidget.PWidget;
 import game.world.World;
 import log.Log;
 
@@ -29,12 +30,14 @@ public class UI {
     PButton startGameButton;
     PButton settingButton;
 
+
     PLayout gamePage;
 
     PLayout settingPage;
 
     public void createUI(){
-        this.ui=new PHeadWidget(null,null,new PFrame(300,200, AsciiFont.pFrame_4x4));
+        this.ui=new PHeadWidget(null,null,new PFrame(400,250, AsciiFont.pFrame_4x4));
+
 
 
 
@@ -48,7 +51,16 @@ public class UI {
         settingButton.setText("Setting",1, Color.BLUE);
 
         this.gamePage=new PLayout(null,null,3,3,false);
-        this.gamePage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
+        this.gamePage.setRCNumStyle(3,3,"1x,2x,1x","1x,2x,1x");
+
+        PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
+        rightUpPanel.setColumnLayout("15,3x");
+
+
+        PWidget coinImage =new PImage(rightUpPanel,Position.getPosition(1,1),UI.class.getClassLoader().getResource("image/coin.png").getFile());
+        PLabel coinDisplay=new PLabel(rightUpPanel,Position.getPosition(1,2));
+        coinDisplay.setText("x0",2,Color.WHITE);
+
 
         this.settingPage=new PLayout(null,null);
         PLabel label=new PLabel(null,null);

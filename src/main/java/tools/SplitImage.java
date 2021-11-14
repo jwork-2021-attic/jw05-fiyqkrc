@@ -9,14 +9,14 @@ import imageTransFormer.GraphicItemImageGenerator;
 
 public class SplitImage {
     public static void main(String[] args) {
-        PGraphicItem largeImage = GraphicItemGenerator.generateItem("/home/fiyqkrc/test.png", 476, 1020);
+        PGraphicItem largeImage = GraphicItemGenerator.generateItem("/home/fiyqkrc/Pictures/ProjectUtumno_supplemental_0.png", 2048, 1536);
         Pixel[][] pixels = largeImage.getPixels();
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 14; j++) {
-                Pixel.subPixels(pixels, Position.getPosition(i * 34, j * 34), 34, 34);
+        for (int i = 0; i < 48; i++) {
+            for (int j = 0; j < 64; j++) {
+                Pixel.subPixels(pixels, Position.getPosition(i * 32, j * 32), 32, 32);
                 GraphicItemImageGenerator.toImage(
-                        new PGraphicItem(Pixel.subPixels(pixels, Position.getPosition(i * 34, j * 34), 34, 34)),
-                        String.format("/home/fiyqkrc/output/%d-%d.png", i, j));
+                        new PGraphicItem(Pixel.subPixels(pixels, Position.getPosition(i * 32, j * 32), 32, 32)),
+                        String.format("/home/fiyqkrc/Pictures/output/%d-%d.png", i, j));
             }
         }
     }
