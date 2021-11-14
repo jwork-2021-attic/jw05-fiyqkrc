@@ -1,4 +1,4 @@
-package game;
+package game.screen;
 
 import asciiPanel.AsciiFont;
 import com.pFrame.PFrame;
@@ -15,7 +15,6 @@ import game.world.World;
 import log.Log;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class UI {
     public static int START_PAGE=0;
@@ -29,6 +28,10 @@ public class UI {
     PLayout startPage;
     PButton startGameButton;
     PButton settingButton;
+
+    PLabel coinValueLabel;
+    PButton MapButton;
+    MessageLabel messageLabel;
 
 
     PLayout gamePage;
@@ -55,11 +58,17 @@ public class UI {
 
         PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
         rightUpPanel.setColumnLayout("15,3x");
+        PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),4,4,true);
+
+        MapButton=new PButton(leftUpPanelLayout,null);
+        MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/icons/17-12.png").getFile()));
+
+        messageLabel=new MessageLabel(gamePage,Position.getPosition(1,2));
 
 
         PWidget coinImage =new PImage(rightUpPanel,Position.getPosition(1,1),UI.class.getClassLoader().getResource("image/coin.png").getFile());
-        PLabel coinDisplay=new PLabel(rightUpPanel,Position.getPosition(1,2));
-        coinDisplay.setText("x0",2,Color.WHITE);
+        coinValueLabel=new PLabel(rightUpPanel,Position.getPosition(1,2));
+        coinValueLabel.setText("x0",2,Color.WHITE);
 
 
         this.settingPage=new PLayout(null,null);
@@ -70,6 +79,7 @@ public class UI {
         try {
             startGameButton.setClickFunc(this,this.getClass().getMethod("startGameButtonBeClicked"));
             settingButton.setClickFunc(this,this.getClass().getMethod("settingButtonBeClicked"));
+            MapButton.setClickFunc(this,this.getClass().getMethod("MapButtonBeClicked"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -78,7 +88,7 @@ public class UI {
         ui.startRepaintThread();
     }
 
-    public void setWorld(PGraphicScene world){
+    public void setWorld(World world){
         PGraphicView view=new PGraphicView(null,null,world);
         this.gamePage.addBackground(view);
     }
@@ -97,6 +107,11 @@ public class UI {
         ui.createUI();
         World world=new World(200,200);
         ui.setWorld(world);
+        ui.sendMessage("message tested , ahsdjdjfirrkddfjgkgkgdkkkkdjfkfflgl");
+    }
+
+    public void setCoinValue(int n){
+        this.coinValueLabel.setText("x"+ n,2,Color.WHITE);
     }
 
 
@@ -106,6 +121,14 @@ public class UI {
 
     public void settingButtonBeClicked(){
         this.setPage(UI.SETTING_PAGE);
+    }
+
+    public void MapButtonBeClicked(){
+        Log.InfoLog(this,"this method:MapButtonBeClicked need finish");
+    }
+
+    public void sendMessage(String str){
+        this.messageLabel.sendMessage(str,3000);
     }
 }
 

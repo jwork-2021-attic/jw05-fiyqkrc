@@ -32,6 +32,7 @@ public class PLabel extends PWidget {
         if (color != null)
             this.color = color;
         this.fontScale = size;
+        content=Pixel.emptyPixels(widgetWidth,widgetHeight);
         this.updateDraw();
     }
 
