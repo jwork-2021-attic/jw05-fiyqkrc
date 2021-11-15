@@ -1,12 +1,12 @@
 package game.screen;
 
 import asciiPanel.AsciiFont;
-import com.pFrame.PFrame;
-import com.pFrame.PLayout;
+import com.pFrame.pwidget.PFrame;
+import com.pFrame.pwidget.PLayout;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
-import com.pFrame.pgraphic.PImage;
+import com.pFrame.pwidget.PImage;
 import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;

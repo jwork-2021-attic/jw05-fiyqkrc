@@ -1,11 +1,10 @@
-package com.pFrame.pgraphic;
+package com.pFrame.pwidget;
 
 import java.awt.*;
 import java.io.File;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pwidget.PWidget;
 
 import imageTransFormer.GraphicItemGenerator;
 

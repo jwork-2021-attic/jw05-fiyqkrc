@@ -3,7 +3,7 @@ package com.pFrame;
 import java.awt.Color;
 
 import com.pFrame.pgraphic.PGraphicItem;
-import com.pFrame.pgraphic.PImage;
+import com.pFrame.pwidget.PImage;
 import imageTransFormer.ObjectTransFormer;
 
 import java.awt.image.*;

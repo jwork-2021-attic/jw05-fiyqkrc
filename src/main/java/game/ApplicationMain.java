@@ -1,11 +1,9 @@
 package game;
 
 import asciiPanel.AsciiFont;
-import com.pFrame.PFrame;
+import com.pFrame.pwidget.PFrame;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicView;
-import com.pFrame.pgraphic.PImage;
-import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import game.role.creature.Operational;
 import game.world.World;

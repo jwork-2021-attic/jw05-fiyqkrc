@@ -1,7 +1,9 @@
-package com.pFrame;
+package com.pFrame.pwidget;
 
 import java.util.ArrayList;
 
+import com.pFrame.Pixel;
+import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;
 import log.Log;
 
