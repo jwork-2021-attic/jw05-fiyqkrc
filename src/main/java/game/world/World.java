@@ -2,11 +2,14 @@ package game.world;
 
 import java.io.File;
 
+import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.role.Thing;
+import game.role.creature.Operational;
+import log.Log;
 import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
@@ -100,5 +103,15 @@ public class World extends PGraphicScene {
         if(item instanceof Thing)
             ((Thing) item).whenBeAddedToScene();
         return super.addItem(item);
+    }
+    public void addOperational(Operational operational){
+        addItem(operational);
+        if(this.parentView!=null){
+            parentView.setItemController((ObjectUserInteractive) operational.getController());
+            parentView.setFocus(operational);
+        }
+        else{
+            Log.ErrorLog(this,"please put world on a view first");
+        }
     }
 }

@@ -41,6 +41,7 @@ public class PGraphicView extends PWidget implements PView {
     public PGraphicView(PWidget parent, Position p, PGraphicScene world) {
         super(parent, p);
         this.scene = world;
+        world.setParentView(this);
         this.viewPosition = Position.getPosition(0, 0);
         this.focus = null;
     }

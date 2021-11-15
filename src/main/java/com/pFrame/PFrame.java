@@ -199,11 +199,9 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     public void run() {
         while (true) {
             try {
-                long last=new Date().getTime();
                 this.repaint();
-                System.out.println(new Date().getTime()-last);
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
+                Thread.sleep(30);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

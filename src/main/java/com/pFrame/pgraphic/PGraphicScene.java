@@ -18,8 +18,14 @@ public class PGraphicScene {
     protected ArrayList<PGraphicItem>[][] blocks;
     protected int blockSize;
 
+    protected PGraphicView parentView;
+
     public ArrayList<PGraphicItem> getItems() {
         return Items;
+    }
+
+    public void setParentView(PGraphicView view){
+        this.parentView=view;
     }
 
     public PGraphicScene(int width, int height) {
