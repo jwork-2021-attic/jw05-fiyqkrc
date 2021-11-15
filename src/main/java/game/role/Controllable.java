@@ -2,7 +2,7 @@ package game.role;
 
 import game.controller.CreatureController;
 
-public interface Controlable {
+public interface Controllable {
     public void setController(CreatureController controller);
 
     public CreatureController getController();

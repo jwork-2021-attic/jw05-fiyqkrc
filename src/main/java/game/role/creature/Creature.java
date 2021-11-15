@@ -3,12 +3,10 @@ package game.role.creature;
 
 import com.pFrame.Position;
 import game.controller.CreatureController;
-import game.role.Controlable;
+import game.role.Controllable;
 import game.role.Thing;
 
-import java.io.File;
-
-public class Creature extends Thing implements Controlable {
+public class Creature extends Thing implements Controllable {
 
     protected CreatureController controller;
 

@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelEvent;
 import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Position;
 
-import game.role.Controlable;
+import game.role.Controllable;
 import game.role.Direction;
 
 public class KeyBoardThingController extends CreatureController implements ObjectUserInteractive {
@@ -16,12 +16,12 @@ public class KeyBoardThingController extends CreatureController implements Objec
         super();
     }
 
-    public void setThing(Controlable controlable) {
-        this.controlable = controlable;
+    public void setThing(Controllable controllable) {
+        this.controllable = controllable;
     }
 
     public void respondToUserInput(KeyEvent key) {
-        Controlable aim = this.controlable;
+        Controllable aim = this.controllable;
         switch (key.getKeyChar()) {
         case 'w':
             aim.move(Direction.Up);

@@ -1,15 +1,15 @@
 package game.controller;
 
-import game.role.Controlable;
+import game.role.Controllable;
 
 public class CreatureController{
-    protected Controlable controlable;
+    protected Controllable controllable;
 
     public CreatureController(){
 
     }
 
-    public void setThing(Controlable controlable){
-        this.controlable=controlable;
+    public void setThing(Controllable controllable){
+        this.controllable = controllable;
     }
 }
