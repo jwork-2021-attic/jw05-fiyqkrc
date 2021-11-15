@@ -1,6 +1,7 @@
 package game.world;
 
 import java.io.File;
+import java.util.Random;
 
 import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Position;
@@ -92,18 +93,51 @@ public class World extends PGraphicScene {
     }
 
     private void createWorld() {
+        Random random=new Random();
+        File[] WallPaths={
+                new File(this.getClass().getClassLoader().getResource("image/source/1-18.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/1-15.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/1-23.png").getFile())
+        };
+        File[] CorridorPaths={
+                new File(this.getClass().getClassLoader().getResource("image/source/1-45.png").getFile())
+        };
+        File[] RoomPath={
+                new File(this.getClass().getClassLoader().getResource("image/source/3-28.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-29.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-30.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-31.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-32.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-33.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-34.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-35.png").getFile()),
+                new File(this.getClass().getClassLoader().getResource("image/source/3-36.png").getFile())
+        };
+        File[] DoorPath={
+                new File(this.getClass().getClassLoader().getResource("image/source/0-39.png").getFile())
+        };
         for (int i = 0; i < tileHeight; i++) {
             for (int j = 0; j < tileWidth; j++) {
                 File srcpath=null;
                 switch (worldArray[i][j]) {
                     case 0 -> {
-                        srcpath=new File(this.getClass().getClassLoader().getResource("image/wall.png").getFile());
+                        srcpath=WallPaths[random.nextInt(WallPaths.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         tiles[i][j].setThing(thing);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
                     }
-                    case 1, 6, 5, 4, 3, 2 -> {
-                        srcpath=new File(this.getClass().getClassLoader().getResource("image/floor.png").getFile());
+                    case 1 -> {
+                        srcpath=CorridorPaths[random.nextInt(CorridorPaths.length)];
+                        Thing thing = new Thing(srcpath, tileSize, tileSize);
+                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                    }
+                    case 6, 5, 4 ->{
+                        srcpath=DoorPath[random.nextInt(DoorPath.length)];
+                        Thing thing = new Thing(srcpath, tileSize, tileSize);
+                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                    }
+                    case 2,3 -> {
+                        srcpath=RoomPath[random.nextInt(RoomPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
                     }

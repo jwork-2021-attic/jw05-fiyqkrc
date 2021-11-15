@@ -48,8 +48,6 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public void keyPressed(KeyEvent e) {
-        //respondToUserInput(e);
-
     }
 
     @Override
@@ -59,7 +57,6 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public void keyReleased(KeyEvent e) {
-        //System.out.println("hello");
     }
 
     @Override
