@@ -6,11 +6,7 @@ import java.io.File;
 
 public class Operational extends Creature{
 
-    public Operational(File file, int width, int height) {
-        super(file, width, height);
-        controller= new KeyBoardThingController();
-        controller.setThing(this);
-    }
+
 
     public Operational(String path, int width, int height){
         super(path, width, height);

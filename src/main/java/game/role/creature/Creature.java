@@ -14,11 +14,6 @@ public class Creature extends Thing implements Controlable {
 
     protected int speed = 5;
 
-    public Creature(File file, int width, int height) {
-        super(file, width, height);
-        controller=new CreatureController();
-    }
-
     public Creature(String path, int width, int height) {
         super(path, width, height);
         controller=new CreatureController();

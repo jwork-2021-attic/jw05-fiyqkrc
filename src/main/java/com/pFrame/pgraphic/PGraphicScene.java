@@ -143,26 +143,6 @@ public class PGraphicScene {
         return res;
     }
 
-    protected void updatePixels() {
-        if (this.backImage != null) {
-            // TODO
-        }
-        for (PGraphicItem item : this.Items) {
-            int w = item.getWidth();
-            int h = item.getHeight();
-            Pixel[][] pix = item.getPixels();
-            int x = item.getPosition().getX();
-            int y = item.getPosition().getY();
-            for (int i = 0; i < h; i++) {
-                for (int j = 0; j < w; j++) {
-                    if ((x + i > 0 && x + i < this.height) && (y + j > 0 && y + j < this.width)) {
-                        if (pix[i][j] != null)
-                            this.pixels[x + i][y + j] = pix[i][j];
-                    }
-                }
-            }
-        }
-    }
 
     public boolean removeItem(PGraphicItem item) {
         boolean res=this.Items.remove(item);
