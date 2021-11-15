@@ -3,32 +3,49 @@ package game.world;
 import java.io.File;
 
 import com.pFrame.ObjectUserInteractive;
-import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.role.Thing;
+import game.role.creature.Creature;
 import game.role.creature.Operational;
 import log.Log;
 import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
+    private Tile<Thing>[][] tiles;
+    private int tileWidth;
+    private int tileHeight;
     private int[][] worldArray;
     private int worldScale;
     private WorldGenerate worldGenerator;
-    private int tileWidth;
+    private int tileSize;
+
+    private Position startPosition;
 
 
     public World(int width, int height) {
         super(width, height);
         worldScale=2;
-        tileWidth=20;
+        tileSize =20;
+        tileWidth=width/tileSize;
+        tileHeight=height/tileSize;
+        tiles=new Tile[tileHeight][tileWidth];
+        for(int i=0;i<tileHeight;i++)
+            for(int j=0;j<tileWidth;j++)
+                tiles[i][j]=new Tile<Thing>();
+
         generateWorld();
         if(worldScale>=2){
             scaleWorld();
         }
         createWorld();
     }
+    public Position getStartPosition()
+    {
+        return this.startPosition;
+    }
+
     public int[][] scaleWorld(){
         if(worldArray!=null&&worldScale>=2) {
             int width = worldArray[0].length*worldScale;
@@ -49,24 +66,23 @@ public class World extends PGraphicScene {
         return worldScale;
     }
 
-    public int getTileWidth(){
-        return this.tileWidth;
+    public int getTileSize(){
+        return this.tileSize;
     }
 
-    public Position getStartPosition() {
-        return worldGenerator.getStart();
-    }
+
 
     private void generateWorld() {
         boolean success = false;
         int tryTimes = 0;
         while (tryTimes <= 3 && !success) {
             try {
-                worldGenerator = new WorldGenerate(this.width / (tileWidth * worldScale), this.height / (tileWidth * worldScale), 2000000,
+                worldGenerator = new WorldGenerate(this.width / (tileSize * worldScale), this.height / (tileSize * worldScale), 2000000,
                         20, 2,
                         20, 2
                 );
                 worldArray = worldGenerator.generate();
+                startPosition=Position.getPosition(worldGenerator.getStart().getX()*tileSize*worldScale,worldGenerator.getStart().getY()*tileSize*worldScale);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -76,15 +92,24 @@ public class World extends PGraphicScene {
     }
 
     private void createWorld() {
-        for (int i = 0; i < height / tileWidth; i++) {
-            for (int j = 0; j < width / tileWidth; j++) {
-                File srcpath = switch (worldArray[i][j]) {
-                    case 0 -> new File(this.getClass().getClassLoader().getResource("image/wall.png").getFile());
-                    case 1, 6, 5, 4, 3, 2 -> new File(this.getClass().getClassLoader().getResource("image/floor.png").getFile());
-                    default -> null;
+        for (int i = 0; i < tileHeight; i++) {
+            for (int j = 0; j < tileWidth; j++) {
+                File srcpath=null;
+                switch (worldArray[i][j]) {
+                    case 0 -> {
+                        srcpath=new File(this.getClass().getClassLoader().getResource("image/wall.png").getFile());
+                        Thing thing = new Thing(srcpath, tileSize, tileSize);
+                        tiles[i][j].setThing(thing);
+                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                    }
+                    case 1, 6, 5, 4, 3, 2 -> {
+                        srcpath=new File(this.getClass().getClassLoader().getResource("image/floor.png").getFile());
+                        Thing thing = new Thing(srcpath, tileSize, tileSize);
+                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                    }
+                    default -> {
+                    }
                 };
-                PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
-                addItem(tile, Position.getPosition(i  * tileWidth, j * tileWidth));
             }
         }
     }
@@ -92,8 +117,10 @@ public class World extends PGraphicScene {
 
     @Override
     public boolean addItem(PGraphicItem item) {
-        if (item instanceof Thing)
+        if (item instanceof Thing) {
             ((Thing) item).whenBeAddedToScene();
+            ((Thing) item).setWorld(this);
+        }
         return super.addItem(item);
     }
 
@@ -105,5 +132,12 @@ public class World extends PGraphicScene {
         } else {
             Log.ErrorLog(this, "please put world on a view first");
         }
+    }
+
+    public boolean isLocationReachable(Creature creature,Position position){
+        if(tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
+            return true;
+        else
+            return false;
     }
 }

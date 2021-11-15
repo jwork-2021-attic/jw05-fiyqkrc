@@ -37,7 +37,8 @@ public class Creature extends Thing implements Controllable {
     public void move(double direction) {
         double y = Math.sin(direction) * speed;
         double x = Math.cos(direction) * speed;
-        this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+        if(world==null||world.isLocationReachable(this,Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x)))
+            this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
     }
 
 }
