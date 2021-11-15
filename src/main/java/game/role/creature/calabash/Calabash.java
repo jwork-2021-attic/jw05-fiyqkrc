@@ -3,8 +3,6 @@ package game.role.creature.calabash;
 import com.pFrame.Pixel;
 import game.role.creature.Operational;
 
-import java.io.File;
-
 public class Calabash extends Operational {
 
 

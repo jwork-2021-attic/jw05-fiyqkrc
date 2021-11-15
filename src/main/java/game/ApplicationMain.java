@@ -16,7 +16,7 @@ public class ApplicationMain {
         PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(600, 400, AsciiFont.pFrame_2x2));
         PGraphicView view=new PGraphicView(null, Position.getPosition(1, 2), world);
         pHeadWidget.addBackground(view);
-        Operational calabash =new Operational(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/icons/0-0.png")).getFile(), 10, 10);
+        Operational calabash =new Operational(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/role/calabash0/")).getFile(), 20, 20);
         calabash.setPosition(world.getStartPosition());
         world.addOperational(calabash);
 

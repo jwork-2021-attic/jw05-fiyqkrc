@@ -1,5 +1,6 @@
 package game.role;
 
+import com.pFrame.Pixel;
 import com.pFrame.pgraphic.PGraphicItem;
 import game.world.Tile;
 import game.world.World;
@@ -26,6 +27,11 @@ public class Thing extends PGraphicItem{
     
     public Thing(String path,int width,int height){
         super(path, width, height);
+        beCoverAble=true;
+    }
+
+    public Thing(Pixel[][] pixels){
+        super(pixels);
         beCoverAble=true;
     }
 

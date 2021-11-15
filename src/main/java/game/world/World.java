@@ -20,7 +20,7 @@ public class World extends PGraphicScene {
     private int[][] worldArray;
     private int worldScale;
     private WorldGenerate worldGenerator;
-    private int tileSize;
+    public static int tileSize=20;
 
     private Position startPosition;
 
@@ -28,7 +28,6 @@ public class World extends PGraphicScene {
     public World(int width, int height) {
         super(width, height);
         worldScale=2;
-        tileSize =20;
         tileWidth=width/tileSize;
         tileHeight=height/tileSize;
         tiles=new Tile[tileHeight][tileWidth];
@@ -67,8 +66,8 @@ public class World extends PGraphicScene {
         return worldScale;
     }
 
-    public int getTileSize(){
-        return this.tileSize;
+    public static int getTileSize(){
+        return World.tileSize;
     }
 
 
