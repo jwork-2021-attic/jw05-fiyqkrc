@@ -127,7 +127,7 @@ public class World extends PGraphicScene {
     public void addOperational(Operational operational) {
         addItem(operational);
         if (this.parentView != null) {
-            parentView.setItemController((ObjectUserInteractive) operational.getController());
+            parentView.getKeyMouseListener((ObjectUserInteractive) operational.getController());
             parentView.setFocus(operational);
         } else {
             Log.ErrorLog(this, "please put world on a view first");
@@ -135,7 +135,7 @@ public class World extends PGraphicScene {
     }
 
     public boolean isLocationReachable(Creature creature,Position position){
-        if(tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
+        if(position.getX()>=0&&position.getX()<height&&position.getY()>=0&&position.getY()<width&&tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
             return true;
         else
             return false;
