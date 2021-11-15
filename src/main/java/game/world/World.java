@@ -57,7 +57,8 @@ public class World extends PGraphicScene {
                 for(int a=0;a<2;a++){
                     for(int b=0;b<2;b++){
                         PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
-                        Pixel.pixelsAdd(this.mazePixels, tile.getPixels(), Position.getPosition((2*i+a) * tileWidth, (2*j+b) * tileWidth));
+                        addItem(tile,Position.getPosition((2*i+a) * tileWidth, (2*j+b) * tileWidth));
+                        //Pixel.pixelsAdd(this.mazePixels, tile.getPixels(), Position.getPosition((2*i+a) * tileWidth, (2*j+b) * tileWidth));
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.pFrame.pgraphic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
@@ -8,9 +9,14 @@ import com.pFrame.Position;
 public class PGraphicScene {
     protected int width;
     protected int height;
+
     protected ArrayList<PGraphicItem> Items;
+
     protected PImage backImage;
     protected Pixel[][] pixels;
+
+    protected ArrayList<PGraphicItem>[][] blocks;
+    protected int blockSize;
 
     public ArrayList<PGraphicItem> getItems() {
         return Items;
@@ -22,14 +28,24 @@ public class PGraphicScene {
         pixels = new Pixel[height][width];
         this.backImage = null;
         this.Items = new ArrayList<>();
+        blockSize=100;
+        blocks=new ArrayList[height/blockSize+1][width/blockSize+1];
+
+        for(int i=0;i<height/blockSize+1;i++)
+            for(int j=0;j<width/blockSize+1;j++)
+                blocks[i][j]=new ArrayList<PGraphicItem>();
     }
 
     public ArrayList<PGraphicItem> getItemsAt(Position p) {
-        ArrayList<PGraphicItem> res = new ArrayList<>();
-        for (PGraphicItem item : this.Items)
-            if (item.includePosition(p))
-                res.add(item);
-        return res;
+        Block block=positionToBlock(p);
+        return new ArrayList<>(blocks[block.x][block.y]);
+    }
+
+    record Block(int x, int y) {
+    }
+
+    public Block positionToBlock(Position position){
+        return new Block(position.getX() / blockSize, position.getY() / blockSize);
     }
 
     public void setBackground(PImage image) {
@@ -37,32 +53,88 @@ public class PGraphicScene {
     }
 
     public PGraphicItem getTopItemAt(Position p) {
-        PGraphicItem res = null;
-        for (PGraphicItem item : this.Items) {
-            if (item.includePosition(p))
-                res = item;
+        Block block=positionToBlock(p);
+        ArrayList<PGraphicItem> list=blocks[block.x][block.y];
+        if(list.size()>0) {
+            return blocks[block.x][block.y].get(blocks[block.x][block.y].size() - 1);
         }
-        return res;
+        else
+            return null;
     }
 
     public Pixel[][] displayOutput(Position p, int width, int height) {
-        this.updatePixels();
-        Pixel[][] pix = new Pixel[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if ((p.getX() + i > 0 && p.getX() + i < this.height)
-                        && (p.getY() + j > 0 && p.getY() + j < this.width)) {
-                    pix[i][j] = this.pixels[p.getX() + i][p.getY() + j];
-                } else {
-                    pix[i][j] = null;
-                }
+
+        int starty=p.getY()/blockSize;
+        if(p.getY()<0)
+            starty--;
+        int endy=(p.getY()+width)/blockSize;
+        if(p.getY()+width<0)
+            endy--;
+        int startx=p.getX()/blockSize;
+        if(p.getX()<0)
+            startx--;
+        int endx=(p.getX()+height)/blockSize;
+        if(p.getX()+height<0)
+            endx--;
+
+        int w=(endy-starty+1)*blockSize;
+        int h=(endx-startx+1)*blockSize;
+
+        Pixel[][] pixels=Pixel.emptyPixels(w,h);
+        for(int i=starty;i<=endy;i++){
+            for(int j=startx;j<=endx;j++){
+                Pixel.pixelsAdd(pixels,calBlockPixels(new Block(j,i)),Position.getPosition((j-startx)*blockSize,(i-starty)*blockSize));
             }
         }
-        return pix;
+        return Pixel.subPixels(pixels,Position.getPosition(p.getX()-startx*blockSize,p.getY()-starty*blockSize),width,height);
+    }
+
+    public Pixel[][] calBlockPixels(Block block){
+        Pixel[][] pixels = Pixel.emptyPixels(blockSize, blockSize);
+        if(block.x>=0&&block.x<this.blocks.length&&block.y>=0&&block.y<this.blocks[0].length) {
+            for (PGraphicItem item : this.blocks[block.x][block.y]) {
+                Pixel.pixelsAdd(pixels, item.getPixels(), Position.getPosition(item.getPosition().getX()-block.x*blockSize, item.getPosition().getY()-block.y*blockSize));
+            }
+        }
+        return pixels;
     }
 
     public void repaintItem(PGraphicItem item){
+        ArrayList<Block> oldBlocks=calBlock(item.getOldPos(),item.getWidth(),item.getHeight());
+        ArrayList<Block> newBlocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
+        ArrayList<ArrayList<PGraphicItem>> toremove=new ArrayList<>();
+        ArrayList<ArrayList<PGraphicItem>> toadd=new ArrayList<>();
+        for(Block block:oldBlocks){
+            toremove.add(blocks[block.x][block.y]);
+        }
+        for(Block block:newBlocks){
+            if(toremove.contains(blocks[block.x][block.y])){
+                toremove.remove(blocks[block.x][block.y]);
+            }
+            else{
+                toadd.add(blocks[block.x][block.y]);
+            }
+        }
+        for(ArrayList<PGraphicItem> list:toremove)
+            list.remove(item);
+        for(ArrayList<PGraphicItem> list:toadd){
+            list.add(item);
+            Collections.sort(list);
+        }
+    }
 
+    public ArrayList<Block> calBlock(Position p,int width,int height){
+        ArrayList<Block> res=new ArrayList<>();
+        int starty=p.getY()/blockSize;
+        int endy=(p.getY()+width)/blockSize;
+        int startx=p.getX()/blockSize;
+        int endx=(p.getX()+height)/blockSize;
+        for(int i=Math.max(0,starty);i<=Math.min(endy,this.blocks.length-1);i++){
+            for(int j=Math.max(0,startx);j<=Math.min(endx,this.blocks[0].length-1);j++){
+                res.add(new Block(j,i));
+            }
+        }
+        return res;
     }
 
     protected void updatePixels() {
@@ -90,6 +162,10 @@ public class PGraphicScene {
         boolean res=this.Items.remove(item);
         if(res){
             item.removeParentScene();
+            ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
+            for(Block block:blocks){
+                this.blocks[block.x][block.y].remove(item);
+            }
         }
         return res;
     }
@@ -97,6 +173,11 @@ public class PGraphicScene {
     public boolean addItem(PGraphicItem item) {
         this.Items.add(item);
         item.setParentScene(this);
+        ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
+        for(Block block:blocks){
+                this.blocks[block.x][block.y].add(item);
+                Collections.sort(this.blocks[block.x][block.y]);
+        }
         return true;
     }
 
@@ -104,6 +185,11 @@ public class PGraphicScene {
         item.setPosition(p);
         this.Items.add(item);
         item.setParentScene(this);
+        ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
+        for(Block block:blocks){
+                this.blocks[block.x][block.y].add(item);
+                Collections.sort(this.blocks[block.x][block.y]);
+        }
         return true;
     }
 

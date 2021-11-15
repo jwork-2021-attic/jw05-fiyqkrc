@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class ApplicationMain {
     public static void main(String[] args){
-        World world=new World(8000, 8000);
+        World world=new World(10000, 20000);
         PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(600, 400, AsciiFont.pFrame_2x2));
         PGraphicView view=new PGraphicView(null, Position.getPosition(1, 2), world);
         pHeadWidget.addBackground(view);
