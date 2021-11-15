@@ -381,29 +381,9 @@ public class AsciiPanel extends JPanel {
                 oldChars[x][y] = chars[x][y];
             }
         }
-
-
-
         g.drawImage(offscreenBuffer, 0, 0, this);
-
-
-
     }
 
-    class DrawThread implements Runnable{
-        Color bg;
-        Color fg;
-        Graphics graphics;
-
-        DrawThread(){
-
-        }
-
-        @Override
-        public void run() {
-
-        }
-    }
 
     private void loadGlyphs() {
         try {

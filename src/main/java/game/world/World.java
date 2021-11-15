@@ -14,16 +14,43 @@ import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
     private int[][] worldArray;
+    private int worldScale;
     private WorldGenerate worldGenerator;
-    private int tileWidth = 32;
+    private int tileWidth;
 
-    Pixel[][] mazePixels;
 
     public World(int width, int height) {
         super(width, height);
-        mazePixels = new Pixel[height][width];
+        worldScale=2;
+        tileWidth=20;
         generateWorld();
+        if(worldScale>=2){
+            scaleWorld();
+        }
         createWorld();
+    }
+    public int[][] scaleWorld(){
+        if(worldArray!=null&&worldScale>=2) {
+            int width = worldArray[0].length*worldScale;
+            int height=worldArray.length*worldScale;
+            int[][] array=new int[height][width];
+            for(int i=0;i<height;i++){
+                for(int j=0;j<width;j++){
+                    array[i][j]=worldArray[i/worldScale][j/worldScale];
+                }
+            }
+            worldArray=array;
+            return worldArray;
+        }
+        return worldArray;
+    }
+
+    public int getWorldScale(){
+        return worldScale;
+    }
+
+    public int getTileWidth(){
+        return this.tileWidth;
     }
 
     public Position getStartPosition() {
@@ -35,7 +62,7 @@ public class World extends PGraphicScene {
         int tryTimes = 0;
         while (tryTimes <= 3 && !success) {
             try {
-                worldGenerator = new WorldGenerate(this.width / (tileWidth * 2), this.height / (tileWidth * 2), 2000000,
+                worldGenerator = new WorldGenerate(this.width / (tileWidth * worldScale), this.height / (tileWidth * worldScale), 2000000,
                         20, 2,
                         20, 2
                 );
@@ -49,20 +76,15 @@ public class World extends PGraphicScene {
     }
 
     private void createWorld() {
-        for (int i = 0; i < height / (tileWidth * 4); i++) {
-            for (int j = 0; j < width / (tileWidth * 4); j++) {
+        for (int i = 0; i < height / tileWidth; i++) {
+            for (int j = 0; j < width / tileWidth; j++) {
                 File srcpath = switch (worldArray[i][j]) {
                     case 0 -> new File(this.getClass().getClassLoader().getResource("image/wall.png").getFile());
                     case 1, 6, 5, 4, 3, 2 -> new File(this.getClass().getClassLoader().getResource("image/floor.png").getFile());
                     default -> null;
                 };
-                assert srcpath != null;
-                for (int a = 0; a < 2; a++) {
-                    for (int b = 0; b < 2; b++) {
-                        PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
-                        addItem(tile, Position.getPosition((2 * i + a) * tileWidth, (2 * j + b) * tileWidth));
-                    }
-                }
+                PGraphicItem tile = new PGraphicItem(srcpath, tileWidth, tileWidth);
+                addItem(tile, Position.getPosition(i  * tileWidth, j * tileWidth));
             }
         }
     }

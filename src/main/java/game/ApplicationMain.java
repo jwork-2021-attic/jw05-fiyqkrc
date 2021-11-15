@@ -22,10 +22,13 @@ public class ApplicationMain {
         calabash.setPosition(world.getStartPosition());
         world.addOperational(calabash);
 
+        /*
         PImage startButtonBack=new PImage(null,null,ApplicationMain.class.getClassLoader().getResource("image/startButton.png").getFile());
         pHeadWidget.getLayout().setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
         PButton startButton=new PButton(pHeadWidget,Position.getPosition(2,2));
         startButton.addBackground(startButtonBack);
+        */
+
 
 
 

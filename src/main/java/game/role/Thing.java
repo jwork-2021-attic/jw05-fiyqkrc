@@ -1,10 +1,9 @@
 package game.role;
 
-import java.io.File;
-
 import com.pFrame.pgraphic.PGraphicItem;
-import game.controller.CreatureController;
 import game.world.Tile;
+
+import java.io.File;
 
 public class Thing extends PGraphicItem{
     protected Tile<? extends Thing> tile;

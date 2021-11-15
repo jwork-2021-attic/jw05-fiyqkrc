@@ -12,9 +12,6 @@ public class PGraphicScene {
 
     protected ArrayList<PGraphicItem> Items;
 
-    protected PImage backImage;
-    protected Pixel[][] pixels;
-
     protected ArrayList<PGraphicItem>[][] blocks;
     protected int blockSize;
 
@@ -31,8 +28,6 @@ public class PGraphicScene {
     public PGraphicScene(int width, int height) {
         this.width = width;
         this.height = height;
-        pixels = new Pixel[height][width];
-        this.backImage = null;
         this.Items = new ArrayList<>();
         blockSize=100;
         blocks=new ArrayList[height/blockSize+1][width/blockSize+1];
@@ -52,10 +47,6 @@ public class PGraphicScene {
 
     public Block positionToBlock(Position position){
         return new Block(position.getX() / blockSize, position.getY() / blockSize);
-    }
-
-    public void setBackground(PImage image) {
-        this.backImage = image;
     }
 
     public PGraphicItem getTopItemAt(Position p) {
