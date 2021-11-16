@@ -165,17 +165,8 @@ public class World extends PGraphicScene {
 
     @Override
     public boolean addItem(PGraphicItem item, Position p) {
-        if (item instanceof Thing) {
-            ((Thing) item).whenBeAddedToScene();
-            ((Thing) item).setWorld(this);
-            if(isLocationReachable(p)){
-                if(!((Thing) item).isBeCoverAble())
-                    tiles[p.getX()/tileSize][p.getY()/tileSize].setThing((Thing)item);
-            }
-            else
-                return false;
-        }
-        return super.addItem(item, p);
+        item.setPosition(p);
+        return addItem(item);
     }
 
     public void addOperational(Operational operational) {
@@ -191,7 +182,8 @@ public class World extends PGraphicScene {
     public boolean isLocationReachable(Position position){
         if(position.getX()>=0&&position.getX()<height&&position.getY()>=0&&position.getY()<width&&tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
             return true;
-        else
+        else {
             return false;
+        }
     }
 }

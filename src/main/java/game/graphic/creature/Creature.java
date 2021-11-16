@@ -6,7 +6,9 @@ import com.pFrame.Position;
 import game.controller.CreatureController;
 import game.graphic.Controllable;
 import game.graphic.Thing;
+import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
+import game.graphic.effect.Swoon;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;
@@ -60,7 +62,8 @@ public class Creature extends Thing implements Controllable {
 
     @Override
     public void attack() {
-
+        Swoon swoon=new Swoon(this.getPosition());
+        world.addItem(swoon);
     }
 
     @Override
@@ -85,6 +88,8 @@ public class Creature extends Thing implements Controllable {
             height=Bodys[i].height();
         }
     }
+
+
 
 }
 

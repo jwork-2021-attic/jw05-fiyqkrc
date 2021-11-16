@@ -135,7 +135,7 @@ public class PGraphicScene {
     }
 
 
-    public boolean removeItem(PGraphicItem item) {
+    public synchronized boolean removeItem(PGraphicItem item) {
         boolean res=this.Items.remove(item);
         if(res){
             item.removeParentScene();
@@ -147,27 +147,20 @@ public class PGraphicScene {
         return res;
     }
 
-    public boolean addItem(PGraphicItem item) {
+    public synchronized boolean addItem(PGraphicItem item) {
         this.Items.add(item);
-        item.setParentScene(this);
         ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
         for(Block block:blocks){
                 this.blocks[block.x][block.y].add(item);
                 Collections.sort(this.blocks[block.x][block.y]);
         }
+        item.setParentScene(this);
         return true;
     }
 
     public boolean addItem(PGraphicItem item, Position p) {
         item.setPosition(p);
-        this.Items.add(item);
-        item.setParentScene(this);
-        ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
-        for(Block block:blocks){
-                this.blocks[block.x][block.y].add(item);
-                Collections.sort(this.blocks[block.x][block.y]);
-        }
-        return true;
+        return addItem(item);
     }
 
 

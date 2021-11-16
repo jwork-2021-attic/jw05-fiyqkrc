@@ -12,6 +12,11 @@ public class Thing extends PGraphicItem{
     protected boolean beCoverAble;
     protected World world;
 
+    public World getWorld()
+    {
+        return this.world;
+    }
+
     public void setWorld(World world){
         this.world=world;
     }

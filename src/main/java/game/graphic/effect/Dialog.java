@@ -4,7 +4,6 @@ import com.pFrame.PFont;
 import com.pFrame.PTimerTask;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pgraphic.PGraphicItem;
 import imageTransFormer.GraphicItemGenerator;
 
 public class Dialog extends Effect {

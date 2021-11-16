@@ -19,8 +19,10 @@ public class ApplicationMain {
         Operational calabash =new Operational(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/role/calabash0/")).getFile(), 20, 20);
         calabash.setPosition(world.getStartPosition());
         world.addOperational(calabash);
-        calabash.speak("Where is here?");
+
 
         pHeadWidget.startRepaintThread();
+
+        calabash.attack();
     }
 }
