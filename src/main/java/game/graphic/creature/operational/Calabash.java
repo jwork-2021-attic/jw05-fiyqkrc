@@ -1,6 +1,4 @@
-package game.graphic.creature.calabash;
-
-import game.graphic.creature.Operational;
+package game.graphic.creature.operational;
 
 public class Calabash extends Operational {
 

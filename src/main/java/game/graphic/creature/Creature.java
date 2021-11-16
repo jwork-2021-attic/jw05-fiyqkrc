@@ -3,6 +3,7 @@ package game.graphic.creature;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.graphic.Controllable;
 import game.graphic.Thing;
@@ -13,7 +14,7 @@ import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;
 
-public class Creature extends Thing implements Controllable {
+public abstract class Creature extends Thing implements Controllable {
     protected static HashMap<String,Body[]> SourceMap=new HashMap<>();
 
     protected Body[] Bodys;
@@ -27,8 +28,6 @@ public class Creature extends Thing implements Controllable {
         super((Pixel[][]) null);
 
         beCoverAble=false;
-
-        controller=new CreatureController();
 
         Bodys=new Body[8];
         if(!SourceMap.containsKey(path)) {
@@ -88,6 +87,9 @@ public class Creature extends Thing implements Controllable {
             height=Bodys[i].height();
         }
     }
+
+    abstract public void pause();
+    abstract public void Continue();
 
 
 

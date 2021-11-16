@@ -8,7 +8,7 @@ import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.graphic.Thing;
-import game.graphic.creature.Operational;
+import game.graphic.creature.operational.Operational;
 import log.Log;
 import worldGenerate.WorldGenerate;
 

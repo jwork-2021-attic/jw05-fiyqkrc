@@ -25,6 +25,10 @@ public class PGraphicScene {
         this.parentView=view;
     }
 
+    public PGraphicView getParentView(){
+        return parentView;
+    }
+
     public PGraphicScene(int width, int height) {
         this.width = width;
         this.height = height;

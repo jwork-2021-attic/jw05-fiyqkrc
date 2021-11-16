@@ -2,7 +2,7 @@ package game.controller;
 
 import game.graphic.Controllable;
 
-public class CreatureController{
+abstract public class CreatureController{
     protected Controllable controllable;
 
     public CreatureController(){

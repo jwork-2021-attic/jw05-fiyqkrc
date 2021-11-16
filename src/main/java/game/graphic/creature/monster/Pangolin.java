@@ -1,8 +1,8 @@
 package game.graphic.creature.monster;
 
-import game.graphic.creature.Creature;
+import game.controller.AlogrithmController;
 
-public class Pangolin extends Creature {
+public class Pangolin extends Monster {
     public Pangolin(String path, int width, int height) {
         super(path, width, height);
     }

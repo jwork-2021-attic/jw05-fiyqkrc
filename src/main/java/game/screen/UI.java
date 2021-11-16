@@ -11,7 +11,7 @@ import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;
 import com.pFrame.pwidget.PWidget;
-import game.graphic.creature.calabash.Calabash;
+import game.graphic.creature.operational.Calabash;
 import game.world.World;
 import log.Log;
 

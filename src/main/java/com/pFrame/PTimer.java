@@ -26,8 +26,8 @@ public class PTimer implements Runnable {
         if (this.tasker == null || this.time <= 0) {
             Log.ErrorLog(this, String.format("Invalid args: %s %d", tasker, this.time));
         } else {
-            if (repeat == true) {
-                while (true && this.stop == false) {
+            if (repeat) {
+                while (!this.stop) {
                     try {
                         Thread.sleep(time);
                         this.tasker.doTask();

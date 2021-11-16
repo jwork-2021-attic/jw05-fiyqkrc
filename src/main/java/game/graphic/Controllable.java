@@ -10,4 +10,6 @@ public interface Controllable {
     public void attack();
 
     public void move(double direction);
+
+    public void speak(String text);
 }
