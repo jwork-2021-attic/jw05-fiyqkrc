@@ -17,17 +17,17 @@ public class Shoot extends Thing implements Runnable {
     protected int speed;
     protected double direction;
 
-    public Shoot(Calabash calabash, double angle, int group) {
+    public Shoot(Calabash calabash, double angle) {
         super(null);
         this.calabash = calabash;
-        direction=calabash.direction;
+        direction=angle;
         beCoverAble=true;
         Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize, World.tileSize).getPixels();
         this.width = World.tileSize;
         this.height = World.tileSize;
         graphic=pixels;
         this.speed = 6;
-        this.group = group;
+        this.group = calabash.getGroup();
     }
 
     @Override

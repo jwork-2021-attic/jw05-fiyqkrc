@@ -5,6 +5,6 @@ import game.world.World;
 
 public class Pangolin extends Monster {
     public Pangolin() {
-        super("image/monster/Pangolin/", World.tileSize,World.tileSize);
+        super(Pangolin.class.getClassLoader().getResource("image/monster/Pangolin/").getPath(), World.tileSize,World.tileSize);
     }
 }

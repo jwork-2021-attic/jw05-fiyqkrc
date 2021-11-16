@@ -1,6 +1,7 @@
 package game.world;
 
 import java.io.File;
+import java.security.AlgorithmConstraints;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,8 +11,11 @@ import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.Attack;
 import game.Location;
+import game.controller.AlogrithmController;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
+import game.graphic.creature.monster.Monster;
+import game.graphic.creature.monster.Pangolin;
 import game.graphic.creature.operational.Operational;
 import log.Log;
 import worldGenerate.WorldGenerate;
@@ -142,6 +146,12 @@ public class World extends PGraphicScene {
                         srcpath=RoomPath[random.nextInt(RoomPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                        if(random.nextInt(10)>6){
+                            Monster monster=new Pangolin();
+                            monster.setPosition(Position.getPosition(i*tileSize,j*tileSize));
+                            addItem(monster);
+                            AlogrithmController alogrithmController=new AlogrithmController(monster);
+                        }
                     }
                     default -> {
                     }
@@ -250,6 +260,7 @@ public class World extends PGraphicScene {
                 Thing thing = tiles[location.x()][location.y()].getThing();
                 if (thing != null) {
                     if(thing instanceof Creature && ((Creature) thing).getGroup()!=attack.group){
+                        System.out.println("hello world");
                         ((Creature)thing).deHealth(attack.attackNumber);
                     }
                 }

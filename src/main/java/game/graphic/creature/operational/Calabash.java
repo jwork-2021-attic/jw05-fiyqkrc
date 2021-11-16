@@ -14,9 +14,9 @@ public class Calabash extends Operational {
 
     @Override
     public void attack() {
-        Shoot shoot=new Shoot(this, this.direction,group);
-        double y = Math.sin(direction) * width;
-        double x = Math.cos(direction) * height;
+        Shoot shoot=new Shoot(this, this.direction);
+        double y = Math.sin(direction) * width/2;
+        double x = Math.cos(direction) * height/2;
         Position startPosition=Position.getPosition(p.getX()-(int)(y),p.getY()+(int)(x));
         shoot.setPosition(startPosition);
         world.addItem(shoot);

@@ -12,6 +12,7 @@ import imageTransFormer.GraphicItemGenerator;
 import imageTransFormer.ObjectTransFormer;
 
 public class PGraphicItem implements Comparable<PGraphicItem> {
+
     protected static int idCount=0;
     protected int width;
     protected int height;

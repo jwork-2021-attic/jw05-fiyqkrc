@@ -100,7 +100,7 @@ public class PGraphicScene {
         return pixels;
     }
 
-    public void repaintItem(PGraphicItem item){
+    public synchronized void repaintItem(PGraphicItem item){
         ArrayList<Block> oldBlocks=calBlock(item.getOldPos(),item.getWidth(),item.getHeight());
         ArrayList<Block> newBlocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
         ArrayList<ArrayList<PGraphicItem>> toremove=new ArrayList<>();
@@ -166,6 +166,5 @@ public class PGraphicScene {
         item.setPosition(p);
         return addItem(item);
     }
-
 
 }

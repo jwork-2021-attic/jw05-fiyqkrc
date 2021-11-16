@@ -7,6 +7,7 @@ import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.graphic.Controllable;
 import game.graphic.Thing;
+import game.graphic.Tombstone;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
 import game.graphic.effect.Swoon;
@@ -72,6 +73,8 @@ public abstract class Creature extends Thing implements Controllable {
 
     public void deHealth(double i){
         health-=i;
+        BloodChange bloodChange=new BloodChange((int)-i,this.getPosition());
+        world.addItem(bloodChange);
     }
 
     @Override
@@ -83,7 +86,6 @@ public abstract class Creature extends Thing implements Controllable {
     @Override
     public void setController(CreatureController controller) {
         this.controller = controller;
-        controller.setThing(this);
     }
 
     @Override
@@ -133,6 +135,9 @@ public abstract class Creature extends Thing implements Controllable {
     public void dead() {
         System.out.println("I am dead");
         world.removeItem(this);
+        Tombstone tombstone=new Tombstone();
+        tombstone.setPosition(this.getPosition());
+        world.addItem(tombstone);
     }
 }
 

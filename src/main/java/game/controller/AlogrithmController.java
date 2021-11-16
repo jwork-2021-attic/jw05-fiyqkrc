@@ -1,8 +1,12 @@
 package game.controller;
 
+import game.graphic.creature.Creature;
+
 public class AlogrithmController extends CreatureController implements Runnable{
 
-    public AlogrithmController(){
+    public AlogrithmController(Creature creature){
+        setThing(creature);
+        creature.setController(this);
         Thread thread=new Thread(this);
         thread.start();
     }
