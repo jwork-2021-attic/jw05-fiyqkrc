@@ -1,4 +1,4 @@
-package game.role;
+package game.graphic;
 
 import game.controller.CreatureController;
 

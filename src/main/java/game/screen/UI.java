@@ -11,7 +11,7 @@ import com.pFrame.pwidget.PButton;
 import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;
 import com.pFrame.pwidget.PWidget;
-import game.role.creature.calabash.Calabash;
+import game.graphic.creature.calabash.Calabash;
 import game.world.World;
 import log.Log;
 
@@ -107,7 +107,7 @@ public class UI {
         World world=new World(4000,4000);
         ui.setWorld(world);
         ui.sendMessage("message test");
-        Calabash calabash=new Calabash(UI.class.getClassLoader().getResource("image/icons/0-0.png").getFile(),10,10);
+        Calabash calabash=new Calabash(UI.class.getClassLoader().getResource("image/role/calabash0").getFile(),10,10);
     }
 
     public void setCoinValue(int n){

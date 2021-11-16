@@ -1,4 +1,4 @@
-package game.role;
+package game.graphic;
 
 public class Direction {
     public static double Up = Math.PI / 2;

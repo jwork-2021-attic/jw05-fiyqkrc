@@ -1,6 +1,6 @@
-package game.role.creature.monster;
+package game.graphic.creature.monster;
 
-import game.role.creature.Creature;
+import game.graphic.creature.Creature;
 
 public class Pangolin extends Creature {
     public Pangolin(String path, int width, int height) {

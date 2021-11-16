@@ -1,4 +1,4 @@
-package game.role;
+package game.graphic;
 
 import com.pFrame.Pixel;
 import com.pFrame.pgraphic.PGraphicItem;

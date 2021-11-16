@@ -29,7 +29,7 @@ public class PTimer implements Runnable {
             if (repeat == true) {
                 while (true && this.stop == false) {
                     try {
-                        Thread.sleep(this.time);
+                        Thread.sleep(time);
                         this.tasker.doTask();
                     } catch (InterruptedException e) {
                         e.printStackTrace();

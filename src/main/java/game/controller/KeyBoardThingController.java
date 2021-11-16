@@ -7,8 +7,8 @@ import java.awt.event.MouseWheelEvent;
 import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Position;
 
-import game.role.Controllable;
-import game.role.Direction;
+import game.graphic.Controllable;
+import game.graphic.Direction;
 
 public class KeyBoardThingController extends CreatureController implements ObjectUserInteractive {
 

@@ -1,0 +1,12 @@
+{
+  "Calabash": {
+    "name": "Calabash",
+    "health": 100,
+    "path": "image"
+  },
+  "Pangolin": {
+    "name": "Pangolin",
+    "health": 100,
+    "path": "pangolin"
+  }
+}

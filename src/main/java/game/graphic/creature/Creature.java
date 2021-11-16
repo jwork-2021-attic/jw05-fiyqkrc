@@ -1,14 +1,14 @@
-package game.role.creature;
+package game.graphic.creature;
 
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.controller.CreatureController;
-import game.role.Controllable;
-import game.role.Thing;
+import game.graphic.Controllable;
+import game.graphic.Thing;
+import game.graphic.effect.Dialog;
 import imageTransFormer.GraphicItemGenerator;
 
-import java.io.File;
 import java.util.HashMap;
 
 public class Creature extends Thing implements Controllable {
@@ -40,6 +40,11 @@ public class Creature extends Thing implements Controllable {
             Bodys=SourceMap.get(path);
         }
         switchImage(1);
+    }
+
+    public void speak(String text){
+        Dialog dialog=new Dialog(text,this.getPosition());
+        this.world.addItem(dialog);
     }
 
     @Override

@@ -1,7 +1,6 @@
-package game.role.creature.calabash;
+package game.graphic.creature.calabash;
 
-import com.pFrame.Pixel;
-import game.role.creature.Operational;
+import game.graphic.creature.Operational;
 
 public class Calabash extends Operational {
 

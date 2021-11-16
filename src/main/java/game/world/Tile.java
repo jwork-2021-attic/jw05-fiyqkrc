@@ -1,6 +1,6 @@
 package game.world;
 
-import game.role.Thing;
+import game.graphic.Thing;
 
 public class Tile<T extends Thing> {
 

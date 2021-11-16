@@ -1,6 +1,6 @@
 package game.controller;
 
-import game.role.Controllable;
+import game.graphic.Controllable;
 
 public class CreatureController{
     protected Controllable controllable;

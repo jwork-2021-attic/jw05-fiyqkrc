@@ -1,8 +1,6 @@
-package game.role.creature;
+package game.graphic.creature;
 
 import game.controller.KeyBoardThingController;
-
-import java.io.File;
 
 public class Operational extends Creature{
 

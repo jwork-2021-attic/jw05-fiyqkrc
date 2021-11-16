@@ -7,9 +7,8 @@ import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
-import game.role.Thing;
-import game.role.creature.Creature;
-import game.role.creature.Operational;
+import game.graphic.Thing;
+import game.graphic.creature.Operational;
 import log.Log;
 import worldGenerate.WorldGenerate;
 
@@ -153,7 +152,8 @@ public class World extends PGraphicScene {
         if (item instanceof Thing) {
             ((Thing) item).whenBeAddedToScene();
             ((Thing) item).setWorld(this);
-            if(isLocationReachable(item.getPosition())){
+
+            if(((Thing) item).isBeCoverAble() || isLocationReachable(item.getPosition())){
                 if(!((Thing) item).isBeCoverAble())
                     tiles[item.getPosition().getX()/tileSize][item.getPosition().getY()/tileSize].setThing((Thing)item);
             }
