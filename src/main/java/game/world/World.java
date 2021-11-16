@@ -13,11 +13,11 @@ import log.Log;
 import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
-    private Tile<Thing>[][] tiles;
-    private int tileWidth;
-    private int tileHeight;
+    private final Tile<Thing>[][] tiles;
+    private final int tileWidth;
+    private final int tileHeight;
     private int[][] worldArray;
-    private int worldScale;
+    private final int worldScale;
     private WorldGenerate worldGenerator;
     public static int tileSize=20;
 
@@ -141,7 +141,7 @@ public class World extends PGraphicScene {
                     }
                     default -> {
                     }
-                };
+                }
             }
         }
     }
@@ -180,10 +180,6 @@ public class World extends PGraphicScene {
     }
 
     public boolean isLocationReachable(Position position){
-        if(position.getX()>=0&&position.getX()<height&&position.getY()>=0&&position.getY()<width&&tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
-            return true;
-        else {
-            return false;
-        }
+        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null;
     }
 }

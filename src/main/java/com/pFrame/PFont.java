@@ -7,7 +7,7 @@ import imageTransFormer.GraphicItemGenerator;
 public class PFont {
 
     public static Pixel[][] fontImagePixels;
-    private static Pixel[][][] fontsPixels = new Pixel[256][][];
+    private static final Pixel[][][] fontsPixels = new Pixel[256][][];
     public static int fontBaseSize = 8;
 
     static {

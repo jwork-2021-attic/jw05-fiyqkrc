@@ -18,20 +18,20 @@ import asciiPanel.AsciiFont;
 import mazeGenerator.MazeGenerator;
 
 public class WorldGenerate {
-    private int width;
-    private int height;
-    private int max_rooms_generate_trys;
-    private int room_max_height;
-    private int room_min_height;
-    private int room_max_width;
-    private int room_min_width;
+    private final int width;
+    private final int height;
+    private final int max_rooms_generate_trys;
+    private final int room_max_height;
+    private final int room_min_height;
+    private final int room_max_width;
+    private final int room_min_width;
     private MazeGenerator mazeGenerator;
     PGraphicScene scene;
     PGraphicItem item;
 
     private int[][] world;
-    private ArrayList<Room> roomsArray;
-    private ArrayList<Position> oddNodes;
+    private final ArrayList<Room> roomsArray;
+    private final ArrayList<Position> oddNodes;
     private Position start;
     private Room aim;
 

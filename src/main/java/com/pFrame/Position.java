@@ -1,8 +1,8 @@
 package com.pFrame;
 
 public class Position {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     private Position(int a, int b) {
         x = a;
@@ -24,7 +24,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return "{" + String.valueOf(x) + "," + String.valueOf(y) + "}";
+        return "{" + x + "," + y + "}";
     }
 
     @Override

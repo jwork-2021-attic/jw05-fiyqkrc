@@ -4,12 +4,12 @@ import com.pFrame.Position;
 
 public interface PView {
 
-    public void setViewPosition(Position p);
+    void setViewPosition(Position p);
 
-    public Position getViewPosition();
+    Position getViewPosition();
 
-    public PGraphicItem getFocus();
+    PGraphicItem getFocus();
 
-    public void setFocus(PGraphicItem thing);
+    void setFocus(PGraphicItem thing);
 
 }

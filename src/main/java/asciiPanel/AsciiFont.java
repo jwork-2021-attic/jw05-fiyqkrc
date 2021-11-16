@@ -23,19 +23,19 @@ public class AsciiFont {
     public static final AsciiFont QBICFEET_10x10 = new AsciiFont("qbicfeet_10x10.png", 10, 10);
     public static final AsciiFont TALRYTH_15_15 = new AsciiFont("talryth_square_15x15.png", 15, 15);
 
-    private String fontFilename;
+    private final String fontFilename;
 
     public String getFontFilename() {
         return fontFilename;
     }
 
-    private int width;
+    private final int width;
 
     public int getWidth() {
         return width;
     }
 
-    private int height;
+    private final int height;
 
     public int getHeight() {
         return height;

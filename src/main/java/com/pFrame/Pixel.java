@@ -10,7 +10,7 @@ import java.awt.image.*;
 
 public class Pixel {
     private Color color;
-    private char ch;
+    private final char ch;
 
     private Pixel(Color color, char ch) {
         this.ch = ch;

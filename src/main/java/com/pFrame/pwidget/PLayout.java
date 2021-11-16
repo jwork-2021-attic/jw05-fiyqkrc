@@ -132,8 +132,8 @@ public class PLayout extends PWidget {
     }
 
     public void updateWidgetsLayout() {
-        int r[];
-        int c[];
+        int[] r;
+        int[] c;
         if (this.getRowStyle() == "" || this.getRowStyle()==null) {
             int[] row = new int[this.getRowNum()];
             for (int i = 0; i < this.getRowNum(); i++) {

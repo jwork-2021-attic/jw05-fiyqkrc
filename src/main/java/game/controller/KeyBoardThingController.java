@@ -36,7 +36,7 @@ public class KeyBoardThingController extends CreatureController implements Objec
             aim.move(Direction.Down);
             break;
         default:
-            System.out.println("Undefined keycode:" + String.valueOf(key.getKeyChar()));
+            System.out.println("Undefined keycode:" + key.getKeyChar());
             break;
         }
     }

@@ -104,8 +104,8 @@ public class AsciiPanel extends JPanel {
 
     private BufferedImage offscreenBuffer;
     private Graphics offscreenGraphics;
-    private int widthInCharacters;
-    private int heightInCharacters;
+    private final int widthInCharacters;
+    private final int heightInCharacters;
     private int charWidth = 9;
     private int charHeight = 16;
     private String terminalFontFile = "cp437_9x16.png";
@@ -115,14 +115,14 @@ public class AsciiPanel extends JPanel {
     private int cursorY;
     private BufferedImage glyphSprite;
     private BufferedImage[] glyphs;
-    private char[][] chars;
-    private Color[][] backgroundColors;
-    private Color[][] foregroundColors;
+    private final char[][] chars;
+    private final Color[][] backgroundColors;
+    private final Color[][] foregroundColors;
     private char[][] oldChars;
-    private Color[][] oldBackgroundColors;
-    private Color[][] oldForegroundColors;
+    private final Color[][] oldBackgroundColors;
+    private final Color[][] oldForegroundColors;
     private AsciiFont asciiFont;
-    private boolean IsWin=System.getProperty("os.name").startsWith("Windows");
+    private final boolean IsWin=System.getProperty("os.name").startsWith("Windows");
 
 
     /**

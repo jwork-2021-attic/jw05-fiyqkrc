@@ -25,7 +25,7 @@ public abstract class Creature extends Thing implements Controllable {
     protected int speed = 5;
 
     public Creature(String path, int width, int height) {
-        super((Pixel[][]) null);
+        super(null);
 
         beCoverAble=false;
 

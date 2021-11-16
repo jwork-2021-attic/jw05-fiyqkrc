@@ -18,7 +18,7 @@ import asciiPanel.AsciiPanel;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
-    private AsciiPanel terminal;
+    private final AsciiPanel terminal;
     protected PWidget headWidget;
 
     protected ObjectUserInteractive keyListener;

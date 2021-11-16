@@ -1,11 +1,10 @@
 package game;
 
 import asciiPanel.AsciiFont;
-import com.pFrame.pwidget.PFrame;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicView;
+import com.pFrame.pwidget.PFrame;
 import com.pFrame.pwidget.PHeadWidget;
-import game.controller.AlogrithmController;
 import game.graphic.creature.operational.Calabash;
 import game.graphic.creature.operational.Operational;
 import game.world.World;

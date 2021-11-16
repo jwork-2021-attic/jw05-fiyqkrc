@@ -3,13 +3,13 @@ package game.graphic;
 import game.controller.CreatureController;
 
 public interface Controllable {
-    public void setController(CreatureController controller);
+    void setController(CreatureController controller);
 
-    public CreatureController getController();
+    CreatureController getController();
 
-    public void attack();
+    void attack();
 
-    public void move(double direction);
+    void move(double direction);
 
-    public void speak(String text);
+    void speak(String text);
 }

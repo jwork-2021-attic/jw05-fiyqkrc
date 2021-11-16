@@ -172,11 +172,7 @@ public class PWidget implements ObjectUserInteractive {
     public static class WidgetRange {
         public static boolean inRange(Position area, int width, int height, Position src) {
             if (src.getX() >= area.getX() && src.getX() < area.getX() + height)
-                if (src.getY() >= area.getY() && src.getY() < area.getY() + width)
-                    return true;
-                else {
-                    return false;
-                }
+                return src.getY() >= area.getY() && src.getY() < area.getY() + width;
             else
                 return false;
         }
