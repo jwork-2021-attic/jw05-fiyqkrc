@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import com.pFrame.ObjectUserInteractive;
+import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.PWidget;

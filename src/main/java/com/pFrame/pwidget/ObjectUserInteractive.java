@@ -1,4 +1,6 @@
-package com.pFrame;
+package com.pFrame.pwidget;
+
+import com.pFrame.Position;
 
 import java.awt.event.*;
 

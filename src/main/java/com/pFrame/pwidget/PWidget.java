@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 

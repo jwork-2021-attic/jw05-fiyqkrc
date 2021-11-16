@@ -20,22 +20,24 @@ public class MessageLabel extends PButton {
     public void sendMessage(String string,int time){
         setText(string,1,Color.ORANGE);
         PTimer timer=new PTimer();
-        stopMessage stopFunc=new stopMessage(this);
+        StopTask stopFunc=new StopTask(this);
         timer.schedule(stopFunc,false,time);
         Thread thread=new Thread(timer);
         thread.start();
     }
+
+    class StopTask implements PTimerTask{
+        public MessageLabel messageLabel;
+
+        public StopTask(MessageLabel messageLabel){
+            this.messageLabel=messageLabel;
+        }
+
+        @Override
+        public void doTask() {
+            messageLabel.setText("",1,Color.ORANGE);
+        }
+    }
 }
 
-class stopMessage implements PTimerTask{
-    public MessageLabel messageLabel;
 
-    public stopMessage(MessageLabel messageLabel){
-        this.messageLabel=messageLabel;
-    }
-
-    @Override
-    public void doTask() {
-        messageLabel.setText("",1,Color.ORANGE);
-    }
-}

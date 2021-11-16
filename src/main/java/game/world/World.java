@@ -3,7 +3,7 @@ package game.world;
 import java.io.File;
 import java.util.Random;
 
-import com.pFrame.ObjectUserInteractive;
+import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;

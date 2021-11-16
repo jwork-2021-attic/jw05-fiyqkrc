@@ -1,6 +1,5 @@
 package com.pFrame.pwidget;
 
-import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Position;
 
 public class PHeadWidget extends PWidget {

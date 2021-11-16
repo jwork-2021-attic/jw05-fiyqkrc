@@ -2,16 +2,12 @@ package com.pFrame.pwidget;
 
 import java.awt.Color;
 import java.awt.event.*;
-import java.awt.image.DataBuffer;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.JFrame;
 
-import com.pFrame.ObjectUserInteractive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pwidget.PWidget;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;

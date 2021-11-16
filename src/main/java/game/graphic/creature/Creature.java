@@ -91,9 +91,8 @@ public abstract class Creature extends Thing implements Controllable {
     abstract public void pause();
     abstract public void Continue();
 
-
-
+    record Body(Pixel[][] pixels, int width, int height) {
+    }
 }
 
-record Body(Pixel[][] pixels, int width, int height) {
-}
+
