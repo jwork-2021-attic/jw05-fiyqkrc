@@ -368,6 +368,7 @@ public class AsciiPanel extends JPanel {
             ArrayList<Thread> threadsSet = new ArrayList<>();
             for (int x = 0; x < widthInCharacters; x++) {
                 Thread thread = new Thread(new Accelerator(x, this));
+                thread.setPriority(Thread.MAX_PRIORITY);
                 threadsSet.add(thread);
                 thread.start();
             }
