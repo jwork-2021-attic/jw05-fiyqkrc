@@ -122,6 +122,8 @@ public class AsciiPanel extends JPanel {
     private Color[][] oldBackgroundColors;
     private Color[][] oldForegroundColors;
     private AsciiFont asciiFont;
+    private boolean IsWin=System.getProperty("os.name").startsWith("Windows");
+
 
     /**
      * Gets the height, in pixels, of a character.
@@ -364,19 +366,40 @@ public class AsciiPanel extends JPanel {
     public void paint(Graphics g){
         if (g == null)
             throw new NullPointerException();
-        try {
-            ArrayList<Thread> threadsSet = new ArrayList<>();
-            for (int x = 0; x < widthInCharacters; x++) {
-                Thread thread = new Thread(new Accelerator(x, this));
-                thread.setPriority(Thread.MAX_PRIORITY);
-                threadsSet.add(thread);
-                thread.start();
+        if(!IsWin) {
+            try {
+                ArrayList<Thread> threadsSet = new ArrayList<>();
+                for (int x = 0; x < widthInCharacters; x++) {
+                    Thread thread = new Thread(new Accelerator(x, this));
+                    thread.setPriority(Thread.MAX_PRIORITY);
+                    threadsSet.add(thread);
+                    thread.start();
+                }
+                for (Thread thread : threadsSet)
+                    thread.join();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            for (Thread thread : threadsSet)
-                thread.join();
         }
-        catch(Exception e){
-            e.printStackTrace();
+        else{
+            for (int x = 0; x < widthInCharacters; x++) {
+                for (int y = 0; y < heightInCharacters; y++) {
+                    if (oldBackgroundColors[x][y] == backgroundColors[x][y]
+                            && oldForegroundColors[x][y] == foregroundColors[x][y] && oldChars[x][y] == chars[x][y])
+                        continue;
+                    for(int i=0;i<charWidth;i++){
+                        for(int j=0;j<charHeight;j++){
+                            if(glyphs[chars[x][y]].getRGB(i,j)==0xff000000)
+                                offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,0xff000000);
+                            else
+                                offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,foregroundColors[x][y].getRGB()+(foregroundColors[x][y].getAlpha()<<24));
+                        }
+                    }
+                    oldBackgroundColors[x][y] = backgroundColors[x][y];
+                    oldForegroundColors[x][y] = foregroundColors[x][y];
+                    oldChars[x][y] = chars[x][y];
+                }
+            }
         }
         g.drawImage(offscreenBuffer, 0, 0, this);
     }
