@@ -48,6 +48,10 @@ public class Thing extends PGraphicItem{
         this.tile=tile;
     }
 
+    public Tile<? extends Thing> getTile(){
+        return this.tile;
+    }
+
     public void whenBeAddedToScene(){
 
     }

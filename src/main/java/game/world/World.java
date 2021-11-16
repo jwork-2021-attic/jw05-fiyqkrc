@@ -1,12 +1,14 @@
 package game.world;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
+import game.Location;
 import game.graphic.Thing;
 import game.graphic.creature.operational.Operational;
 import log.Log;
@@ -32,7 +34,7 @@ public class World extends PGraphicScene {
         tiles=new Tile[tileHeight][tileWidth];
         for(int i=0;i<tileHeight;i++)
             for(int j=0;j<tileWidth;j++)
-                tiles[i][j]=new Tile<Thing>();
+                tiles[i][j]=new Tile<Thing>(new Location(i,j));
 
         generateWorld();
         if(worldScale>=2){
@@ -153,7 +155,7 @@ public class World extends PGraphicScene {
             ((Thing) item).whenBeAddedToScene();
             ((Thing) item).setWorld(this);
 
-            if(((Thing) item).isBeCoverAble() || isLocationReachable(item.getPosition())){
+            if(((Thing) item).isBeCoverAble() || isLocationReachable((Thing)item, item.getPosition())){
                 if(!((Thing) item).isBeCoverAble())
                     tiles[item.getPosition().getX()/tileSize][item.getPosition().getY()/tileSize].setThing((Thing)item);
             }
@@ -179,7 +181,31 @@ public class World extends PGraphicScene {
         }
     }
 
-    public boolean isLocationReachable(Position position){
-        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null;
+    public boolean isLocationReachable(Thing thing,Position position){
+        position=Position.getPosition(position.getX()+thing.getHeight()/2,position.getY()+thing.getWidth()/2);
+        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
+                || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing()==thing);
+    }
+
+    public void ThingMove(Thing thing,Position position){
+        if(isLocationReachable(thing,position)){
+            if (thing.getTile().getLocation() != getTileByLocation(position)) {
+                thing.getTile().setThing(null);
+                tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
+            }
+            thing.setPosition(position);
+        }
+        else{
+            Log.WarningLog(thing,"Move to position "+position+" failed");
+        }
+    }
+
+    protected Location calTile(Thing thing){
+        Position position=Position.getPosition(thing.getPosition().getX()+thing.getHeight()/2,thing.getPosition().getY()+thing.getWidth()/2);
+        return getTileByLocation(position);
+    }
+
+    protected Location getTileByLocation(Position position){
+        return new Location((position.getX()+tileSize/2)/tileSize,(position.getY()+tileSize/2)/tileSize);
     }
 }

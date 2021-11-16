@@ -1,12 +1,17 @@
 package game.world;
 
+import game.Location;
 import game.graphic.Thing;
+import jdk.jshell.execution.LoaderDelegate;
 
 public class Tile<T extends Thing> {
 
     private T thing;
-    private int xPos;
-    private int yPos;
+    private Location location;
+
+    public Tile(Location location){
+        this.location=location;
+    }
 
     public T getThing() {
         return thing;
@@ -14,6 +19,11 @@ public class Tile<T extends Thing> {
 
     public void setThing(T thing) {
         this.thing = thing;
-        this.thing.setTile(this);
+        if(thing!=null)
+            this.thing.setTile(this);
+    }
+
+    public Location getLocation(){
+        return location;
     }
 }

@@ -76,8 +76,11 @@ public abstract class Creature extends Thing implements Controllable {
         switchImage(nextImage);
         lastImageIndex=nextImage;
 
-        if(world==null||world.isLocationReachable(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x)))
+        if(world==null)
             this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+        else{
+            this.world.ThingMove(this,Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+        }
     }
 
     private void switchImage(int i){
