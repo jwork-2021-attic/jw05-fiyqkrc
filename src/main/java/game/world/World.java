@@ -122,7 +122,7 @@ public class World extends PGraphicScene {
                     case 0 -> {
                         srcpath=WallPaths[random.nextInt(WallPaths.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        tiles[i][j].setThing(thing);
+                        thing.setBeCoverAble(false);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
                     }
                     case 1 -> {
@@ -153,8 +153,29 @@ public class World extends PGraphicScene {
         if (item instanceof Thing) {
             ((Thing) item).whenBeAddedToScene();
             ((Thing) item).setWorld(this);
+            if(isLocationReachable(item.getPosition())){
+                if(!((Thing) item).isBeCoverAble())
+                    tiles[item.getPosition().getX()/tileSize][item.getPosition().getY()/tileSize].setThing((Thing)item);
+            }
+            else
+                return false;
         }
         return super.addItem(item);
+    }
+
+    @Override
+    public boolean addItem(PGraphicItem item, Position p) {
+        if (item instanceof Thing) {
+            ((Thing) item).whenBeAddedToScene();
+            ((Thing) item).setWorld(this);
+            if(isLocationReachable(p)){
+                if(!((Thing) item).isBeCoverAble())
+                    tiles[p.getX()/tileSize][p.getY()/tileSize].setThing((Thing)item);
+            }
+            else
+                return false;
+        }
+        return super.addItem(item, p);
     }
 
     public void addOperational(Operational operational) {
@@ -167,7 +188,7 @@ public class World extends PGraphicScene {
         }
     }
 
-    public boolean isLocationReachable(Creature creature,Position position){
+    public boolean isLocationReachable(Position position){
         if(position.getX()>=0&&position.getX()<height&&position.getY()>=0&&position.getY()<width&&tiles[position.getX()/tileSize][position.getY()/tileSize].getThing()==null)
             return true;
         else

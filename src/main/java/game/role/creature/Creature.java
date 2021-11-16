@@ -24,6 +24,8 @@ public class Creature extends Thing implements Controllable {
     public Creature(String path, int width, int height) {
         super((Pixel[][]) null);
 
+        beCoverAble=false;
+
         controller=new CreatureController();
 
         Bodys=new Body[8];
@@ -67,7 +69,7 @@ public class Creature extends Thing implements Controllable {
         switchImage(nextImage);
         lastImageIndex=nextImage;
 
-        if(world==null||world.isLocationReachable(this,Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x)))
+        if(world==null||world.isLocationReachable(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x)))
             this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
     }
 

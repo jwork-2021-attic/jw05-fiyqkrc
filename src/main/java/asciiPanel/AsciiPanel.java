@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -360,28 +361,53 @@ public class AsciiPanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paint(Graphics g){
         if (g == null)
             throw new NullPointerException();
-        for (int x = 0; x < widthInCharacters; x++) {
-            for (int y = 0; y < heightInCharacters; y++) {
-                if (oldBackgroundColors[x][y] == backgroundColors[x][y]
-                        && oldForegroundColors[x][y] == foregroundColors[x][y] && oldChars[x][y] == chars[x][y])
-                    continue;
-                for(int i=0;i<charWidth;i++){
-                    for(int j=0;j<charHeight;j++){
-                        if(glyphs[chars[x][y]].getRGB(i,j)==0xff000000)
-                            offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,0xff000000);
-                        else
-                            offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,foregroundColors[x][y].getRGB()+(foregroundColors[x][y].getAlpha()<<24));
-                    }
-                }
-                oldBackgroundColors[x][y] = backgroundColors[x][y];
-                oldForegroundColors[x][y] = foregroundColors[x][y];
-                oldChars[x][y] = chars[x][y];
+        try {
+            ArrayList<Thread> threadsSet = new ArrayList<>();
+            for (int x = 0; x < widthInCharacters; x++) {
+                Thread thread = new Thread(new Accelerator(x, this));
+                threadsSet.add(thread);
+                thread.start();
             }
+            for (Thread thread : threadsSet)
+                thread.join();
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
         g.drawImage(offscreenBuffer, 0, 0, this);
+    }
+
+    class Accelerator implements Runnable{
+        int x;
+        AsciiPanel panel;
+
+        public Accelerator(int x,AsciiPanel panel){
+            this.x=x;
+            this.panel=panel;
+        }
+
+        @Override
+        public void run() {
+            for (int y = 0; y < panel.heightInCharacters; y++) {
+                if (panel.oldBackgroundColors[x][y] == panel.backgroundColors[x][y]
+                        && panel.oldForegroundColors[x][y] == panel.foregroundColors[x][y] && panel.oldChars[x][y] == panel.chars[x][y])
+                    continue;
+                for(int i=0;i<panel.charWidth;i++){
+                    for(int j=0;j<panel.charHeight;j++){
+                        if(panel.glyphs[panel.chars[x][y]].getRGB(i,j)==0xff000000)
+                            panel.offscreenBuffer.setRGB(x*panel.charWidth+i,y*panel.charHeight+j,0xff000000);
+                        else
+                            panel.offscreenBuffer.setRGB(x*panel.charWidth+i,y*panel.charHeight+j,panel.foregroundColors[x][y].getRGB()+(panel.foregroundColors[x][y].getAlpha()<<24));
+                    }
+                }
+                panel.oldBackgroundColors[x][y] = panel.backgroundColors[x][y];
+                panel.oldForegroundColors[x][y] = panel.foregroundColors[x][y];
+                panel.oldChars[x][y] = panel.chars[x][y];
+            }
+        }
     }
 
 

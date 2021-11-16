@@ -10,8 +10,4 @@ public class Calabash extends Operational {
         super(path, width, height);
     }
 
-    @Override
-    public Pixel[][] getPixels() {
-        return super.getPixels();
-    }
 }

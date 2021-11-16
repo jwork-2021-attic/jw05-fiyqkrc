@@ -20,6 +20,10 @@ public class Thing extends PGraphicItem{
         return beCoverAble;
     }
 
+    public void setBeCoverAble(boolean coverAble){
+        beCoverAble=coverAble;
+    }
+
     public Thing(File file, int width, int height) {
         super(file, width, height);
         beCoverAble=true;
