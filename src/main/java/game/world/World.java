@@ -8,8 +8,10 @@ import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
+import game.Attack;
 import game.Location;
 import game.graphic.Thing;
+import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
 import log.Log;
 import worldGenerate.WorldGenerate;
@@ -148,6 +150,16 @@ public class World extends PGraphicScene {
         }
     }
 
+    @Override
+    public synchronized boolean removeItem(PGraphicItem item) {
+        if(item instanceof Thing){
+            if(!((Thing) item).isBeCoverAble()){
+                if(((Thing) item).getTile()!=null)
+                    ((Thing) item).getTile().setThing(null);
+            }
+        }
+        return super.removeItem(item);
+    }
 
     @Override
     public boolean addItem(PGraphicItem item) {
@@ -187,25 +199,61 @@ public class World extends PGraphicScene {
                 || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing()==thing);
     }
 
-    public void ThingMove(Thing thing,Position position){
-        if(isLocationReachable(thing,position)){
+    public boolean isLocationNoUnCoverableThing(Position position){
+        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && tiles[position.getX() / tileSize][position.getY()/ tileSize].getThing() == null;
+    }
+
+
+    public boolean ThingMove(Thing thing,Position position){
+        if(thing.isBeCoverAble()) {
+            if(!positionOutOfBound(position))
+            {
+                thing.setPosition(position);
+                return true;
+            }
+            else
+                return false;
+        }
+        else if(isLocationReachable(thing,position)){
             if (thing.getTile().getLocation() != getTileByLocation(position)) {
                 thing.getTile().setThing(null);
                 tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
             }
             thing.setPosition(position);
+            return true;
         }
         else{
             Log.WarningLog(thing,"Move to position "+position+" failed");
+            return false;
         }
     }
 
     protected Location calTile(Thing thing){
-        Position position=Position.getPosition(thing.getPosition().getX()+thing.getHeight()/2,thing.getPosition().getY()+thing.getWidth()/2);
-        return getTileByLocation(position);
+        return getTileByLocation(thing.getPosition());
     }
 
-    protected Location getTileByLocation(Position position){
+    public Location getTileByLocation(Position position){
         return new Location((position.getX()+tileSize/2)/tileSize,(position.getY()+tileSize/2)/tileSize);
+    }
+
+    public boolean locationOutOfBound(Location location){
+        return location.y()<0||location.x()<0||location.x()>=tileHeight||location.y()>=tileWidth;
+    }
+
+    public boolean positionOutOfBound(Position position){
+        return position.getY()<0|| position.getX()<0||position.getX()>=height||position.getY()>=width;
+    }
+
+    public void handleAttack(Attack attack){
+        for(Location location:attack.affectedTiles){
+            if(!locationOutOfBound(location)) {
+                Thing thing = tiles[location.x()][location.y()].getThing();
+                if (thing != null) {
+                    if(thing instanceof Creature && ((Creature) thing).getGroup()!=attack.group){
+                        ((Creature)thing).deHealth(attack.attackNumber);
+                    }
+                }
+            }
+        }
     }
 }

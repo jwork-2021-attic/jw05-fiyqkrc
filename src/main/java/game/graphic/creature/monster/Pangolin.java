@@ -1,9 +1,10 @@
 package game.graphic.creature.monster;
 
 import game.controller.AlogrithmController;
+import game.world.World;
 
 public class Pangolin extends Monster {
-    public Pangolin(String path, int width, int height) {
-        super(path, width, height);
+    public Pangolin() {
+        super("image/monster/Pangolin/", World.tileSize,World.tileSize);
     }
 }

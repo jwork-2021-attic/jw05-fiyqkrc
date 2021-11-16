@@ -107,7 +107,7 @@ public class UI {
         World world=new World(4000,4000);
         ui.setWorld(world);
         ui.sendMessage("message test");
-        Calabash calabash=new Calabash(UI.class.getClassLoader().getResource("image/role/calabash0").getFile(),10,10);
+        Calabash calabash=new Calabash();
     }
 
     public void setCoinValue(int n){

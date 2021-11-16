@@ -7,8 +7,10 @@ import game.graphic.creature.Creature;
 abstract public class Monster extends Creature{
     private CreatureController oldController;
 
+
     public Monster(String path, int width, int height) {
         super(path, width, height);
+        group=1;
     }
 
     @Override

@@ -12,6 +12,7 @@ abstract public class Operational extends Creature {
         super(path, width, height);
         controller= new KeyBoardThingController();
         controller.setThing(this);
+        group=2;
     }
 
     @Override

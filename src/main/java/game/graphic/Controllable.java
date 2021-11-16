@@ -12,4 +12,8 @@ public interface Controllable {
     void move(double direction);
 
     void speak(String text);
+
+    void dead();
+
+    boolean isDead();
 }

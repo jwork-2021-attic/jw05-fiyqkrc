@@ -10,7 +10,13 @@ public class AlogrithmController extends CreatureController implements Runnable{
     @Override
     public void run() {
         while(true){
-            controllable.speak("hello world");
+            if(controllable.isDead()){
+                controllable.dead();
+                break;
+            }
+            else {
+                controllable.speak("? ? ?");
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
