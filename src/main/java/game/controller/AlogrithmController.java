@@ -22,7 +22,7 @@ public class AlogrithmController extends CreatureController implements Runnable 
                     break;
                 } else if (!aim) {
                     Random random = new Random();
-                    if (random.nextDouble(1) > 0.75) {
+                    if (random.nextDouble(1) > 0.35) {
                         if (!controllable.move(direction)) {
                             direction = random.nextDouble(Math.PI * 2);
                         }
@@ -34,7 +34,7 @@ public class AlogrithmController extends CreatureController implements Runnable 
                     } else
                         aim = false;
                 }
-                Thread.sleep(200);
+                Thread.sleep(50);
             } catch (Exception e) {
                 e.printStackTrace();
                 aim = false;

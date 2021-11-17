@@ -83,7 +83,7 @@ public class World extends PGraphicScene implements Runnable {
         for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.25) {
+                    if (random.nextDouble(1) > 0.75) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {

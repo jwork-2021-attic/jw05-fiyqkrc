@@ -4,12 +4,13 @@ import game.Location;
 import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.graphic.creature.Creature;
+import game.graphic.effect.Dialog;
 
 import java.lang.reflect.InvocationTargetException;
 
 abstract public class Monster extends Creature {
     private CreatureController oldController;
-    private Creature aim;
+    protected Creature aim;
 
     public Monster(String path, int width, int height) {
         super(path, width, height);
@@ -45,6 +46,8 @@ abstract public class Monster extends Creature {
                 Location location = world.searchNearestEnemy(this, 7);
                 if (location != null && world.findThing(location) instanceof Creature) {
                     aim = (Creature) world.findThing(location);
+                    Dialog dialog=new Dialog("Ya!!!",this.getPosition());
+                    world.addItem(dialog);
                     return true;
                 } else
                     return false;

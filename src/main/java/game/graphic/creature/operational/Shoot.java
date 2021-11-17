@@ -1,10 +1,10 @@
-package game.graphic;
+package game.graphic.creature.operational;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.Attack;
 import game.Location;
-import game.graphic.creature.operational.Calabash;
+import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
@@ -20,12 +20,12 @@ public class Shoot extends Thing implements Runnable {
     public Shoot(Calabash calabash, double angle) {
         super(null);
         this.calabash = calabash;
-        direction=angle;
-        beCoverAble=true;
-        Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize/4, World.tileSize/4).getPixels();
+        direction = angle;
+        beCoverAble = true;
+        Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
         this.width = World.tileSize;
         this.height = World.tileSize;
-        graphic=pixels;
+        graphic = pixels;
         this.speed = 6;
         this.group = calabash.getGroup();
     }
@@ -37,21 +37,19 @@ public class Shoot extends Thing implements Runnable {
                 if (this.world != null) {
                     double y = Math.sin(direction) * this.speed;
                     double x = Math.cos(direction) * this.speed;
-                    Position nextPosition = Position.getPosition(p.getX() - (int) y, p.getY() + (int)x);
-                    Thing thing=world.findThing(world.getTileByLocation(nextPosition));
-                    if(thing!=null && thing!=this.calabash){
+                    Position nextPosition = Position.getPosition(p.getX() - (int) y, p.getY() + (int) x);
+                    Thing thing = world.findThing(world.getTileByLocation(nextPosition));
+                    if (thing != null && thing != this.calabash) {
                         ArrayList<Location> t = new ArrayList<>();
                         t.add(world.getTileByLocation(nextPosition));
                         world.handleAttack(new Attack(Attack.HIT, t, 10, group));
                         world.removeItem(this);
                         break;
-                    }
-                    else if(world.positionOutOfBound(nextPosition)){
+                    } else if (world.positionOutOfBound(nextPosition)) {
                         world.removeItem(this);
                         break;
-                    }
-                    else{
-                        this.world.ThingMove(this,nextPosition);
+                    } else {
+                        this.world.ThingMove(this, nextPosition);
                         Thread.sleep(30);
                     }
                 } else {

@@ -65,6 +65,10 @@ public abstract class Creature extends Thing implements Controllable {
         return health;
     }
 
+    public double getAttack(){
+        return attack;
+    }
+
     @Override
     public boolean isDead() {
         return health<=0;

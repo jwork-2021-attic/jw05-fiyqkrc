@@ -5,10 +5,10 @@ import com.pFrame.PTimerTask;
 import game.graphic.Thing;
 
 public class Effect extends Thing {
-    PTimerTask task;
-    boolean repeat;
-    int time;
-    PTimer timer;
+    public PTimerTask task;
+    public boolean repeat;
+    public int time;
+    public PTimer timer;
 
     public Effect() {
         super(null);

@@ -110,7 +110,7 @@ public class UI {
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);
-        World world=new World(20000,20000);
+        World world=new World(2000,2000);
         this.setWorld(world);
         this.sendMessage("Game start now!");
         Calabash calabash=new Calabash();
