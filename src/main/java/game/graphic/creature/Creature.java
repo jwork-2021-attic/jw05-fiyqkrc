@@ -138,7 +138,8 @@ public abstract class Creature extends Thing implements Controllable {
 
     @Override
     public void dead() {
-        System.out.println("I am dead");
+        //System.out.println("I am dead");
+        controller.stop=true;
         world.removeItem(this);
         Tombstone tombstone=new Tombstone();
         tombstone.setPosition(this.getPosition());

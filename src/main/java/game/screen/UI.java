@@ -40,7 +40,7 @@ public class UI {
     public PLayout settingPage;
 
     public void createUI(){
-        this.ui=new PHeadWidget(null,null,new PFrame(800,500, AsciiFont.pFrame_2x2));
+        this.ui=new PHeadWidget(null,null,new PFrame(600,400, AsciiFont.pFrame_2x2));
 
         this.startPage=new PLayout(null,null,3,3,false);
         this.startPage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
@@ -110,7 +110,7 @@ public class UI {
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);
-        World world=new World(4000,4000);
+        World world=new World(20000,20000);
         this.setWorld(world);
         this.sendMessage("Game start now!");
         Calabash calabash=new Calabash();

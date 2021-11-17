@@ -1,94 +1,144 @@
 package game.world;
 
-import java.io.File;
-import java.security.AlgorithmConstraints;
-import java.util.ArrayList;
-import java.util.Random;
-
-import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
+import com.pFrame.pwidget.ObjectUserInteractive;
 import game.Attack;
 import game.Location;
-import game.controller.AlogrithmController;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
-import game.graphic.creature.monster.Monster;
-import game.graphic.creature.monster.Pangolin;
+import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
 import game.graphic.interactive.ExitPlace;
 import log.Log;
-import worldGenerate.WorldGenerate.Room;
 import worldGenerate.WorldGenerate;
+import worldGenerate.WorldGenerate.Room;
 
-public class World extends PGraphicScene {
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class World extends PGraphicScene implements Runnable {
     private final Tile<Thing>[][] tiles;
     private final int tileWidth;
     private final int tileHeight;
     private int[][] worldArray;
     private final int worldScale;
     private WorldGenerate worldGenerator;
-    public static int tileSize=20;
+    public static int tileSize = 20;
     protected static ArrayList<Room> rooms;
 
+    protected ArrayList<Class> monster = new ArrayList<>();
+
     private Position startPosition;
+
+    private ArrayList<Creature> areas[][];
+    int areaWidth;
+    int areaHeight;
+    int areaSize = 200;
+
+    Operational operational;
 
 
     public World(int width, int height) {
         super(width, height);
-        worldScale=2;
-        tileWidth=width/tileSize;
-        tileHeight=height/tileSize;
-        tiles=new Tile[tileHeight][tileWidth];
-        for(int i=0;i<tileHeight;i++)
-            for(int j=0;j<tileWidth;j++)
-                tiles[i][j]=new Tile<Thing>(new Location(i,j));
+        worldScale = 2;
+        tileWidth = width / tileSize;
+        tileHeight = height / tileSize;
+        tiles = new Tile[tileHeight][tileWidth];
+        for (int i = 0; i < tileHeight; i++)
+            for (int j = 0; j < tileWidth; j++)
+                tiles[i][j] = new Tile<Thing>(new Location(i, j));
+
+        monster.add(Dragon.class);
+        monster.add(Master.class);
+        monster.add(Pangolin.class);
+        monster.add(SnowMonster.class);
+        monster.add(Spider.class);
+
+        areaHeight = this.height / areaSize + 1;
+        areaWidth = this.width / areaSize + 1;
+
+        areas = new ArrayList[areaHeight][areaWidth];
+        for (int i = 0; i < areaHeight; i++)
+            for (int j = 0; j < areaWidth; j++) {
+                areas[i][j] = new ArrayList<Creature>();
+            }
+
         generateWorld();
-        if(worldScale>=2){
+        if (worldScale >= 2) {
             scaleWorld();
         }
         createWorld();
+        createMonster();
+
+        Thread thread = new Thread(this);
+        thread.start();
     }
-    public Position getStartPosition()
-    {
+
+    protected void createMonster() {
+        Random random = new Random();
+        for (Room room : rooms) {
+            for (int i = 0; i < room.width; i++)
+                for (int j = 0; j < room.height; j++) {
+                    if (random.nextDouble(1) > 0.25) {
+                        int index = random.nextInt(monster.size());
+                        worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
+                        try {
+                            Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
+                            m.setPosition(Position.getPosition((room.pos.getX() + j) * tileSize, (room.pos.getY() + i) * tileSize));
+                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m);
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        }
+    }
+
+    public Position getStartPosition() {
         return this.startPosition;
     }
 
-    public int[][] scaleWorld(){
-        if(worldArray!=null&&worldScale>=2) {
-            int width = worldArray[0].length*worldScale;
-            int height=worldArray.length*worldScale;
-            int[][] array=new int[height][width];
-            for(int i=0;i<height;i++){
-                for(int j=0;j<width;j++){
-                    array[i][j]=worldArray[i/worldScale][j/worldScale];
+    public int[][] scaleWorld() {
+        if (worldArray != null && worldScale >= 2) {
+            int width = worldArray[0].length * worldScale;
+            int height = worldArray.length * worldScale;
+            int[][] array = new int[height][width];
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    array[i][j] = worldArray[i / worldScale][j / worldScale];
                 }
             }
-            worldArray=array;
-            return worldArray;
+            worldArray = array;
         }
 
 
-
-        ArrayList<Room> rooms=worldGenerator.getRoomsArray();
-        for(Room room:rooms){
-            room.pos=Position.getPosition(room.pos.getX()*worldScale,room.pos.getY()*worldScale);
-            room.height=room.height*worldScale;
-            room.width=room.width*worldScale;
+        rooms = worldGenerator.getRoomsArray();
+        for (Room room : rooms) {
+            room.pos = Position.getPosition(room.pos.getX() * worldScale, room.pos.getY() * worldScale);
+            room.height = room.height * worldScale;
+            room.width = room.width * worldScale;
         }
 
         return worldArray;
     }
 
-    public int getWorldScale(){
+    public int getWorldScale() {
         return worldScale;
     }
 
-    public static int getTileSize(){
+    public static int getTileSize() {
         return World.tileSize;
     }
-
 
 
     private void generateWorld() {
@@ -101,7 +151,7 @@ public class World extends PGraphicScene {
                         20, 2
                 );
                 worldArray = worldGenerator.generate();
-                startPosition=Position.getPosition(worldGenerator.getStart().getX()*tileSize*worldScale,worldGenerator.getStart().getY()*tileSize*worldScale);
+                startPosition = Position.getPosition(worldGenerator.getStart().getX() * tileSize * worldScale, worldGenerator.getStart().getY() * tileSize * worldScale);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -111,16 +161,16 @@ public class World extends PGraphicScene {
     }
 
     private void createWorld() {
-        Random random=new Random();
-        File[] WallPaths={
+        Random random = new Random();
+        File[] WallPaths = {
                 new File(this.getClass().getClassLoader().getResource("image/source/1-18.png").getFile()),
                 new File(this.getClass().getClassLoader().getResource("image/source/1-15.png").getFile()),
                 new File(this.getClass().getClassLoader().getResource("image/source/1-23.png").getFile())
         };
-        File[] CorridorPaths={
+        File[] CorridorPaths = {
                 new File(this.getClass().getClassLoader().getResource("image/source/1-45.png").getFile())
         };
-        File[] RoomPath={
+        File[] RoomPath = {
                 new File(this.getClass().getClassLoader().getResource("image/source/3-28.png").getFile()),
                 new File(this.getClass().getClassLoader().getResource("image/source/3-29.png").getFile()),
                 new File(this.getClass().getClassLoader().getResource("image/source/3-30.png").getFile()),
@@ -131,37 +181,37 @@ public class World extends PGraphicScene {
                 new File(this.getClass().getClassLoader().getResource("image/source/3-35.png").getFile()),
                 new File(this.getClass().getClassLoader().getResource("image/source/3-36.png").getFile())
         };
-        File[] DoorPath={
+        File[] DoorPath = {
                 new File(this.getClass().getClassLoader().getResource("image/source/0-39.png").getFile())
         };
         for (int i = 0; i < tileHeight; i++) {
             for (int j = 0; j < tileWidth; j++) {
-                File srcpath=null;
+                File srcpath = null;
                 switch (worldArray[i][j]) {
                     case 0 -> {
-                        srcpath=WallPaths[random.nextInt(WallPaths.length)];
+                        srcpath = WallPaths[random.nextInt(WallPaths.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         thing.setBeCoverAble(false);
-                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 1 -> {
-                        srcpath=CorridorPaths[random.nextInt(CorridorPaths.length)];
+                        srcpath = CorridorPaths[random.nextInt(CorridorPaths.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 5 -> {
-                        Thing thing=new ExitPlace();
-                        addItem(thing, Position.getPosition(i*tileSize,j*tileSize));
+                        Thing thing = new ExitPlace();
+                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 4 -> {
-                        srcpath=DoorPath[random.nextInt(DoorPath.length)];
+                        srcpath = DoorPath[random.nextInt(DoorPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 2, 3, 6 -> {
-                        srcpath=RoomPath[random.nextInt(RoomPath.length)];
+                        srcpath = RoomPath[random.nextInt(RoomPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
+                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     default -> {
                     }
@@ -172,8 +222,8 @@ public class World extends PGraphicScene {
 
     @Override
     public synchronized boolean removeItem(PGraphicItem item) {
-        if(item instanceof Thing){
-            if(!((Thing) item).isBeCoverAble()){
+        if (item instanceof Thing) {
+            if (!((Thing) item).isBeCoverAble()) {
                 synchronized (this) {
                     if (((Thing) item).getTile() != null)
                         ((Thing) item).getTile().setThing(null);
@@ -208,6 +258,7 @@ public class World extends PGraphicScene {
 
     public void addOperational(Operational operational) {
         addItem(operational);
+        this.operational = operational;
         if (this.parentView != null) {
             parentView.addKeyListener((ObjectUserInteractive) operational.getController());
             parentView.setFocus(operational);
@@ -216,24 +267,21 @@ public class World extends PGraphicScene {
         }
     }
 
-    public boolean isLocationReachable(Thing thing,Position position){
-        position=Position.getPosition(position.getX()+thing.getHeight()/2,position.getY()+thing.getWidth()/2);
+    public boolean isLocationReachable(Thing thing, Position position) {
+        position = Position.getPosition(position.getX() + thing.getHeight() / 2, position.getY() + thing.getWidth() / 2);
         return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
-                || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing()==thing);
+                || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
     }
 
 
-    public boolean ThingMove(Thing thing,Position position){
-        if(thing.isBeCoverAble()) {
-            if(!positionOutOfBound(position))
-            {
+    public boolean ThingMove(Thing thing, Position position) {
+        if (thing.isBeCoverAble()) {
+            if (!positionOutOfBound(position)) {
                 thing.setPosition(position);
                 return true;
-            }
-            else
+            } else
                 return false;
-        }
-        else if(isLocationReachable(thing,position)){
+        } else if (isLocationReachable(thing, position)) {
             synchronized (this) {
                 if (thing.getTile().getLocation() != getTileByLocation(position)) {
                     thing.getTile().setThing(null);
@@ -242,68 +290,134 @@ public class World extends PGraphicScene {
             }
             thing.setPosition(position);
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
-    protected Location calTile(Thing thing){
+    protected Location calTile(Thing thing) {
         return getTileByLocation(thing.getPosition());
     }
 
-    public Location getTileByLocation(Position position){
-        return new Location((position.getX()+tileSize/2)/tileSize,(position.getY()+tileSize/2)/tileSize);
+    public Location getTileByLocation(Position position) {
+        return new Location((position.getX() + tileSize / 2) / tileSize, (position.getY() + tileSize / 2) / tileSize);
     }
 
-    public Thing findThing(Location location){
-        if(!locationOutOfBound(location))
+    public Thing findThing(Location location) {
+        if (!locationOutOfBound(location))
             return tiles[location.x()][location.y()].getThing();
         else
             return null;
     }
 
-    public boolean locationOutOfBound(Location location){
-        return location.y()<0||location.x()<0||location.x()>=tileHeight||location.y()>=tileWidth;
+    public boolean locationOutOfBound(Location location) {
+        return location.y() < 0 || location.x() < 0 || location.x() >= tileHeight || location.y() >= tileWidth;
     }
 
-    public boolean positionOutOfBound(Position position){
-        return position.getY()<0|| position.getX()<0||position.getX()>=height||position.getY()>=width;
+    public boolean positionOutOfBound(Position position) {
+        return position.getY() < 0 || position.getX() < 0 || position.getX() >= height || position.getY() >= width;
     }
 
-    public void handleAttack(Attack attack){
-        for(Location location:attack.affectedTiles){
-            if(!locationOutOfBound(location)) {
+    public void handleAttack(Attack attack) {
+        for (Location location : attack.affectedTiles) {
+            if (!locationOutOfBound(location)) {
                 Thing thing = tiles[location.x()][location.y()].getThing();
                 if (thing != null) {
-                    if(thing instanceof Creature && ((Creature) thing).getGroup()!=attack.group){
-                        ((Creature)thing).deHealth(attack.attackNumber);
+                    if (thing instanceof Creature && ((Creature) thing).getGroup() != attack.group) {
+                        ((Creature) thing).deHealth(attack.attackNumber);
                     }
                 }
             }
         }
     }
 
-    public Location searchNearestEnemy(Creature creature,int bound){
-        int x,y;
-        if(creature.getTile()==null){
-           return null;
+    public Location searchNearestEnemy(Creature creature, int bound) {
+        int x, y;
+        if (creature.getTile() == null) {
+            return null;
+        } else {
+            x = creature.getTile().getLocation().x();
+            y = creature.getTile().getLocation().y();
         }
-        else
-        {
-            x=creature.getTile().getLocation().x();
-            y=creature.getTile().getLocation().y();
-        }
-        for(int i=1;i<bound;i++){
-            for(int a=x-i;a<=x+i;a++){
-                for(int b=y-i;b<=y+i;b++){
-                    if(!locationOutOfBound(new Location(a,b)) && ((a==x-i)||(a==x+i)||(b==y-i)||(b==y+i))&& tiles[a][b].getThing()!=null){
-                        if(tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup()!=creature.getGroup())
-                            return new Location(a,b);
+        for (int i = 1; i < bound; i++) {
+            for (int a = x - i; a <= x + i; a++) {
+                for (int b = y - i; b <= y + i; b++) {
+                    if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
+                        if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup())
+                            return new Location(a, b);
                     }
                 }
             }
         }
         return null;
+    }
+
+    @Override
+    public void run() {
+        Log.InfoLog(this, "thread for world's monster recycle start...");
+
+        ArrayList<Area> oldAreas = new ArrayList<>();
+        while (true) {
+            try {
+                if (this.operational != null) {
+                    Position position = operational.getPosition();
+                    int x = position.getX() / areaSize;
+                    int y = position.getY() / areaSize;
+                    ArrayList<Area> curAreas = new ArrayList<>();
+                    for (int i = x - 1; i <= x + 1; i++)
+                        for (int j = y - 1; j <= y + 1; j++) {
+                            if (i >= 0 && i < areaHeight && j >= 0 && j < areaWidth) {
+                                curAreas.add(new Area(i, j));
+                            }
+                        }
+                    for (Area area : curAreas) {
+                        for (Area area1 : oldAreas) {
+                            if (area.x == area1.x && area.y == area1.y) {
+                                oldAreas.remove(area1);
+                                break;
+                            }
+                        }
+                    }
+                    for (Area area : oldAreas) {
+                        for (int i = area.x * areaSize; i < (area.x + 1) * areaSize; i++) {
+                            for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
+                                Thing thing = findThing(new Location(i / tileSize, j / tileSize));
+                                if (thing != null && thing instanceof Creature && thing != operational) {
+                                    areas[area.x][area.y].add((Creature) thing);
+                                    ((Creature) thing).getController().stop=true;
+                                    removeItem(thing);
+                                }
+                            }
+                        }
+                    }
+                    for (Area area : curAreas) {
+                        ArrayList<Creature> added=new ArrayList<>();
+                        for (Creature creature : areas[area.x][area.y]) {
+                            synchronized (this) {
+                                if (!isLocationReachable(creature, creature.getPosition())) {
+                                    //System.out.println(creature.getPosition());
+                                } else {
+                                    addItem(creature);
+                                    added.add(creature);
+                                }
+                            }
+                        }
+                        areas[area.x][area.y].removeAll(added);
+                    }
+                    oldAreas = curAreas;
+                }
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.ErrorLog(this, "thread for world's monster recycle failed...");
+            }
+        }
+    }
+
+    record Area(int x, int y) {
+        public Area(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

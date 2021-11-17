@@ -5,10 +5,11 @@ import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.graphic.creature.Creature;
 
+import java.lang.reflect.InvocationTargetException;
+
 abstract public class Monster extends Creature {
     private CreatureController oldController;
     private Creature aim;
-
 
     public Monster(String path, int width, int height) {
         super(path, width, height);
@@ -19,12 +20,22 @@ abstract public class Monster extends Creature {
     @Override
     public void pause() {
         oldController = controller;
-        controller = null;
+        controller.stop=true;
     }
 
     @Override
     public void Continue() {
-        controller = oldController;
+        try {
+            controller =(CreatureController) oldController.getClass().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -50,5 +61,12 @@ abstract public class Monster extends Creature {
             aim = null;
             return false;
         }
+    }
+
+    @Override
+    public void whenBeAddedToScene() {
+        super.whenBeAddedToScene();
+        controller=new AlogrithmController();
+        controller.setThing(this);
     }
 }

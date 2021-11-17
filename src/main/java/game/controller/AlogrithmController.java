@@ -1,24 +1,21 @@
 package game.controller;
 
-import game.graphic.creature.Creature;
-
 import java.util.Random;
 
 public class AlogrithmController extends CreatureController implements Runnable {
     protected boolean aim;
     protected double direction;
 
-    public AlogrithmController(Creature creature) {
-        setThing(creature);
-        creature.setController(this);
+
+    public AlogrithmController() {
 
         Thread thread = new Thread(this);
         thread.start();
     }
 
     @Override
-    public void run() {
-        while (true) {
+    public void run(){
+        while (!stop) {
             try {
                 if (controllable.isDead()) {
                     controllable.dead();

@@ -1,14 +1,13 @@
 package game.controller;
 
+import com.pFrame.Position;
+import com.pFrame.pwidget.ObjectUserInteractive;
+import game.graphic.Controllable;
+import game.graphic.Direction;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-
-import com.pFrame.pwidget.ObjectUserInteractive;
-import com.pFrame.Position;
-
-import game.graphic.Controllable;
-import game.graphic.Direction;
 
 public class KeyBoardThingController extends CreatureController implements ObjectUserInteractive {
 
@@ -23,23 +22,13 @@ public class KeyBoardThingController extends CreatureController implements Objec
     public void respondToUserInput(KeyEvent key) {
         Controllable aim = this.controllable;
         switch (key.getKeyChar()) {
-            case 'w':
-                aim.move(Direction.Up);
-                break;
-            case 'a':
-                aim.move(Direction.Left);
-                break;
-            case 'd':
-                aim.move(Direction.Right);
-                break;
-            case 's':
-                aim.move(Direction.Down);
-                break;
-            case 'j':
-                controllable.attack();
-                break;
-            default:
-                break;
+            case 'w' -> aim.move(Direction.Up);
+            case 'a' -> aim.move(Direction.Left);
+            case 'd' -> aim.move(Direction.Right);
+            case 's' -> aim.move(Direction.Down);
+            case 'j' -> controllable.attack();
+            default -> {
+            }
         }
     }
 

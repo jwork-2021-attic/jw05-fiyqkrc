@@ -1,20 +1,19 @@
 package imageTransFormer;
 
+import com.pFrame.Pixel;
+import com.pFrame.pgraphic.PGraphicItem;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
-
-import javax.imageio.ImageIO;
-
-import com.pFrame.Pixel;
-import com.pFrame.pgraphic.PGraphicItem;
 
 public class Test {
     public static void main(String[] args) {
-        PGraphicItem item = GraphicItemGenerator.generateItem(Test.class.getClassLoader().getResource("image/role/calabash0/2.png").getFile(), 32, 32);
+        PGraphicItem item = GraphicItemGenerator.generateItem(Test.class.getClassLoader().getResource("image/role/oldMan/2.png").getFile(), 32, 32);
         try {
+            //BufferedImage image=Pixel.toBufferedImage(Pixel.valueOf(ObjectTransFormer.Rotate(Pixel.toBufferedImage(item.getPixels()),270)));
             BufferedImage image=Pixel.toBufferedImage(Rotate.rotate(item.getPixels()));
             ImageIO.write(image, "png",new FileOutputStream(new File("/home/fiyqkrc/6.png")));
         } catch (IOException e) {
