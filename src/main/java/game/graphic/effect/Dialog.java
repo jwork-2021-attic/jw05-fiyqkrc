@@ -10,6 +10,10 @@ public class Dialog extends Effect {
     String string ;
 
     public Dialog(String text, Position position) {
+        this(text,position,2000);
+    }
+
+    public Dialog(String text, Position position,int time) {
         super();
         this.string=text;
         Pixel[][] pixels=Pixel.valueOf(GraphicItemGenerator.generateItem(Dialog.class.getClassLoader().getResource("image/dialog.png").getFile(),8*string.length()+10,12));
@@ -19,7 +23,7 @@ public class Dialog extends Effect {
         this.width=8*string.length()+4;
         this.height=12;
         repeat=false;
-        time=2000;
+        this.time=time;
         task=new Task(this);
         this.p=Position.getPosition(position.getX()-4,position.getY()-8*string.length()-4);
     }

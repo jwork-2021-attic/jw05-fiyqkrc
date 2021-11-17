@@ -67,6 +67,7 @@ public class PWidget implements ObjectUserInteractive {
         }
         this.layout=layout;
         if(layout!=null) {
+            this.layout.setParent(this);
             this.layout.setPosition(Position.getPosition(0, 0));
             this.layout.changeWidgetSize(this.widgetWidth, this.widgetHeight);
         }

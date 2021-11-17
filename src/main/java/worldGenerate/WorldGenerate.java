@@ -98,6 +98,10 @@ public class WorldGenerate {
         this.aim = curRoom;
         world[this.start.getX()][start.getY()] = 5;
         world[aim.pos.getX()][aim.pos.getY()] = 6;
+
+        for(Position position:oddNodes){
+            world[position.getX()][position.getY()]=5;
+        }
     }
 
     private Room getUnLinkedRoom() {
@@ -412,10 +416,10 @@ public class WorldGenerate {
         return (p.getX() >= this.height) || (p.getX() < 0) || (p.getY() >= this.width) || (p.getY() < 0);
     }
 
-    class Room {
-        Position pos;
-        int width;
-        int height;
+    public class Room {
+        public Position pos;
+        public int width;
+        public int height;
         boolean linkToRoad = false;
         ArrayList<Room> linkedRooms = new ArrayList<>();
 
@@ -465,7 +469,7 @@ public class WorldGenerate {
     }
 
     public static void main(String[] args) {
-        WorldGenerate generate = new WorldGenerate(20, 20, 2000000, 20, 2, 20, 2);
+        WorldGenerate generate = new WorldGenerate(100, 100, 2000000, 20, 2, 20, 2);
         generate.generate();
         PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));

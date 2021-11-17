@@ -23,27 +23,28 @@ public class KeyBoardThingController extends CreatureController implements Objec
     public void respondToUserInput(KeyEvent key) {
         Controllable aim = this.controllable;
         switch (key.getKeyChar()) {
-        case 'w':
-            aim.move(Direction.Up);
-            break;
-        case 'a':
-            aim.move(Direction.Left);
-            break;
-        case 'd':
-            aim.move(Direction.Right);
-            break;
-        case 's':
-            aim.move(Direction.Down);
-            break;
-        default:
-            System.out.println("Undefined keycode:" + key.getKeyChar());
-            break;
+            case 'w':
+                aim.move(Direction.Up);
+                break;
+            case 'a':
+                aim.move(Direction.Left);
+                break;
+            case 'd':
+                aim.move(Direction.Right);
+                break;
+            case 's':
+                aim.move(Direction.Down);
+                break;
+            case 'j':
+                controllable.attack();
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
-        controllable.attack();
     }
 
     @Override
@@ -86,7 +87,7 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public Position getRealPosition() {
-        return Position.getPosition(0,0);
+        return Position.getPosition(0, 0);
     }
 
 }

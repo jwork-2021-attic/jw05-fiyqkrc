@@ -17,7 +17,9 @@ import game.graphic.creature.Creature;
 import game.graphic.creature.monster.Monster;
 import game.graphic.creature.monster.Pangolin;
 import game.graphic.creature.operational.Operational;
+import game.graphic.interactive.ExitPlace;
 import log.Log;
+import worldGenerate.WorldGenerate.Room;
 import worldGenerate.WorldGenerate;
 
 public class World extends PGraphicScene {
@@ -28,6 +30,7 @@ public class World extends PGraphicScene {
     private final int worldScale;
     private WorldGenerate worldGenerator;
     public static int tileSize=20;
+    protected static ArrayList<Room> rooms;
 
     private Position startPosition;
 
@@ -41,7 +44,6 @@ public class World extends PGraphicScene {
         for(int i=0;i<tileHeight;i++)
             for(int j=0;j<tileWidth;j++)
                 tiles[i][j]=new Tile<Thing>(new Location(i,j));
-
         generateWorld();
         if(worldScale>=2){
             scaleWorld();
@@ -66,6 +68,16 @@ public class World extends PGraphicScene {
             worldArray=array;
             return worldArray;
         }
+
+
+
+        ArrayList<Room> rooms=worldGenerator.getRoomsArray();
+        for(Room room:rooms){
+            room.pos=Position.getPosition(room.pos.getX()*worldScale,room.pos.getY()*worldScale);
+            room.height=room.height*worldScale;
+            room.width=room.width*worldScale;
+        }
+
         return worldArray;
     }
 
@@ -137,21 +149,19 @@ public class World extends PGraphicScene {
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
                     }
-                    case 6, 5, 4 ->{
+                    case 5 -> {
+                        Thing thing=new ExitPlace();
+                        addItem(thing, Position.getPosition(i*tileSize,j*tileSize));
+                    }
+                    case 4 -> {
                         srcpath=DoorPath[random.nextInt(DoorPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
                     }
-                    case 2,3 -> {
+                    case 2, 3, 6 -> {
                         srcpath=RoomPath[random.nextInt(RoomPath.length)];
                         Thing thing = new Thing(srcpath, tileSize, tileSize);
                         addItem(thing, Position.getPosition(i  * tileSize, j * tileSize));
-                        if(random.nextInt(10)>6){
-                            Monster monster=new Pangolin();
-                            monster.setPosition(Position.getPosition(i*tileSize,j*tileSize));
-                            addItem(monster);
-                            AlogrithmController alogrithmController=new AlogrithmController(monster);
-                        }
                     }
                     default -> {
                     }
@@ -199,7 +209,7 @@ public class World extends PGraphicScene {
     public void addOperational(Operational operational) {
         addItem(operational);
         if (this.parentView != null) {
-            parentView.getKeyMouseListener((ObjectUserInteractive) operational.getController());
+            parentView.addKeyListener((ObjectUserInteractive) operational.getController());
             parentView.setFocus(operational);
         } else {
             Log.ErrorLog(this, "please put world on a view first");

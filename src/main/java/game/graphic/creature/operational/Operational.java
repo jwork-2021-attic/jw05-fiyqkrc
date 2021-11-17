@@ -26,4 +26,5 @@ abstract public class Operational extends Creature {
         this.parentScene.getParentView().addMouseListener((KeyBoardThingController)controller);
         this.parentScene.getParentView().addKeyListener((KeyBoardThingController)controller);
     }
+
 }

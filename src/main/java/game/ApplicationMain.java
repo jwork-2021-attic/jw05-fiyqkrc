@@ -5,21 +5,15 @@ import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.PFrame;
 import com.pFrame.pwidget.PHeadWidget;
+import game.controller.KeyBoardThingController;
 import game.graphic.creature.operational.Calabash;
+import game.screen.UI;
 import game.world.World;
 
 public class ApplicationMain {
-    public static void main(String[] args){
-        World world=new World(800, 800);
-        PHeadWidget pHeadWidget=new PHeadWidget(null, null, new PFrame(600, 400, AsciiFont.pFrame_2x2));
-        PGraphicView view=new PGraphicView(null, Position.getPosition(1, 2), world);
-        pHeadWidget.addBackground(view);
-        Calabash calabash =new Calabash();
-        calabash.setPosition(world.getStartPosition());
-        world.addOperational(calabash);
+    public static  void main(String[] args){
+        UI ui=new UI();
+        ui.createUI();
 
-        pHeadWidget.startRepaintThread();
-
-        calabash.attack();
     }
 }

@@ -22,22 +22,22 @@ public class UI {
     public static int GAME_PAGE=1;
     public static int SETTING_PAGE=2;
 
-    PHeadWidget ui;
+    public PHeadWidget ui;
 
-    PGraphicScene world;
+    public PGraphicScene world;
 
-    PLayout startPage;
-    PButton startGameButton;
-    PButton settingButton;
+    public PLayout startPage;
+    public PButton startGameButton;
+    public PButton settingButton;
 
-    PLabel coinValueLabel;
-    PButton MapButton;
-    MessageLabel messageLabel;
+    public PLabel coinValueLabel;
+    public PButton MapButton;
+    public MessageLabel messageLabel;
 
 
-    PLayout gamePage;
+    public PLayout gamePage;
 
-    PLayout settingPage;
+    public PLayout settingPage;
 
     public void createUI(){
         this.ui=new PHeadWidget(null,null,new PFrame(800,500, AsciiFont.pFrame_2x2));
@@ -101,14 +101,7 @@ public class UI {
         }
     }
 
-    public static  void main(String[] args){
-        UI ui=new UI();
-        ui.createUI();
-        World world=new World(4000,4000);
-        ui.setWorld(world);
-        ui.sendMessage("message test");
-        Calabash calabash=new Calabash();
-    }
+
 
     public void setCoinValue(int n){
         this.coinValueLabel.setText("x"+ n,2,Color.WHITE);
@@ -117,6 +110,13 @@ public class UI {
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);
+        World world=new World(4000,4000);
+        this.setWorld(world);
+        this.sendMessage("Game start now!");
+        Calabash calabash=new Calabash();
+        calabash.setPosition(world.getStartPosition());
+        world.addOperational(calabash);
+        world.getParentView().setFocus(calabash);
     }
 
     public void settingButtonBeClicked(){
