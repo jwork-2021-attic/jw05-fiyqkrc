@@ -1,6 +1,5 @@
 package game.graphic.interactive;
 
-import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.ObjectUserInteractive;
 import game.controller.KeyBoardThingController;
@@ -67,7 +66,7 @@ public class ExitPlace extends Thing implements Runnable , ObjectUserInteractive
         }
         else{
             world.getParentView().freeKeyMouseListener();
-            world.getParentView().getKeyMouseListener(oldController);
+            world.getParentView().addKeyListener(oldController);
         }
     }
 

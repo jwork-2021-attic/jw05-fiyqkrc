@@ -102,6 +102,29 @@ public class World extends PGraphicScene implements Runnable {
                     }
                 }
         }
+        for(int i=0;i<worldArray.length;i++){
+            for(int j=0;j<worldArray[0].length;j++){
+                if(worldArray[i][j]==1){
+                    if(random.nextDouble(1)>0.9){
+                        int index = random.nextInt(monster.size());
+                        worldArray[i][j] = 100 + index;
+                        try {
+                            Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
+                            m.setPosition(Position.getPosition((i) * tileSize, (j) * tileSize));
+                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m);
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public Position getStartPosition() {

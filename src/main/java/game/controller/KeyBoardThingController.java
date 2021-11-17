@@ -34,6 +34,7 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
+        System.out.println("hello world");
     }
 
     @Override
