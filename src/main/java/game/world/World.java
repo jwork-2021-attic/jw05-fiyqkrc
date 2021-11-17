@@ -164,8 +164,10 @@ public class World extends PGraphicScene {
     public synchronized boolean removeItem(PGraphicItem item) {
         if(item instanceof Thing){
             if(!((Thing) item).isBeCoverAble()){
-                if(((Thing) item).getTile()!=null)
-                    ((Thing) item).getTile().setThing(null);
+                synchronized (this) {
+                    if (((Thing) item).getTile() != null)
+                        ((Thing) item).getTile().setThing(null);
+                }
             }
         }
         return super.removeItem(item);
@@ -177,12 +179,13 @@ public class World extends PGraphicScene {
             ((Thing) item).whenBeAddedToScene();
             ((Thing) item).setWorld(this);
 
-            if(((Thing) item).isBeCoverAble() || isLocationReachable((Thing)item, item.getPosition())){
-                if(!((Thing) item).isBeCoverAble())
-                    tiles[item.getPosition().getX()/tileSize][item.getPosition().getY()/tileSize].setThing((Thing)item);
+            synchronized (this) {
+                if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, item.getPosition())) {
+                    if (!((Thing) item).isBeCoverAble())
+                        tiles[item.getPosition().getX() / tileSize][item.getPosition().getY() / tileSize].setThing((Thing) item);
+                } else
+                    return false;
             }
-            else
-                return false;
         }
         return super.addItem(item);
     }
@@ -221,15 +224,16 @@ public class World extends PGraphicScene {
                 return false;
         }
         else if(isLocationReachable(thing,position)){
-            if (thing.getTile().getLocation() != getTileByLocation(position)) {
-                thing.getTile().setThing(null);
-                tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
+            synchronized (this) {
+                if (thing.getTile().getLocation() != getTileByLocation(position)) {
+                    thing.getTile().setThing(null);
+                    tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
+                }
             }
             thing.setPosition(position);
             return true;
         }
         else{
-            //Log.WarningLog(thing,"Move to position "+position+" failed");
             return false;
         }
     }

@@ -93,8 +93,10 @@ public class PGraphicScene {
     public Pixel[][] calBlockPixels(Block block){
         Pixel[][] pixels = Pixel.emptyPixels(blockSize, blockSize);
         if(block.x>=0&&block.x<this.blocks.length&&block.y>=0&&block.y<this.blocks[0].length) {
-            for (PGraphicItem item : this.blocks[block.x][block.y]) {
-                Pixel.pixelsAdd(pixels, item.getPixels(), Position.getPosition(item.getPosition().getX()-block.x*blockSize, item.getPosition().getY()-block.y*blockSize));
+            synchronized (this) {
+                for (PGraphicItem item : this.blocks[block.x][block.y]) {
+                    Pixel.pixelsAdd(pixels, item.getPixels(), Position.getPosition(item.getPosition().getX() - block.x * blockSize, item.getPosition().getY() - block.y * blockSize));
+                }
             }
         }
         return pixels;
@@ -139,7 +141,7 @@ public class PGraphicScene {
     }
 
 
-    public synchronized boolean removeItem(PGraphicItem item) {
+    public  synchronized boolean removeItem(PGraphicItem item) {
         boolean res=this.Items.remove(item);
         if(res){
             item.removeParentScene();
@@ -151,12 +153,14 @@ public class PGraphicScene {
         return res;
     }
 
-    public synchronized boolean addItem(PGraphicItem item) {
+    public boolean addItem(PGraphicItem item) {
         this.Items.add(item);
         ArrayList<Block> blocks=calBlock(item.getPosition(),item.getWidth(),item.getHeight());
         for(Block block:blocks){
                 this.blocks[block.x][block.y].add(item);
-                Collections.sort(this.blocks[block.x][block.y]);
+                synchronized (this) {
+                    Collections.sort(this.blocks[block.x][block.y]);
+                }
         }
         item.setParentScene(this);
         return true;
