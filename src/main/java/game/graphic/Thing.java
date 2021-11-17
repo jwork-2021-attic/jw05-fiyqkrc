@@ -23,7 +23,7 @@ public class Thing extends PGraphicItem{
     }
 
     public Location getLocation(){
-        return new Location((p.getX()+height/2)/World.tileSize,(p.getY()+width/2)/World.tileSize);
+        return new Location((p.getX()+height/2)/height,(p.getY()+width/2)/width);
     }
 
     public boolean isBeCoverAble(){

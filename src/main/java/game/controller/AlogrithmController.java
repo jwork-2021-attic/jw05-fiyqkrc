@@ -2,6 +2,8 @@ package game.controller;
 
 import game.graphic.creature.Creature;
 
+import java.util.Random;
+
 public class AlogrithmController extends CreatureController implements Runnable{
 
     public AlogrithmController(Creature creature){
@@ -19,7 +21,9 @@ public class AlogrithmController extends CreatureController implements Runnable{
                 break;
             }
             else {
-                controllable.speak("? ? ?");
+                Random random=new Random();
+                double direction=random.nextDouble(2*Math.PI);
+                controllable.move(direction);
             }
             try {
                 Thread.sleep(1000);

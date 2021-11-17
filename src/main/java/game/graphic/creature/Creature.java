@@ -106,6 +106,10 @@ public abstract class Creature extends Thing implements Controllable {
         int nextImage = 1;
         int nextDirection = (int) Math.floor((direction + Math.PI / 4) * 2 / Math.PI);
         nextImage = ((lastImageIndex % 2) + 1) % 2 + nextDirection * 2;
+        if(nextImage<0)
+            nextImage=0;
+        else if(nextImage>=8)
+            nextImage=7;
         switchImage(nextImage);
         lastImageIndex = nextImage;
 

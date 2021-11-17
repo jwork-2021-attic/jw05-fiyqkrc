@@ -209,10 +209,6 @@ public class World extends PGraphicScene {
                 || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing()==thing);
     }
 
-    public boolean isLocationNoUnCoverableThing(Position position){
-        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && tiles[position.getX() / tileSize][position.getY()/ tileSize].getThing() == null;
-    }
-
 
     public boolean ThingMove(Thing thing,Position position){
         if(thing.isBeCoverAble()) {
@@ -233,7 +229,7 @@ public class World extends PGraphicScene {
             return true;
         }
         else{
-            Log.WarningLog(thing,"Move to position "+position+" failed");
+            //Log.WarningLog(thing,"Move to position "+position+" failed");
             return false;
         }
     }
@@ -244,6 +240,13 @@ public class World extends PGraphicScene {
 
     public Location getTileByLocation(Position position){
         return new Location((position.getX()+tileSize/2)/tileSize,(position.getY()+tileSize/2)/tileSize);
+    }
+
+    public Thing findThing(Location location){
+        if(!locationOutOfBound(location))
+            return tiles[location.x()][location.y()].getThing();
+        else
+            return null;
     }
 
     public boolean locationOutOfBound(Location location){
@@ -260,11 +263,33 @@ public class World extends PGraphicScene {
                 Thing thing = tiles[location.x()][location.y()].getThing();
                 if (thing != null) {
                     if(thing instanceof Creature && ((Creature) thing).getGroup()!=attack.group){
-                        System.out.println("hello world");
                         ((Creature)thing).deHealth(attack.attackNumber);
                     }
                 }
             }
         }
+    }
+
+    public Location searchNearestEnemy(Creature creature,int bound){
+        int x,y;
+        if(creature.getTile()==null){
+            return null;
+        }
+        else
+        {
+            x=creature.getTile().getLocation().x();
+            y=creature.getTile().getLocation().y();
+        }
+        for(int i=1;i<bound;i++){
+            for(int a=x-i;a<=x+i;a++){
+                for(int b=y-i;b<=y+i;b++){
+                    if(!locationOutOfBound(new Location(a,b)) && ((a==x-i)||(a==x+i)||(b==y-i)||(b==y+i))&& tiles[a][b].getThing()!=null){
+                        if(tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup()!=creature.getGroup())
+                            return new Location(a,b);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

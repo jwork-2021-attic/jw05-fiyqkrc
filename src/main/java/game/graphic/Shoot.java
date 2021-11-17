@@ -22,7 +22,7 @@ public class Shoot extends Thing implements Runnable {
         this.calabash = calabash;
         direction=angle;
         beCoverAble=true;
-        Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize/4, World.tileSize/4).getPixels();
         this.width = World.tileSize;
         this.height = World.tileSize;
         graphic=pixels;
@@ -38,10 +38,15 @@ public class Shoot extends Thing implements Runnable {
                     double y = Math.sin(direction) * this.speed;
                     double x = Math.cos(direction) * this.speed;
                     Position nextPosition = Position.getPosition(p.getX() - (int) y, p.getY() + (int)x);
-                    if(!world.isLocationNoUnCoverableThing(nextPosition)){
+                    Thing thing=world.findThing(world.getTileByLocation(nextPosition));
+                    if(thing!=null && thing!=this.calabash){
                         ArrayList<Location> t = new ArrayList<>();
                         t.add(world.getTileByLocation(nextPosition));
                         world.handleAttack(new Attack(Attack.HIT, t, 10, group));
+                        world.removeItem(this);
+                        break;
+                    }
+                    else if(world.positionOutOfBound(nextPosition)){
                         world.removeItem(this);
                         break;
                     }
