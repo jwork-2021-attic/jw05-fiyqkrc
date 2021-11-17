@@ -9,11 +9,13 @@ public interface Controllable {
 
     void attack();
 
-    void move(double direction);
+    boolean move(double direction);
 
     void speak(String text);
 
     void dead();
 
     boolean isDead();
+
+    boolean searchAim();
 }

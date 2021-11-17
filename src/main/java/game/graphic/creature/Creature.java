@@ -3,14 +3,13 @@ package game.graphic.creature;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import game.controller.AlogrithmController;
+import game.Location;
 import game.controller.CreatureController;
 import game.graphic.Controllable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
-import game.graphic.effect.Swoon;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;
@@ -98,7 +97,7 @@ public abstract class Creature extends Thing implements Controllable {
     }
 
     @Override
-    public void move(double direction) {
+    public boolean move(double direction) {
         this.direction = direction;
         double y = Math.sin(direction) * speed;
         double x = Math.cos(direction) * speed;
@@ -113,10 +112,12 @@ public abstract class Creature extends Thing implements Controllable {
         switchImage(nextImage);
         lastImageIndex = nextImage;
 
-        if (world == null)
+        if (world == null) {
             this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+            return true;
+        }
         else {
-            this.world.ThingMove(this, Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+            return this.world.ThingMove(this, Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
         }
     }
 
@@ -142,6 +143,12 @@ public abstract class Creature extends Thing implements Controllable {
         Tombstone tombstone=new Tombstone();
         tombstone.setPosition(this.getPosition());
         world.addItem(tombstone);
+    }
+
+    @Override
+    public boolean searchAim() {
+        Location location=world.searchNearestEnemy(this,7);
+        return location!=null;
     }
 }
 

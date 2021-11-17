@@ -273,7 +273,7 @@ public class World extends PGraphicScene {
     public Location searchNearestEnemy(Creature creature,int bound){
         int x,y;
         if(creature.getTile()==null){
-            return null;
+           return null;
         }
         else
         {
