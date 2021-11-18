@@ -18,8 +18,8 @@ public class Master extends Monster{
     public void attack() {
         super.attack();
         if(new Date().getTime()-lastAttack>this.codeTime){
-            int x=this.world.getTileByLocation(getPosition()).x();
-            int y=this.world.getTileByLocation(p).y();
+            int x=this.world.getTileByLocation(getCentralPosition()).x();
+            int y=this.world.getTileByLocation(getCentralPosition()).y();
             for(int i=x-2;i<=x+2;i++) {
                 for (int j = y - 2; j < y + 2; j++) {
                     if (!getWorld().locationOutOfBound(new Location(i, j))&&world.findThing(new Location(i,j))==null) {

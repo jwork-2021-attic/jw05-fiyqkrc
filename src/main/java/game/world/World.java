@@ -83,7 +83,7 @@ public class World extends PGraphicScene implements Runnable {
         for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.75) {
+                    if (random.nextDouble(1) > 0.95) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -102,10 +102,10 @@ public class World extends PGraphicScene implements Runnable {
                     }
                 }
         }
-        for(int i=0;i<worldArray.length;i++){
-            for(int j=0;j<worldArray[0].length;j++){
-                if(worldArray[i][j]==1){
-                    if(random.nextDouble(1)>0.9){
+        for (int i = 0; i < worldArray.length; i++) {
+            for (int j = 0; j < worldArray[0].length; j++) {
+                if (worldArray[i][j] == 1) {
+                    if (random.nextDouble(1) > 0.9) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {
@@ -263,9 +263,9 @@ public class World extends PGraphicScene implements Runnable {
             ((Thing) item).setWorld(this);
 
             synchronized (this) {
-                if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, item.getPosition())) {
+                if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
                     if (!((Thing) item).isBeCoverAble())
-                        tiles[item.getPosition().getX() / tileSize][item.getPosition().getY() / tileSize].setThing((Thing) item);
+                        tiles[((Thing) item).getCentralPosition().getX() / tileSize][((Thing) item).getCentralPosition().getY() / tileSize].setThing((Thing) item);
                 } else
                     return false;
             }
@@ -290,8 +290,11 @@ public class World extends PGraphicScene implements Runnable {
         }
     }
 
+    public Operational getOperational() {
+        return this.operational;
+    }
+
     public boolean isLocationReachable(Thing thing, Position position) {
-        position = Position.getPosition(position.getX() + thing.getHeight() / 2, position.getY() + thing.getWidth() / 2);
         return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
                 || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
     }
@@ -300,30 +303,29 @@ public class World extends PGraphicScene implements Runnable {
     public boolean ThingMove(Thing thing, Position position) {
         if (thing.isBeCoverAble()) {
             if (!positionOutOfBound(position)) {
-                thing.setPosition(position);
+                thing.setPosition(Position.getPosition(position.getX()-thing.getHeight()/2,position.getY()-thing.getWidth()/2));
                 return true;
             } else
                 return false;
-        } else if (isLocationReachable(thing, position)) {
+        } else {
             synchronized (this) {
-                if (thing.getTile().getLocation() != getTileByLocation(position)) {
+                if (isLocationReachable(thing, position) && thing.getTile().getLocation() != getTileByLocation(position)&&!locationOutOfBound(getTileByLocation(position))  ) {
                     thing.getTile().setThing(null);
                     tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
-                }
+                    thing.setPosition(Position.getPosition(position.getX()-thing.getHeight()/2,position.getY()-thing.getWidth()/2));
+                    return true;
+                } else
+                    return false;
             }
-            thing.setPosition(position);
-            return true;
-        } else {
-            return false;
         }
     }
 
     protected Location calTile(Thing thing) {
-        return getTileByLocation(thing.getPosition());
+        return getTileByLocation(thing.getCentralPosition());
     }
 
     public Location getTileByLocation(Position position) {
-        return new Location((position.getX() + tileSize / 2) / tileSize, (position.getY() + tileSize / 2) / tileSize);
+        return new Location(position.getX()  / tileSize, position.getY() / tileSize);
     }
 
     public Thing findThing(Location location) {
@@ -405,16 +407,16 @@ public class World extends PGraphicScene implements Runnable {
                         for (int i = area.x * areaSize; i < (area.x + 1) * areaSize; i++) {
                             for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
-                                if (thing != null && thing instanceof Creature && thing != operational) {
+                                if (thing instanceof Creature && thing != operational) {
                                     areas[area.x][area.y].add((Creature) thing);
-                                    ((Creature) thing).getController().stop=true;
+                                    ((Creature) thing).getController().stop = true;
                                     removeItem(thing);
                                 }
                             }
                         }
                     }
                     for (Area area : curAreas) {
-                        ArrayList<Creature> added=new ArrayList<>();
+                        ArrayList<Creature> added = new ArrayList<>();
                         for (Creature creature : areas[area.x][area.y]) {
                             synchronized (this) {
                                 if (!isLocationReachable(creature, creature.getPosition())) {

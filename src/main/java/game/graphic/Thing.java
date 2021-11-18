@@ -1,6 +1,7 @@
 package game.graphic;
 
 import com.pFrame.Pixel;
+import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import game.Location;
 import game.world.Tile;
@@ -22,8 +23,20 @@ public class Thing extends PGraphicItem{
         this.world=world;
     }
 
+    public Position getCentralPosition(){
+        if(this.width!=0&&this.height!=0){
+            return Position.getPosition(p.getX()+height/2,p.getY()+width/2);
+        }
+        else
+            return p;
+    }
+
     public Location getLocation(){
-        return new Location((p.getX()+height/2)/height,(p.getY()+width/2)/width);
+        if(this.getTile()!=null){
+            return this.tile.getLocation();
+        }
+        else
+            return new Location((p.getX()+height/2)/height,(p.getY()+width/2)/width);
     }
 
     public boolean isBeCoverAble(){

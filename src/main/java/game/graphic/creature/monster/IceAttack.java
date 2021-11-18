@@ -25,10 +25,8 @@ public class IceAttack extends Effect {
         this.graphic=image;
         time=1500;
         repeat=true;
-        task=new IceAttack.Task(creature,timer,position,this);
         this.p=position;
-
-
+        task=new IceAttack.Task(creature,timer,position,this);
     }
 
     class Task implements PTimerTask{

@@ -17,10 +17,10 @@ public class SnowMonster extends Monster{
     @Override
     public void attack() {
         if(new Date().getTime()-lastAttack>coldTime){
-            int x=this.world.getTileByLocation(getPosition()).x();
-            int y=this.world.getTileByLocation(p).y();
+            int x=this.world.getTileByLocation(getCentralPosition()).x();
+            int y=this.world.getTileByLocation(getCentralPosition()).y();
             for(int i=x-1;i<=x+1;i++) {
-                for (int j = y - 1; j < y + 1; j++) {
+                for (int j = y - 1; j <= y + 1; j++) {
                     if (!getWorld().locationOutOfBound(new Location(i, j))) {
                         IceAttack iceAttack = new IceAttack(this, Position.getPosition(i * World.tileSize, j * World.tileSize));
                         world.addItem(iceAttack);

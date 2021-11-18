@@ -8,6 +8,7 @@ abstract public class Operational extends Creature {
     public Operational(String path, int width, int height){
         super(path, width, height);
         group=2;
+        speed=speed*2;
     }
 
     @Override
@@ -28,4 +29,5 @@ abstract public class Operational extends Creature {
         controller= new KeyBoardThingController();
         controller.setThing(this);
     }
+
 }

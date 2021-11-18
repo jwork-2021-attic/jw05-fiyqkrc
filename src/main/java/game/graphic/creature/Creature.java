@@ -25,13 +25,18 @@ public abstract class Creature extends Thing implements Controllable {
     public double direction;
 
     protected int group = 0;
-
-    protected int speed = 5;
-
+    protected int speed = 2;
     protected double health;
     protected double attack;
     protected double resistance;
     protected boolean beControlled;
+
+    protected double healthLimit;
+    protected double attackLimit;
+    protected double resistanceLimit;
+    protected int speedLimit;
+
+    protected long lastMove;
 
 
     public Creature(String path, int width, int height) {
@@ -43,6 +48,10 @@ public abstract class Creature extends Thing implements Controllable {
         attack = 10;
         resistance = 0.2;
         beControlled = false;
+        healthLimit=health;
+        attackLimit=attack;
+        resistanceLimit=resistance;
+        speedLimit=speed;
 
         Bodys = new Body[8];
         if (!SourceMap.containsKey(path)) {
@@ -103,6 +112,7 @@ public abstract class Creature extends Thing implements Controllable {
     @Override
     public boolean move(double direction) {
         this.direction = direction;
+
         double y = Math.sin(direction) * speed;
         double x = Math.cos(direction) * speed;
 
@@ -121,11 +131,11 @@ public abstract class Creature extends Thing implements Controllable {
             return true;
         }
         else {
-            return this.world.ThingMove(this, Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
+            return this.world.ThingMove(this, Position.getPosition(this.getCentralPosition().getX() - (int) y, this.getCentralPosition().getY() + (int) x));
         }
     }
 
-    private void switchImage(int i) {
+    protected void switchImage(int i) {
         if (Bodys[i] != null) {
             graphic = Bodys[i].pixels();
             width = Bodys[i].width();
@@ -142,7 +152,6 @@ public abstract class Creature extends Thing implements Controllable {
 
     @Override
     public void dead() {
-        //System.out.println("I am dead");
         controller.stop=true;
         world.removeItem(this);
         Tombstone tombstone=new Tombstone();
