@@ -118,7 +118,6 @@ public class AsciiPanel extends JPanel {
     private final Color[][] oldBackgroundColors;
     private final Color[][] oldForegroundColors;
     private AsciiFont asciiFont;
-    private final boolean IsWin=System.getProperty("os.name").startsWith("Windows");
     private final ExecutorService es=Executors.newFixedThreadPool(16);
 
     /**
@@ -362,34 +361,12 @@ public class AsciiPanel extends JPanel {
     public void paint(Graphics g){
         if (g == null)
             throw new NullPointerException();
-        if(!IsWin) {
-            try {
-                for (int x = 0; x < widthInCharacters; x++) {
-                    es.submit(new Accelerator(x,this));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        else{
+        try {
             for (int x = 0; x < widthInCharacters; x++) {
-                for (int y = 0; y < heightInCharacters; y++) {
-                    if (oldBackgroundColors[x][y] == backgroundColors[x][y]
-                            && oldForegroundColors[x][y] == foregroundColors[x][y] && oldChars[x][y] == chars[x][y])
-                        continue;
-                    for(int i=0;i<charWidth;i++){
-                        for(int j=0;j<charHeight;j++){
-                            if(glyphs[chars[x][y]].getRGB(i,j)==0xff000000)
-                                offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,0xff000000);
-                            else
-                                offscreenBuffer.setRGB(x*charWidth+i,y*charHeight+j,foregroundColors[x][y].getRGB()+(foregroundColors[x][y].getAlpha()<<24));
-                        }
-                    }
-                    oldBackgroundColors[x][y] = backgroundColors[x][y];
-                    oldForegroundColors[x][y] = foregroundColors[x][y];
-                    oldChars[x][y] = chars[x][y];
-                }
+                es.submit(new Accelerator(x,this));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         g.drawImage(offscreenBuffer, 0, 0, this);
     }
