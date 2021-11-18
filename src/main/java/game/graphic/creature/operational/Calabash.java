@@ -11,6 +11,8 @@ public class Calabash extends Operational {
 
     public Calabash() {
         super(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/role/calabash0/")).getFile(), World.tileSize, World.tileSize);
+        health=500;
+        healthLimit=500;
     }
 
     @Override

@@ -11,6 +11,7 @@ import game.graphic.creature.Creature;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
 import game.graphic.interactive.ExitPlace;
+import game.screen.UI;
 import log.Log;
 import worldGenerate.WorldGenerate;
 import worldGenerate.WorldGenerate.Room;
@@ -29,6 +30,7 @@ public class World extends PGraphicScene implements Runnable {
     private WorldGenerate worldGenerator;
     public static int tileSize = 20;
     protected static ArrayList<Room> rooms;
+    public  UI screen;
 
     protected ArrayList<Class> monster = new ArrayList<>();
 

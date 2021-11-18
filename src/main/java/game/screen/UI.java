@@ -34,6 +34,8 @@ public class UI {
     public PButton MapButton;
     public MessageLabel messageLabel;
 
+    public HealthBar healthBar;
+
 
     public PLayout gamePage;
 
@@ -52,16 +54,18 @@ public class UI {
         settingButton.setText("Setting",1, Color.BLUE);
 
         this.gamePage=new PLayout(null,null,3,3,false);
-        this.gamePage.setRCNumStyle(3,3,"1x,2x,1x","1x,2x,1x");
+        this.gamePage.setRCNumStyle(3,3,"1x,4x,1x","1x,4x,1x");
 
         PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
         rightUpPanel.setColumnLayout("15,3x");
-        PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),4,4,true);
+        PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),2,2,true);
 
         MapButton=new PButton(leftUpPanelLayout,null);
         MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/icons/17-12.png").getFile()));
 
         messageLabel=new MessageLabel(gamePage,Position.getPosition(1,2));
+
+        healthBar=new HealthBar(gamePage,Position.getPosition(3,2));
 
 
         PWidget coinImage =new PImage(rightUpPanel,Position.getPosition(1,1),UI.class.getClassLoader().getResource("image/coin.png").getFile());
@@ -113,6 +117,7 @@ public class UI {
         World world=new World(2000,2000);
         this.setWorld(world);
         this.sendMessage("Game start now!");
+        world.screen=this;
         Calabash calabash=new Calabash();
         calabash.setPosition(world.getStartPosition());
         world.addOperational(calabash);
@@ -129,6 +134,10 @@ public class UI {
 
     public void sendMessage(String str){
         this.messageLabel.sendMessage(str,3000);
+    }
+
+    public void displayHealth(double health,double healthLimit){
+        healthBar.display(health,healthLimit);
     }
 }
 

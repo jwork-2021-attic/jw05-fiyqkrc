@@ -30,4 +30,12 @@ abstract public class Operational extends Creature {
         controller.setThing(this);
     }
 
+    @Override
+    public void deHealth(double i) {
+        super.deHealth(i);
+        if(world.screen!=null)
+        {
+            world.screen.displayHealth(health,healthLimit);
+        }
+    }
 }
