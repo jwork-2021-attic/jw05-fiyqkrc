@@ -1,10 +1,11 @@
 package game.graphic.effect;
 
-import com.pFrame.*;
+import com.pFrame.PTimer;
+import com.pFrame.PTimerTask;
+import com.pFrame.Pixel;
+import com.pFrame.Position;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
-
-import java.util.Random;
 
 
 public class Swoon extends Effect{

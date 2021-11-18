@@ -37,5 +37,22 @@ abstract public class Operational extends Creature {
         {
             world.screen.displayHealth(health,healthLimit);
         }
+        if(isDead())
+            dead();
+    }
+
+    @Override
+    public void addCoin(int n) {
+        super.addCoin(n);
+        if(world.screen!=null){
+            world.screen.setCoinValue(coin);
+        }
+
+    }
+
+    @Override
+    public void dead() {
+        super.dead();
+        world.gameFinish();
     }
 }

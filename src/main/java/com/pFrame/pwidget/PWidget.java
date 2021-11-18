@@ -1,13 +1,14 @@
 package com.pFrame.pwidget;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class PWidget implements ObjectUserInteractive {
     protected int widgetHeight;
@@ -20,10 +21,13 @@ public class PWidget implements ObjectUserInteractive {
     protected ArrayList<PWidget> childWidgets;
 
     public void addBackground(PWidget background) {
+
         this.background = background;
-        this.background.setPosition(Position.getPosition(0, 0));
-        this.background.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
-        this.background.setParent(this);
+        if(background!=null) {
+            this.background.setPosition(Position.getPosition(0, 0));
+            this.background.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
+            this.background.setParent(this);
+        }
     }
 
     public PWidget getBackground() {

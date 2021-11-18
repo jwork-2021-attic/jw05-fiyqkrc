@@ -2,6 +2,7 @@ package game.graphic.bullet;
 
 import com.pFrame.Position;
 import game.Attack;
+import game.GameThread;
 import game.Location;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
@@ -17,6 +18,7 @@ public class Bullet extends Thing implements Runnable {
     protected double last_x;
     protected double last_y;
     protected long lastFlashPosition;
+    protected Thread thread;
 
     public Bullet(Creature creature, double angle) {
         super(null);
@@ -28,13 +30,13 @@ public class Bullet extends Thing implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (this.world != null) {
-                    long currentTime=System.currentTimeMillis();
-                    double y = Math.sin(direction) * this.speed *(double) (currentTime-lastFlashPosition)/1000 + last_y;
-                    double x = Math.cos(direction) * this.speed *(double) (currentTime-lastFlashPosition)/1000 + last_x;
-                    lastFlashPosition=currentTime;
+                    long currentTime = System.currentTimeMillis();
+                    double y = Math.sin(direction) * this.speed * (double) (currentTime - lastFlashPosition) / 1000 + last_y;
+                    double x = Math.cos(direction) * this.speed * (double) (currentTime - lastFlashPosition) / 1000 + last_x;
+                    lastFlashPosition = currentTime;
 
                     last_x = x - (int) x;
                     last_y = y - (int) y;
@@ -58,17 +60,21 @@ public class Bullet extends Thing implements Runnable {
                 } else {
                     Thread.sleep(100);
                 }
+            }catch (InterruptedException e){
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        Thread thread=new Thread(this);
+        thread=new Thread(this);
         this.lastFlashPosition=System.currentTimeMillis();
+        GameThread.threadSet.add(thread);
         thread.start();
     }
 }

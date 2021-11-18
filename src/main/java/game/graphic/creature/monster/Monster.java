@@ -21,7 +21,8 @@ abstract public class Monster extends Creature {
     @Override
     public void pause() {
         oldController = controller;
-        controller.stop=true;
+        if(controller instanceof AlogrithmController)
+            ((AlogrithmController) controller).stop();
     }
 
     @Override

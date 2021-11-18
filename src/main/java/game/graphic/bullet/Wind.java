@@ -6,7 +6,7 @@ import game.graphic.creature.monster.Dragon;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
-public class Wind extends Bullet implements Runnable{
+public class Wind extends Bullet{
     public Wind(Dragon dragon, double angle) {
         super(dragon,angle);
         Pixel[][] pixels = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/wind.png").getFile(), World.tileSize , World.tileSize ).getPixels();

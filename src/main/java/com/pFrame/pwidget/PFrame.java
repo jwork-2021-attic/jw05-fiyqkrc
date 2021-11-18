@@ -1,16 +1,14 @@
 package com.pFrame.pwidget;
 
-import java.awt.Color;
-import java.awt.event.*;
-import java.util.ArrayList;
-
-import javax.swing.JFrame;
-
+import asciiPanel.AsciiFont;
+import asciiPanel.AsciiPanel;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 
-import asciiPanel.AsciiFont;
-import asciiPanel.AsciiPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
@@ -79,6 +77,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void repaint() {
+        long last=System.currentTimeMillis();
         Pixel[][] pixels = this.headWidget.displayOutput();
         if (pixels != null) {
             int height = pixels.length;
@@ -93,6 +92,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
             }
         }
         super.repaint();
+
     }
 
     @Override

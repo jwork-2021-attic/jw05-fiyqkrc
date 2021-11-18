@@ -1,0 +1,9 @@
+Version 1.2.0
+	1.new thread executors support for AsciiPanel draw
+	2.add GameThread.threadset for threads manage 
+	3.game now can finish,exit and restart
+	4.fix the bullet sometimes can not hit enemy problem
+	5.creature create coin after die
+	...
+
+the game will be update continuous

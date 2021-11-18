@@ -4,7 +4,10 @@ package game.graphic.creature;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.Location;
+import game.controller.AlogrithmController;
 import game.controller.CreatureController;
+import game.controller.KeyBoardThingController;
+import game.graphic.Coin;
 import game.graphic.Controllable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
@@ -35,6 +38,7 @@ public abstract class Creature extends Thing implements Controllable {
     protected double attackLimit;
     protected double resistanceLimit;
     protected int speedLimit;
+    protected int coin;
 
     protected long lastMove;
 
@@ -52,6 +56,7 @@ public abstract class Creature extends Thing implements Controllable {
         attackLimit=attack;
         resistanceLimit=resistance;
         speedLimit=speed;
+        coin=1;
 
         Bodys = new Body[8];
         if (!SourceMap.containsKey(path)) {
@@ -76,6 +81,27 @@ public abstract class Creature extends Thing implements Controllable {
 
     public double getAttack(){
         return attack;
+    }
+
+    public double getHealthLimit(){
+        return healthLimit;
+    }
+
+    public void addCoin(int n){
+        this.coin+=n;
+    }
+
+    public int getCoin(){
+        return coin;
+    }
+
+    public int getSpeed()
+    {
+        return speed;
+    }
+
+    public int getSpeedLimit(){
+        return speedLimit;
     }
 
     @Override
@@ -152,11 +178,16 @@ public abstract class Creature extends Thing implements Controllable {
 
     @Override
     public void dead() {
-        controller.stop=true;
+        if(controller instanceof AlogrithmController)
+            ((AlogrithmController) controller).stop();
+        else if(controller instanceof KeyBoardThingController)
+            world.getParentView().freeKeyListener();
         world.removeItem(this);
         Tombstone tombstone=new Tombstone();
         tombstone.setPosition(this.getPosition());
         world.addItem(tombstone);
+        Coin coin=new Coin(this);
+        world.addItem(coin);
     }
 
     @Override

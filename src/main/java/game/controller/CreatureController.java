@@ -4,7 +4,6 @@ import game.graphic.Controllable;
 
 abstract public class CreatureController{
     protected Controllable controllable;
-    public boolean stop=false;
 
     public CreatureController(){
 

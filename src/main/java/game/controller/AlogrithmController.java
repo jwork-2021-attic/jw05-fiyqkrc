@@ -1,39 +1,47 @@
 package game.controller;
 
+import game.GameThread;
+
 import java.util.Random;
 
 public class AlogrithmController extends CreatureController implements Runnable {
     protected boolean aim;
     protected double direction;
-    protected double lastSearchAim=System.currentTimeMillis();
+    protected double lastSearchAim = System.currentTimeMillis();
     protected Random random = new Random();
+    protected Thread thread;
 
 
 
     public AlogrithmController() {
-        Thread thread = new Thread(this);
+        thread = new Thread(this);
+        GameThread.threadSet.add(thread);
         thread.start();
     }
 
-    public void tryMove(){
+    public void tryMove() {
         if (random.nextDouble(1) > 0.65) {
             if (!controllable.move(direction)) {
-                if(random.nextDouble(1)>0.8)
+                if (random.nextDouble(1) > 0.8)
                     direction = random.nextDouble(Math.PI * 2);
             }
         }
     }
 
-    public void trySearchAim(){
-        if(System.currentTimeMillis()-lastSearchAim>2000) {
+    public void trySearchAim() {
+        if (System.currentTimeMillis() - lastSearchAim > 2000) {
             aim = controllable.searchAim();
-            lastSearchAim=System.currentTimeMillis();
+            lastSearchAim = System.currentTimeMillis();
         }
     }
 
+    public void stop() {
+        thread.interrupt();
+    }
+
     @Override
-    public void run(){
-        while (!stop && !Thread.interrupted()) {
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (controllable.isDead()) {
                     controllable.dead();
@@ -45,11 +53,13 @@ public class AlogrithmController extends CreatureController implements Runnable 
                     controllable.attack();
                 }
                 Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
-                e.printStackTrace();
                 aim = false;
                 direction = 0;
             }
         }
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 }

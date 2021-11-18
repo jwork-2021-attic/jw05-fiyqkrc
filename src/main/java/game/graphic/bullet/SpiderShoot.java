@@ -7,7 +7,7 @@ import game.graphic.creature.monster.Spider;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
-public class SpiderShoot extends Bullet implements Runnable {
+public class SpiderShoot extends Bullet {
     public SpiderShoot(Spider spider, double angle) {
         super(spider,angle);
         Pixel[][] pixels = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/spider.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();

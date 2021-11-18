@@ -1,18 +1,14 @@
 package asciiPanel;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This simulates a code page 437 ASCII terminal display.
@@ -123,7 +119,7 @@ public class AsciiPanel extends JPanel {
     private final Color[][] oldForegroundColors;
     private AsciiFont asciiFont;
     private final boolean IsWin=System.getProperty("os.name").startsWith("Windows");
-
+    private final ExecutorService es=Executors.newFixedThreadPool(16);
 
     /**
      * Gets the height, in pixels, of a character.
@@ -368,15 +364,9 @@ public class AsciiPanel extends JPanel {
             throw new NullPointerException();
         if(!IsWin) {
             try {
-                ArrayList<Thread> threadsSet = new ArrayList<>();
                 for (int x = 0; x < widthInCharacters; x++) {
-                    Thread thread = new Thread(new Accelerator(x, this));
-                    thread.setPriority(Thread.MAX_PRIORITY);
-                    threadsSet.add(thread);
-                    thread.start();
+                    es.submit(new Accelerator(x,this));
                 }
-                for (Thread thread : threadsSet)
-                    thread.join();
             } catch (Exception e) {
                 e.printStackTrace();
             }

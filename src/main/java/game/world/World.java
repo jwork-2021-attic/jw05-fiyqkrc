@@ -5,7 +5,9 @@ import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pwidget.ObjectUserInteractive;
 import game.Attack;
+import game.GameThread;
 import game.Location;
+import game.controller.AlogrithmController;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.*;
@@ -30,7 +32,7 @@ public class World extends PGraphicScene implements Runnable {
     private WorldGenerate worldGenerator;
     public static int tileSize = 20;
     protected static ArrayList<Room> rooms;
-    public  UI screen;
+    public UI screen;
 
     protected ArrayList<Class> monster = new ArrayList<>();
 
@@ -42,6 +44,7 @@ public class World extends PGraphicScene implements Runnable {
     int areaSize = 200;
 
     Operational operational;
+    Thread daemonThread;
 
 
     public World(int width, int height) {
@@ -76,8 +79,8 @@ public class World extends PGraphicScene implements Runnable {
         createWorld();
         createMonster();
 
-        Thread thread = new Thread(this);
-        thread.start();
+        daemonThread = new Thread(this);
+        daemonThread.start();
     }
 
     protected void createMonster() {
@@ -85,7 +88,7 @@ public class World extends PGraphicScene implements Runnable {
         for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.95) {
+                    if (random.nextDouble(1) > 0.25) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -107,7 +110,7 @@ public class World extends PGraphicScene implements Runnable {
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.9) {
+                    if (random.nextDouble(1) > 0.19) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {
@@ -290,6 +293,8 @@ public class World extends PGraphicScene implements Runnable {
         } else {
             Log.ErrorLog(this, "please put world on a view first");
         }
+        if (screen != null)
+            screen.displayHealth(operational.getHealth(), operational.getHealthLimit());
     }
 
     public Operational getOperational() {
@@ -305,16 +310,16 @@ public class World extends PGraphicScene implements Runnable {
     public boolean ThingMove(Thing thing, Position position) {
         if (thing.isBeCoverAble()) {
             if (!positionOutOfBound(position)) {
-                thing.setPosition(Position.getPosition(position.getX()-thing.getHeight()/2,position.getY()-thing.getWidth()/2));
+                thing.setPosition(Position.getPosition(position.getX() - thing.getHeight() / 2, position.getY() - thing.getWidth() / 2));
                 return true;
             } else
                 return false;
         } else {
             synchronized (this) {
-                if (isLocationReachable(thing, position) && thing.getTile().getLocation() != getTileByLocation(position)&&!locationOutOfBound(getTileByLocation(position))  ) {
+                if (isLocationReachable(thing, position) && thing.getTile().getLocation() != getTileByLocation(position) && !locationOutOfBound(getTileByLocation(position))) {
                     thing.getTile().setThing(null);
                     tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
-                    thing.setPosition(Position.getPosition(position.getX()-thing.getHeight()/2,position.getY()-thing.getWidth()/2));
+                    thing.setPosition(Position.getPosition(position.getX() - thing.getHeight() / 2, position.getY() - thing.getWidth() / 2));
                     return true;
                 } else
                     return false;
@@ -327,7 +332,7 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     public Location getTileByLocation(Position position) {
-        return new Location(position.getX()  / tileSize, position.getY() / tileSize);
+        return new Location(position.getX() / tileSize, position.getY() / tileSize);
     }
 
     public Thing findThing(Location location) {
@@ -358,6 +363,11 @@ public class World extends PGraphicScene implements Runnable {
         }
     }
 
+    public void gameFinish() {
+        Thread thread=new Thread(new GameResourceRecycle());
+        thread.start();
+    }
+
     public Location searchNearestEnemy(Creature creature, int bound) {
         int x, y;
         if (creature.getTile() == null) {
@@ -384,7 +394,7 @@ public class World extends PGraphicScene implements Runnable {
         Log.InfoLog(this, "thread for world's monster recycle start...");
 
         ArrayList<Area> oldAreas = new ArrayList<>();
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (this.operational != null) {
                     Position position = operational.getPosition();
@@ -411,7 +421,8 @@ public class World extends PGraphicScene implements Runnable {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
                                 if (thing instanceof Creature && thing != operational) {
                                     areas[area.x][area.y].add((Creature) thing);
-                                    ((Creature) thing).getController().stop = true;
+                                    if (((Creature) thing).getController() instanceof AlogrithmController)
+                                        ((AlogrithmController) ((Creature) thing).getController()).stop();
                                     removeItem(thing);
                                 }
                             }
@@ -434,9 +445,12 @@ public class World extends PGraphicScene implements Runnable {
                     oldAreas = curAreas;
                 }
                 Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.ErrorLog(this, "thread for world's monster recycle failed...");
+                Log.ErrorLog(this, "thread failed");
+                break;
             }
         }
     }
@@ -445,6 +459,37 @@ public class World extends PGraphicScene implements Runnable {
         public Area(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+    }
+
+    class GameResourceRecycle implements Runnable {
+
+        @Override
+        public void run() {
+            synchronized (this) {
+                daemonThread.interrupt();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (GameThread.threadSet) {
+                for (Thread thread : GameThread.threadSet) {
+                    thread.interrupt();
+                }
+                while (GameThread.threadSet.size() != 0) {
+                    System.out.println("Waiting for threads quit... now has " + GameThread.threadSet.size());
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (screen != null) {
+                screen.gameExit();
+            }
         }
     }
 }

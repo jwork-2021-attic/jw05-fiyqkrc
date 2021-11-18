@@ -1,5 +1,6 @@
 package com.pFrame;
 
+import game.GameThread;
 import log.Log;
 
 public class PTimer implements Runnable {
@@ -27,23 +28,23 @@ public class PTimer implements Runnable {
             Log.ErrorLog(this, String.format("Invalid args: %s %d", tasker, this.time));
         } else {
             if (repeat) {
-                while (!this.stop) {
+                while (!this.stop && !Thread.currentThread().isInterrupted()) {
                     try {
                         Thread.sleep(time);
                         this.tasker.doTask();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }
                 }
             } else {
                 try {
                     Thread.sleep(this.time);
                     this.tasker.doTask();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 
     public void stop() {

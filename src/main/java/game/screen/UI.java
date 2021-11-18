@@ -1,21 +1,16 @@
 package game.screen;
 
 import asciiPanel.AsciiFont;
-import com.pFrame.pwidget.PFrame;
-import com.pFrame.pwidget.PLayout;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
-import com.pFrame.pwidget.PImage;
-import com.pFrame.pwidget.PButton;
-import com.pFrame.pwidget.PHeadWidget;
-import com.pFrame.pwidget.PLabel;
-import com.pFrame.pwidget.PWidget;
+import com.pFrame.pwidget.*;
 import game.graphic.creature.operational.Calabash;
 import game.world.World;
 import log.Log;
 
 import java.awt.*;
+import java.io.InputStream;
 
 public class UI {
     public static int START_PAGE=0;
@@ -74,9 +69,20 @@ public class UI {
 
 
         this.settingPage=new PLayout(null,null);
+
         PLabel label=new PLabel(null,null);
         this.settingPage.addBackground(label);
-        label.setText("Version: 1.10" ,1,Color.ORANGE);
+        try{
+            InputStream inputStream=  this.getClass().getClassLoader().getResourceAsStream("about.txt");
+            byte[] bytes=inputStream.readAllBytes();
+            StringBuilder string= new StringBuilder();
+            for(byte b:bytes){
+                string.append((char) b);
+            }
+            label.setText(string.toString(),1,Color.YELLOW);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         try {
             startGameButton.setClickFunc(this,this.getClass().getMethod("startGameButtonBeClicked"));
@@ -105,7 +111,10 @@ public class UI {
         }
     }
 
-
+    public void gameExit(){
+        this.gamePage.addBackground(null);
+        setPage(UI.START_PAGE);
+    }
 
     public void setCoinValue(int n){
         this.coinValueLabel.setText("x"+ n,2,Color.WHITE);
@@ -114,7 +123,7 @@ public class UI {
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);
-        World world=new World(2000,2000);
+        World world=new World(20000,20000);
         this.setWorld(world);
         this.sendMessage("Game start now!");
         world.screen=this;

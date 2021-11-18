@@ -2,6 +2,7 @@ package game.graphic.effect;
 
 import com.pFrame.PTimer;
 import com.pFrame.PTimerTask;
+import game.GameThread;
 import game.graphic.Thing;
 
 public class Effect extends Thing {
@@ -9,6 +10,7 @@ public class Effect extends Thing {
     public boolean repeat;
     public int time;
     public PTimer timer;
+    public Thread thread;
 
     public Effect() {
         super(null);
@@ -21,7 +23,8 @@ public class Effect extends Thing {
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
         timer.schedule(task,repeat,time);
-        Thread thread=new Thread(timer);
+        thread=new Thread(timer);
         thread.start();
+        GameThread.threadSet.add(thread);
     }
 }
