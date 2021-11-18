@@ -1,5 +1,6 @@
 package game.world;
 
+import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
@@ -18,6 +19,7 @@ import log.Log;
 import worldGenerate.WorldGenerate;
 import worldGenerate.WorldGenerate.Room;
 
+import java.awt.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -83,12 +85,24 @@ public class World extends PGraphicScene implements Runnable {
         daemonThread.start();
     }
 
+    public Pixel[][] getWorldMap() {
+        Pixel[][] pixels = Pixel.emptyPixels(worldArray.length, worldArray[0].length);
+        for (int i = 0; i < worldArray.length; i++)
+            for (int j = 0; j < worldArray[0].length; j++) {
+                Color color = (worldArray[i][j] == 0) ? Color.GRAY : Color.BLUE;
+                pixels[i][j] = Pixel.getPixel(color, (char) 0xf0);
+            }
+        assert pixels != null;
+        pixels[operational.getLocation().x() / worldScale][operational.getLocation().y() / worldScale] = Pixel.getPixel(Color.RED, (char) 0xf0);
+        return pixels;
+    }
+
     protected void createMonster() {
         Random random = new Random();
         for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.25) {
+                    if (random.nextDouble(1) > 0.95) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -110,7 +124,7 @@ public class World extends PGraphicScene implements Runnable {
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.19) {
+                    if (random.nextDouble(1) > 0.89) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {
@@ -364,7 +378,7 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     public void gameFinish() {
-        Thread thread=new Thread(new GameResourceRecycle());
+        Thread thread = new Thread(new GameResourceRecycle());
         thread.start();
     }
 

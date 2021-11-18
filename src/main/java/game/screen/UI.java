@@ -1,7 +1,9 @@
 package game.screen;
 
 import asciiPanel.AsciiFont;
+import com.pFrame.Pixel;
 import com.pFrame.Position;
+import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
@@ -112,6 +114,7 @@ public class UI {
     }
 
     public void gameExit(){
+        gameWorld=null;
         this.gamePage.addBackground(null);
         setPage(UI.START_PAGE);
     }
@@ -120,25 +123,43 @@ public class UI {
         this.coinValueLabel.setText("x"+ n,2,Color.WHITE);
     }
 
+    public World gameWorld;
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);
-        World world=new World(20000,20000);
-        this.setWorld(world);
+        gameWorld=new World(20000,20000);
+        this.setWorld(gameWorld);
         this.sendMessage("Game start now!");
-        world.screen=this;
+        gameWorld.screen=this;
         Calabash calabash=new Calabash();
-        calabash.setPosition(world.getStartPosition());
-        world.addOperational(calabash);
-        world.getParentView().setFocus(calabash);
+        calabash.setPosition(gameWorld.getStartPosition());
+        gameWorld.addOperational(calabash);
+        gameWorld.getParentView().setFocus(calabash);
     }
 
     public void settingButtonBeClicked(){
         this.setPage(UI.SETTING_PAGE);
     }
 
-    public void MapButtonBeClicked(){
-        Log.InfoLog(this,"this method:MapButtonBeClicked need finish");
+    public PGraphicView mapView;
+
+
+    public void MapButtonBeClicked() {
+        if (mapView == null) {
+            PGraphicScene world = new PGraphicScene(400, 400);
+            mapView = new PGraphicView(gamePage, Position.getPosition(2, 2), world);
+            Pixel[][] pixels=gameWorld.getWorldMap();
+            int scale=Math.max(1,mapView.getWidgetHeight()/pixels.length);
+            pixels=Pixel.pixelsScaleLarger(pixels,scale);
+            PGraphicItem item = new PGraphicItem(pixels);
+            world.addItem(item);
+            mapView.setViewPosition(Position.getPosition((gameWorld.getOperational().getLocation().x() / gameWorld.getWorldScale() - mapView.getWidgetHeight() / 2)*scale, (gameWorld.getOperational().getLocation().y() / gameWorld.getWorldScale() - mapView.getWidgetWidth() / 2)*scale));
+            sendMessage("Map may can not display whole,\nthis is the map around your role");
+        }
+        else{
+            gamePage.removeWidget(mapView);
+            mapView=null;
+        }
     }
 
     public void sendMessage(String str){

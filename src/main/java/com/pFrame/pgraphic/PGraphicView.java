@@ -1,13 +1,13 @@
 package com.pFrame.pgraphic;
 
+import com.pFrame.Pixel;
+import com.pFrame.Position;
+import com.pFrame.pwidget.ObjectUserInteractive;
+import com.pFrame.pwidget.PWidget;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-
-import com.pFrame.pwidget.ObjectUserInteractive;
-import com.pFrame.Pixel;
-import com.pFrame.Position;
-import com.pFrame.pwidget.PWidget;
 
 public class PGraphicView extends PWidget implements PView {
 
@@ -70,8 +70,8 @@ public class PGraphicView extends PWidget implements PView {
 
     protected void adjustViewPosition() {
         if (this.getFocus() == null) {
-            // Log.WarningLog(this, "focus thing not be set,so not exec
-            // adjustViewPosition");
+            //Log.WarningLog(this, "focus thing not be set,so not exec"+
+            //"adjustViewPosition");
         } else {
             Position focusPosition = this.getFocus().getPosition();
             Position viewPosition = this.getViewPosition();

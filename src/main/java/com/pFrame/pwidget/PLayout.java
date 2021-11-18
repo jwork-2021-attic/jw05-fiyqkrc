@@ -1,11 +1,10 @@
 package com.pFrame.pwidget;
 
-import java.util.ArrayList;
-
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pwidget.PWidget;
 import log.Log;
+
+import java.util.ArrayList;
 
 public class PLayout extends PWidget {
     protected int rownum;
@@ -103,14 +102,20 @@ public class PLayout extends PWidget {
     public void addChildWidget(PWidget widget, Position p) {
         if (this.layout != null)
             this.layout.addChildWidget(widget, p);
-            //this.layout.autoSetPosition(widget, p);
         else {
             widget.setParent(this);
             this.autoSetPosition(widget, p);
-            //widget.setPosition(p);
-            //this.childWidgets.add(widget);
-            //widget.changeWidgetSize(this.getWidgetWidth(), this.getWidgetHeight());
         }
+    }
+
+    @Override
+    public synchronized void removeWidget(PWidget widget) {
+        for(int i=0;i<containedWidgets.length;i++)
+            for(int j=0;j<containedWidgets[0].length;j++){
+                if(containedWidgets[i][j]==widget){
+                    containedWidgets[i][j]=null;
+                }
+            }
     }
 
     @Override
@@ -120,8 +125,9 @@ public class PLayout extends PWidget {
         ArrayList<PWidget> childWidget = new ArrayList<>();
         for (int i = 0; i < this.getRowNum(); i++) {
             for (int j = 0; j < this.getColumnNum(); j++) {
-                if (this.containedWidgets[i][j] != null)
+                if (this.containedWidgets[i][j] != null) {
                     childWidget.add(this.containedWidgets[i][j]);
+                }
             }
         }
         for (PWidget widget : childWidget) {

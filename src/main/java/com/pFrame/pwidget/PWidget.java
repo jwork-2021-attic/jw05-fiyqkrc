@@ -99,21 +99,27 @@ public class PWidget implements ObjectUserInteractive {
         } else {
             Pixel[][] pixels = Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
             if (this.background == null) {
-                //do nothing
             } else {
                 pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
-            }/*
-            if(this.layout==null){
-                //do nothing
             }
-            else{
-                pixels=Pixel.pixelsAdd(pixels,this.layout.displayOutput(),this.layout.getPosition());
-            }*/
             for(PWidget widget:this.childWidgets){
 
                 Pixel.pixelsAdd(pixels,widget.displayOutput(),widget.getPosition());
             }
             return pixels;
+        }
+    }
+
+    public synchronized void removeWidget(PWidget widget){
+        if(widget==layout){
+            this.layout=null;
+            this.childWidgets.remove(widget);
+        }
+        else if(this.childWidgets.contains(widget)){
+            childWidgets.remove(widget);
+        }
+        else{
+            this.layout.removeWidget(widget);
         }
     }
 
