@@ -117,6 +117,9 @@ public class UI {
         gameWorld=null;
         this.gamePage.addBackground(null);
         setPage(UI.START_PAGE);
+        startPage.freeMouseListener();
+        startPage.freeKeyListener();
+        startPage.freeMouseWheelListener();
     }
 
     public void setCoinValue(int n){

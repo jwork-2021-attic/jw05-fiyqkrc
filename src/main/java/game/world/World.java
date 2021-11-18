@@ -302,7 +302,7 @@ public class World extends PGraphicScene implements Runnable {
         addItem(operational);
         this.operational = operational;
         if (this.parentView != null) {
-            parentView.addKeyListener((ObjectUserInteractive) operational.getController());
+            parentView.getKeyMouseListener((ObjectUserInteractive) operational.getController());
             parentView.setFocus(operational);
         } else {
             Log.ErrorLog(this, "please put world on a view first");

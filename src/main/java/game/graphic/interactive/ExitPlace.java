@@ -2,6 +2,7 @@ package game.graphic.interactive;
 
 import com.pFrame.Position;
 import com.pFrame.pwidget.ObjectUserInteractive;
+import game.GameThread;
 import game.controller.KeyBoardThingController;
 import game.graphic.Thing;
 import game.graphic.creature.operational.Operational;
@@ -13,44 +14,45 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class ExitPlace extends Thing implements Runnable , ObjectUserInteractive {
-    KeyBoardThingController oldController;
+public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive {
+    Thread thread;
 
     public ExitPlace() {
         super(null);
-        graphic= GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/exit.png").getFile(), World.tileSize,World.tileSize).getPixels();
-        width=World.tileSize;
-        height=World.tileSize;
-        beCoverAble=true;
+        graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        width = World.tileSize;
+        height = World.tileSize;
+        beCoverAble = true;
     }
 
     @Override
     public void run() {
-        try {
-            while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
                 if (world != null) {
                     Thing thing = world.findThing(getLocation());
-                    if (thing != null && thing instanceof Operational) {
-                        Dialog dialog=new Dialog("Press f to exit maze",p,3000);
+                    if (thing instanceof Operational) {
+                        Dialog dialog = new Dialog("Press f to exit maze", p, 3000);
                         world.addItem(dialog);
-                        oldController=(KeyBoardThingController) ((Operational) thing).getController();
-                        world.getParentView().getKeyMouseListener(this);
                     }
                 }
-                Thread.sleep(100);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                GameThread.threadSet.remove(Thread.currentThread());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
-
 
 
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        Thread thread=new Thread(this);
+        thread = new Thread(this);
         thread.start();
+        GameThread.threadSet.add(thread);
     }
 
     @Override
@@ -60,19 +62,15 @@ public class ExitPlace extends Thing implements Runnable , ObjectUserInteractive
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyChar()=='f'||e.getKeyChar()=='F'){
-            System.out.println("you choose to leave");
 
-        }
-        else{
-            world.getParentView().freeKeyMouseListener();
-            world.getParentView().addKeyListener(oldController);
-        }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-
+        if (e.getKeyChar() == 'f' || e.getKeyChar() == 'F') {
+            System.out.println("you choose to leave");
+            world.gameFinish();
+        }
     }
 
     @Override
@@ -107,6 +105,6 @@ public class ExitPlace extends Thing implements Runnable , ObjectUserInteractive
 
     @Override
     public Position getRealPosition() {
-        return Position.getPosition(0,0);
+        return Position.getPosition(0, 0);
     }
 }

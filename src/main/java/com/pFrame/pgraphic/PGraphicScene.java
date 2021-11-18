@@ -43,7 +43,15 @@ public class PGraphicScene {
 
     public ArrayList<PGraphicItem> getItemsAt(Position p) {
         Block block = positionToBlock(p);
-        return new ArrayList<>(blocks[block.x][block.y]);
+        ArrayList<PGraphicItem> items=new ArrayList<>();
+        synchronized (this) {
+            for (PGraphicItem item : blocks[block.x][block.y]) {
+                if(item.includePosition(p)) {
+                    items.add(item);
+                }
+            }
+        }
+        return items;
     }
 
     record Block(int x, int y) {
@@ -54,12 +62,8 @@ public class PGraphicScene {
     }
 
     public PGraphicItem getTopItemAt(Position p) {
-        Block block = positionToBlock(p);
-        ArrayList<PGraphicItem> list = blocks[block.x][block.y];
-        if (list.size() > 0) {
-            return blocks[block.x][block.y].get(blocks[block.x][block.y].size() - 1);
-        } else
-            return null;
+        ArrayList<PGraphicItem> items=getItemsAt(p);
+        return items.get(items.size()-1);
     }
 
     public Pixel[][] displayOutput(Position p, int width, int height) {
