@@ -2,7 +2,6 @@ package com.pFrame.pgraphic;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import com.pFrame.Pixel;
@@ -20,15 +19,15 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
     protected Position p;
     protected Position oldPos;
     static protected HashMap<String, PGraphicItem> items = new HashMap<>();
-    protected PGraphicScene parentScene;
+    protected PGraphicScene world;
     protected int id;
 
     public void setParentScene(PGraphicScene scene){
-        this.parentScene=scene;
+        this.world =scene;
     }
 
     public void removeParentScene(){
-        this.parentScene=null;
+        this.world =null;
     }
 
     public Position getPosition() {
@@ -42,8 +41,8 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
     public void setPosition(Position pos) {
         this.oldPos=this.p;
         this.p = pos;
-        if(this.parentScene!=null)
-            this.parentScene.repaintItem(this);
+        if(this.world !=null)
+            this.world.repaintItem(this);
     }
 
     public PGraphicItem(String path, int width, int height) {

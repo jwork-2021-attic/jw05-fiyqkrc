@@ -102,7 +102,7 @@ public class World extends PGraphicScene implements Runnable {
         for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.95) {
+                    if (random.nextDouble(1) > 0.55) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -124,7 +124,7 @@ public class World extends PGraphicScene implements Runnable {
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.89) {
+                    if (random.nextDouble(1) > 0.85) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {
@@ -278,8 +278,9 @@ public class World extends PGraphicScene implements Runnable {
     @Override
     public boolean addItem(PGraphicItem item) {
         if (item instanceof Thing) {
-            ((Thing) item).whenBeAddedToScene();
             ((Thing) item).setWorld(this);
+            ((Thing) item).whenBeAddedToScene();
+
 
             synchronized (this) {
                 if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
@@ -302,7 +303,6 @@ public class World extends PGraphicScene implements Runnable {
         addItem(operational);
         this.operational = operational;
         if (this.parentView != null) {
-            parentView.getKeyMouseListener((ObjectUserInteractive) operational.getController());
             parentView.setFocus(operational);
         } else {
             Log.ErrorLog(this, "please put world on a view first");
@@ -394,8 +394,10 @@ public class World extends PGraphicScene implements Runnable {
             for (int a = x - i; a <= x + i; a++) {
                 for (int b = y - i; b <= y + i; b++) {
                     if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
-                        if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup())
-                            return new Location(a, b);
+                        synchronized (this) {
+                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup())
+                                return new Location(a, b);
+                        }
                     }
                 }
             }

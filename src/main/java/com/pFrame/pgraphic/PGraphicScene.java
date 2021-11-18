@@ -2,11 +2,15 @@ package com.pFrame.pgraphic;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import com.pFrame.pwidget.ObjectUserInteractive;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class PGraphicScene {
+public class PGraphicScene implements ObjectUserInteractive {
     protected int width;
     protected int height;
 
@@ -52,6 +56,83 @@ public class PGraphicScene {
             }
         }
         return items;
+    }
+
+    protected  ObjectUserInteractive[] keyListenerTable=new ObjectUserInteractive[256];
+    protected ObjectUserInteractive mouseListener;
+    protected ObjectUserInteractive mouseWheelListener;
+    public void addKeyListener(char ch,ObjectUserInteractive objectUserInteractive){
+        keyListenerTable[(int)ch]=objectUserInteractive;
+    }
+
+    public void addMouseListener(ObjectUserInteractive objectUserInteractive){
+        mouseListener=objectUserInteractive;
+    }
+
+    public void addMouseWheelListener(ObjectUserInteractive objectUserInteractive){
+        mouseWheelListener=objectUserInteractive;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e, Position p) {
+        if(mouseListener!=null)
+            mouseListener.mouseClicked(e,p);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+            keyListenerTable[e.getKeyChar()].keyPressed(e);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+            keyListenerTable[e.getKeyChar()].keyTyped(e);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+            keyListenerTable[e.getKeyChar()].keyReleased(e);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+        if(mouseListener!=null)
+            mouseListener.mouseEntered(arg0);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+        if(mouseListener!=null)
+            mouseListener.mouseExited(arg0);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0, Position p) {
+        if(mouseListener!=null)
+            mouseListener.mousePressed(arg0,p);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0, Position p) {
+        if(mouseListener!=null)
+            mouseListener.mouseReleased(arg0,p);
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if(mouseWheelListener!=null)
+            mouseWheelListener.mouseWheelMoved(e);
+    }
+
+    @Override
+    public Position getRealPosition() {
+        return null;
     }
 
     record Block(int x, int y) {

@@ -15,18 +15,6 @@ public class PGraphicView extends PWidget implements PView {
     protected PGraphicScene scene;
     protected PGraphicItem focus;
 
-    public void getKeyMouseListener(ObjectUserInteractive thing) {
-        addKeyListener(thing);
-        addMouseListener(thing);
-        addMouseWheelListener(thing);
-    }
-
-    public void freeKeyMouseListener() {
-        freeKeyListener();
-        freeMouseListener();
-        freeMouseWheelListener();
-    }
-
     @Override
     public void setViewPosition(Position p) {
         this.viewPosition = p;
@@ -101,46 +89,64 @@ public class PGraphicView extends PWidget implements PView {
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
+        if(scene!=null)
+            scene.keyPressed(e);
     }
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
         super.mouseClicked(e, p);
+        if(scene!=null)
+            scene.mouseClicked(e,p);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
+        if(scene!=null)
+            scene.keyReleased(e);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
+        if(scene!=null)
+            scene.keyTyped(e);
     }
 
     @Override
     public void mouseEntered(MouseEvent arg0) {
         super.mouseEntered(arg0);
+        if(scene!=null)
+            scene.mouseEntered(arg0);
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
         super.mouseExited(arg0);
+        if(scene!=null)
+            scene.mouseExited(arg0);
     }
 
     @Override
     public void mousePressed(MouseEvent arg0, Position p) {
         super.mousePressed(arg0, p);
+        if(scene!=null)
+            scene.mousePressed(arg0,p);
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0, Position p) {
         super.mouseReleased(arg0, p);
+        if(scene!=null)
+            scene.mouseReleased(arg0,p);
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
+        if(scene!=null)
+            scene.mouseWheelMoved(e);
     }
 
 }

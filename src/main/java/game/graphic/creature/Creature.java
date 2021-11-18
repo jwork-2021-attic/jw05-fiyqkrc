@@ -183,8 +183,9 @@ public abstract class Creature extends Thing implements Controllable {
     public void dead() {
         if(controller instanceof AlogrithmController)
             ((AlogrithmController) controller).stop();
-        else if(controller instanceof KeyBoardThingController)
-            world.getParentView().freeKeyListener();
+        else if(controller instanceof KeyBoardThingController){
+            pause();
+        }
         world.removeItem(this);
         Tombstone tombstone=new Tombstone();
         tombstone.setPosition(this.getPosition());

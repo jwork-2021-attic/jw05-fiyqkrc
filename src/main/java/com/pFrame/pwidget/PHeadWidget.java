@@ -24,35 +24,4 @@ public class PHeadWidget extends PWidget {
         Thread thread = new Thread(pFrame, "window flash thread");
         thread.start();
     }
-
-
-    @Override
-    public void addKeyListener(ObjectUserInteractive widget) {
-        this.pFrame.setKeyListener(widget);
-    }
-
-    @Override
-    public void freeKeyListener() {
-        this.pFrame.freeKeyListener();
-    }
-
-    @Override
-    public void addMouseListener(ObjectUserInteractive widget) {
-        this.pFrame.setMouseListener(widget);
-    }
-
-    @Override
-    public void freeMouseListener() {
-        this.pFrame.freeMouseListener();
-    }
-
-    @Override
-    public void addMouseWheelListener(ObjectUserInteractive widget) {
-        this.pFrame.setMouseWheelListener(widget);
-    }
-
-    @Override
-    public void freeMouseWheelListener() {
-        this.pFrame.freeMouseWheelListener();
-    }
 }

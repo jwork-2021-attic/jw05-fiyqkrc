@@ -34,6 +34,10 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive 
                     if (thing instanceof Operational) {
                         Dialog dialog = new Dialog("Press f to exit maze", p, 3000);
                         world.addItem(dialog);
+                        world.addKeyListener('f',this);
+                    }
+                    else{
+                        world.addKeyListener('f',null);
                     }
                 }
                 Thread.sleep(1000);

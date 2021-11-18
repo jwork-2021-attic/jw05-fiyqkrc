@@ -336,8 +336,8 @@ public class PLayout extends PWidget {
             for (int j = 0; j < this.getColumnNum(); j++) {
                 if (this.containedWidgets[i][j] != null) {
                     PWidget w = this.containedWidgets[i][j];
-                    if (PWidget.WidgetRange.inRange(w.getPosition(), w.getWidgetWidth(), w.getWidgetHeight(),
-                            p) == true)
+                    if (WidgetRange.inRange(w.getPosition(), w.getWidgetWidth(), w.getWidgetHeight(),
+                            p))
                         res.addAll(this.containedWidgets[i][j].getWidgetsAt(Position
                                 .getPosition(p.getX() - w.getPosition().getX(), p.getY() - w.getPosition().getY())));
                 }

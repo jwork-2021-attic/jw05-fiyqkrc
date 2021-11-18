@@ -1,5 +1,6 @@
 package game.graphic.creature.operational;
 
+import com.pFrame.pwidget.ObjectUserInteractive;
 import game.controller.KeyBoardThingController;
 import game.graphic.creature.Creature;
 
@@ -13,14 +14,20 @@ abstract public class Operational extends Creature {
 
     @Override
     public void pause() {
-        this.parentScene.getParentView().freeKeyMouseListener();
+        this.world.addKeyListener('w',null);
+        this.world.addMouseListener(null);
+        this.world.addKeyListener('a',null);
+        this.world.addKeyListener('s',null);
+        this.world.addKeyListener('d',null);
     }
 
     @Override
     public void Continue() {
-        this.parentScene.getParentView().addMouseWheelListener(((KeyBoardThingController)controller));
-        this.parentScene.getParentView().addMouseListener((KeyBoardThingController)controller);
-        this.parentScene.getParentView().addKeyListener((KeyBoardThingController)controller);
+        this.world.addKeyListener('w', (ObjectUserInteractive) this.controller);
+        this.world.addMouseListener((ObjectUserInteractive) this.controller);
+        this.world.addKeyListener('a', (ObjectUserInteractive) this.controller);
+        this.world.addKeyListener('s', (ObjectUserInteractive) this.controller);
+        this.world.addKeyListener('d', (ObjectUserInteractive) this.controller);
     }
 
     @Override
@@ -28,6 +35,7 @@ abstract public class Operational extends Creature {
         super.whenBeAddedToScene();
         controller= new KeyBoardThingController();
         controller.setThing(this);
+        Continue();
     }
 
     @Override
