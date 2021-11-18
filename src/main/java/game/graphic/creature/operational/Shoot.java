@@ -17,14 +17,17 @@ public class Shoot extends Thing implements Runnable {
     protected int speed;
     protected double direction;
 
+    double last_x;
+    double last_y;
+
     public Shoot(Calabash calabash, double angle) {
         super(null);
         this.calabash = calabash;
         direction = angle;
         beCoverAble = true;
         Pixel[][] pixels = GraphicItemGenerator.generateItem(Shoot.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
-        this.width = World.tileSize;
-        this.height = World.tileSize;
+        this.width = World.tileSize/4;
+        this.height = World.tileSize/4;
         graphic = pixels;
         this.speed = 6;
         this.group = calabash.getGroup();
@@ -35,14 +38,19 @@ public class Shoot extends Thing implements Runnable {
         try {
             while (true) {
                 if (this.world != null) {
-                    double y = Math.sin(direction) * this.speed;
-                    double x = Math.cos(direction) * this.speed;
+                    double y = Math.sin(direction) * this.speed+last_y;
+                    double x = Math.cos(direction) * this.speed+last_x;
+
+                    last_x=x-(int)x;
+                    last_y=y-(int)y;
+
                     Position nextPosition = Position.getPosition(p.getX() - (int) y, p.getY() + (int) x);
-                    Thing thing = world.findThing(world.getTileByLocation(nextPosition));
+                    Position nextCentral = Position.getPosition(nextPosition.getX()+height/2,nextPosition.getY()+width/2);
+                    Thing thing = world.findThing(world.getTileByLocation(nextCentral));
                     if (thing != null && thing != this.calabash) {
                         ArrayList<Location> t = new ArrayList<>();
-                        t.add(world.getTileByLocation(nextPosition));
-                        world.handleAttack(new Attack(Attack.HIT, t, 10, group));
+                        t.add(world.getTileByLocation(nextCentral));
+                        world.handleAttack(new Attack(Attack.HIT, t, calabash.getAttack(), group));
                         world.removeItem(this);
                         break;
                     } else if (world.positionOutOfBound(nextPosition)) {
