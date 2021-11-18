@@ -72,7 +72,7 @@ public class UI {
         this.settingPage=new PLayout(null,null);
         PLabel label=new PLabel(null,null);
         this.settingPage.addBackground(label);
-        label.setText("Welcome to play this game.Because this game is under programming,this version does not represent the final quality" ,2,Color.ORANGE);
+        label.setText("Version: 1.10" ,1,Color.ORANGE);
 
         try {
             startGameButton.setClickFunc(this,this.getClass().getMethod("startGameButtonBeClicked"));
