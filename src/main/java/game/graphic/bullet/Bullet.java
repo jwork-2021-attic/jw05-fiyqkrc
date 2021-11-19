@@ -2,6 +2,7 @@ package game.graphic.bullet;
 
 import com.pFrame.Position;
 import game.Attack;
+import game.graphic.creature.monster.Vine;
 import game.graphic.interactive.GameThread;
 import game.Location;
 import game.graphic.Thing;
@@ -44,13 +45,18 @@ public class Bullet extends Thing implements Runnable {
                     Position nextPosition = Position.getPosition(p.getX() - (int) y, p.getY() + (int) x);
                     Position nextCentral = Position.getPosition(nextPosition.getX() + height / 2, nextPosition.getY() + width / 2);
                     Thing thing = world.findThing(world.getTileByLocation(nextCentral));
-                    if (thing != null && thing != this.creature) {
+                    if (thing instanceof Creature && ((Creature) thing).getGroup() != this.creature.getGroup()) {
                         ArrayList<Location> t = new ArrayList<>();
                         t.add(world.getTileByLocation(nextCentral));
                         world.handleAttack(new Attack(Attack.HIT, t, creature.getAttack(), group));
                         world.removeItem(this);
                         break;
-                    } else if (world.positionOutOfBound(nextCentral)) {
+                    }
+                    else if(thing!=null && !(thing instanceof Creature) && !(thing instanceof Vine)){
+                        world.removeItem(this);
+                        break;
+                    }
+                    else if (world.positionOutOfBound(nextCentral)) {
                         world.removeItem(this);
                         break;
                     } else {

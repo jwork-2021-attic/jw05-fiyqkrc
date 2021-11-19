@@ -40,7 +40,7 @@ public class World extends PGraphicScene implements Runnable {
 
     private Position startPosition;
 
-    private ArrayList<Creature> areas[][];
+    private ArrayList<Thing> areas[][];
     int areaWidth;
     int areaHeight;
     int areaSize = 200;
@@ -71,7 +71,7 @@ public class World extends PGraphicScene implements Runnable {
         areas = new ArrayList[areaHeight][areaWidth];
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
-                areas[i][j] = new ArrayList<Creature>();
+                areas[i][j] = new ArrayList<Thing>();
             }
 
         generateWorld();
@@ -79,6 +79,7 @@ public class World extends PGraphicScene implements Runnable {
             scaleWorld();
         }
         createWorld();
+        createBox();
         createMonster();
 
         daemonThread = new Thread(this);
@@ -97,24 +98,28 @@ public class World extends PGraphicScene implements Runnable {
         return pixels;
     }
 
-    protected void createMonster() {
-        Random random = new Random();
-        for (Room room : rooms) {
+    protected void createBox(){
+        Random random=new Random();
+        for(Room room:rooms){
             //generate box
             int x=random.nextInt(room.height);
             int y=random.nextInt(room.width);
             Box box=new Box();
             worldArray[x][y]=200;
             box.setPosition(Position.getPosition((room.pos.getX()+x)*tileSize,(room.pos.getY()+y)*tileSize));
-            //areas[box.getPosition().getX()][box.getPosition().getX()].add(box);
-            addItem(box,box.getPosition());
+            areas[box.getPosition().getX()/areaSize][box.getPosition().getY()/areaSize].add(box);
+            //addItem(box,box.getPosition());
+        }
+    }
 
+    protected void createMonster() {
+        Random random = new Random();
 
+        //generate for rooms
+        for (Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-
-
-                    if (random.nextDouble(1) > 0.95) {
+                    if (random.nextDouble(1) > 0.75) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -133,10 +138,12 @@ public class World extends PGraphicScene implements Runnable {
                     }
                 }
         }
+
+        //generate for corridor
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.95) {
+                    if (random.nextDouble(1) > 0.90) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {
@@ -254,8 +261,14 @@ public class World extends PGraphicScene implements Runnable {
                         addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 5 -> {
+                        srcpath = DoorPath[random.nextInt(DoorPath.length)];
+                        Thing backThing = new Thing(srcpath, tileSize, tileSize);
+                        addItem(backThing, Position.getPosition(i * tileSize, j * tileSize));
+
                         Thing thing = new ExitPlace();
-                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        //addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        thing.setPosition(Position.getPosition(i*tileSize,j*tileSize));
+                        areas[thing.getPosition().getX()/areaSize][thing.getPosition().getY()/areaSize].add(thing);
                     }
                     case 4 -> {
                         srcpath = DoorPath[random.nextInt(DoorPath.length)];
@@ -448,23 +461,28 @@ public class World extends PGraphicScene implements Runnable {
                             for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
                                 if (thing instanceof Creature && thing != operational) {
-                                    areas[area.x][area.y].add((Creature) thing);
+                                    areas[area.x][area.y].add( thing);
                                     if (((Creature) thing).getController() instanceof AlogrithmController)
                                         ((AlogrithmController) ((Creature) thing).getController()).stop();
+                                    removeItem(thing);
+                                }
+                                else if(thing instanceof GameThread){
+                                    areas[area.x][area.y].add(thing);
+                                    ((GameThread) thing).stop();
                                     removeItem(thing);
                                 }
                             }
                         }
                     }
                     for (Area area : curAreas) {
-                        ArrayList<Creature> added = new ArrayList<>();
-                        for (Creature creature : areas[area.x][area.y]) {
+                        ArrayList<Thing> added = new ArrayList<>();
+                        for (Thing thing : areas[area.x][area.y]) {
                             synchronized (this) {
-                                if (!isLocationReachable(creature, creature.getPosition())) {
+                                if (!thing.isBeCoverAble() && !isLocationReachable(thing, thing.getPosition())) {
                                     //System.out.println(creature.getPosition());
                                 } else {
-                                    addItem(creature);
-                                    added.add(creature);
+                                    addItem(thing);
+                                    added.add(thing);
                                 }
                             }
                         }
@@ -480,6 +498,7 @@ public class World extends PGraphicScene implements Runnable {
                 Log.ErrorLog(this, "thread failed");
                 break;
             }
+            System.out.println("The number of all gameThreads at this time is "+GameThread.threadSet.size());
         }
     }
 

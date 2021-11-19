@@ -197,14 +197,16 @@ public class PGraphicScene implements ObjectUserInteractive {
             ArrayList<Block> newBlocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
             ArrayList<ArrayList<PGraphicItem>> toremove = new ArrayList<>();
             ArrayList<ArrayList<PGraphicItem>> toadd = new ArrayList<>();
-            for (Block block : oldBlocks) {
-                toremove.add(blocks[block.x][block.y]);
-            }
-            for (Block block : newBlocks) {
-                if (toremove.contains(blocks[block.x][block.y])) {
-                    toremove.remove(blocks[block.x][block.y]);
-                } else {
-                    toadd.add(blocks[block.x][block.y]);
+            synchronized (blocks) {
+                for (Block block : oldBlocks) {
+                    toremove.add(blocks[block.x][block.y]);
+                }
+                for (Block block : newBlocks) {
+                    if (toremove.contains(blocks[block.x][block.y])) {
+                        toremove.remove(blocks[block.x][block.y]);
+                    } else {
+                        toadd.add(blocks[block.x][block.y]);
+                    }
                 }
             }
             for (ArrayList<PGraphicItem> list : toremove)

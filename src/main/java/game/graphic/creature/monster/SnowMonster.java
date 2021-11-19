@@ -12,6 +12,10 @@ public class SnowMonster extends Monster{
 
     public SnowMonster(){
         super(Pangolin.class.getClassLoader().getResource("image/monster/SnowMonster/").getPath(), World.tileSize,World.tileSize);
+        health=400;
+        attack=20;
+        speed=2;
+        resistance=0.1;
     }
 
     @Override

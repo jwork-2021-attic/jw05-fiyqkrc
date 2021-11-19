@@ -12,6 +12,10 @@ public class Master extends Monster{
 
     public Master(){
         super(Pangolin.class.getClassLoader().getResource("image/monster/Master/").getPath(), World.tileSize,World.tileSize);
+        health=500;
+        attack=20;
+        resistance=0.2;
+        speed=4;
     }
 
     @Override

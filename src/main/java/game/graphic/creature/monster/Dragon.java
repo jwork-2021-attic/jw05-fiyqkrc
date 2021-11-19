@@ -13,6 +13,9 @@ public class Dragon extends Monster {
     public Dragon() {
         super(Pangolin.class.getClassLoader().getResource("image/monster/Dragon/").getPath(), World.tileSize, World.tileSize);
         speed = 2;
+        health=400;
+        resistance=0.4;
+        attack=70;
     }
 
     @Override
