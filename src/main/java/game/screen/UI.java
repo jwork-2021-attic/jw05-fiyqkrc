@@ -11,7 +11,9 @@ import game.graphic.creature.operational.Calabash;
 import game.world.World;
 import log.Log;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class UI {
@@ -39,7 +41,14 @@ public class UI {
     public PLayout settingPage;
 
     public void createUI(){
-        this.ui=new PHeadWidget(null,null,new PFrame(600,400, AsciiFont.pFrame_2x2));
+        PFrame pFrame=new PFrame(600,400, AsciiFont.pFrame_2x2);
+        pFrame.setName("Dungeon Adventure");
+        try {
+            pFrame.setIconImage(ImageIO.read(this.getClass().getClassLoader().getResourceAsStream("image/source/19-36.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.ui=new PHeadWidget(null,null,pFrame);
 
         this.startPage=new PLayout(null,null,3,3,false);
         this.startPage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
@@ -153,7 +162,7 @@ public class UI {
             pixels=Pixel.pixelsScaleLarger(pixels,scale);
             PGraphicItem item = new PGraphicItem(pixels);
             world.addItem(item);
-            mapView.setViewPosition(Position.getPosition((gameWorld.getOperational().getLocation().x() / gameWorld.getWorldScale() - mapView.getWidgetHeight() / 2)*scale, (gameWorld.getOperational().getLocation().y() / gameWorld.getWorldScale() - mapView.getWidgetWidth() / 2)*scale));
+            mapView.setViewPosition(Position.getPosition(0,0));
             sendMessage("Map may can not display whole,\nthis is the map around your role");
         }
         else{

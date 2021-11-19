@@ -2,11 +2,12 @@ package game.graphic.bullet;
 
 import com.pFrame.Position;
 import game.Attack;
-import game.graphic.creature.monster.Vine;
-import game.graphic.interactive.GameThread;
 import game.Location;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
+import game.graphic.creature.monster.Monster;
+import game.graphic.creature.monster.Vine;
+import game.graphic.interactive.GameThread;
 
 import java.util.ArrayList;
 
@@ -51,12 +52,20 @@ public class Bullet extends Thing implements Runnable {
                         world.handleAttack(new Attack(Attack.HIT, t, creature.getAttack(), group));
                         world.removeItem(this);
                         break;
-                    }
-                    else if(thing!=null && !(thing instanceof Creature) && !(thing instanceof Vine)){
-                        world.removeItem(this);
-                        break;
-                    }
-                    else if (world.positionOutOfBound(nextCentral)) {
+                    } else if (thing != null && !(thing instanceof Creature)) {
+                        if (thing instanceof Vine) {
+                            if (creature instanceof Monster) {
+                                this.world.ThingMove(this, nextCentral);
+                                Thread.sleep(20);
+                            } else {
+                                world.removeItem(this);
+                                break;
+                            }
+                        } else {
+                            world.removeItem(this);
+                            break;
+                        }
+                    } else if (world.positionOutOfBound(nextCentral)) {
                         world.removeItem(this);
                         break;
                     } else {
@@ -66,7 +75,7 @@ public class Bullet extends Thing implements Runnable {
                 } else {
                     Thread.sleep(100);
                 }
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -78,8 +87,8 @@ public class Bullet extends Thing implements Runnable {
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        thread=new Thread(this);
-        this.lastFlashPosition=System.currentTimeMillis();
+        thread = new Thread(this);
+        this.lastFlashPosition = System.currentTimeMillis();
         GameThread.threadSet.add(thread);
         thread.start();
     }

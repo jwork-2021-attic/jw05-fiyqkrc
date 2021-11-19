@@ -45,6 +45,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         addKeyListener(this);
         addMouseListener(this);
         addMouseWheelListener(this);
+
     }
 
     @Override
