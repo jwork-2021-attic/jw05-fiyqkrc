@@ -1,4 +1,4 @@
-package game.graphic;
+package game.graphic.creature;
 
 import com.pFrame.pwidget.ObjectUserInteractive;
 import game.controller.CreatureController;

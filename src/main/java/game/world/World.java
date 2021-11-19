@@ -5,10 +5,14 @@ import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.Attack;
+import game.graphic.*;
+import game.graphic.env.CorridorFloor;
+import game.graphic.env.Door;
+import game.graphic.env.RoomFloor;
+import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.Location;
 import game.controller.AlogrithmController;
-import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
@@ -20,7 +24,6 @@ import worldGenerate.WorldGenerate;
 import worldGenerate.WorldGenerate.Room;
 
 import java.awt.*;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -98,16 +101,16 @@ public class World extends PGraphicScene implements Runnable {
         return pixels;
     }
 
-    protected void createBox(){
-        Random random=new Random();
-        for(Room room:rooms){
+    protected void createBox() {
+        Random random = new Random();
+        for (Room room : rooms) {
             //generate box
-            int x=random.nextInt(room.height);
-            int y=random.nextInt(room.width);
-            Box box=new Box();
-            worldArray[x][y]=200;
-            box.setPosition(Position.getPosition((room.pos.getX()+x)*tileSize,(room.pos.getY()+y)*tileSize));
-            areas[box.getPosition().getX()/areaSize][box.getPosition().getY()/areaSize].add(box);
+            int x = random.nextInt(room.height);
+            int y = random.nextInt(room.width);
+            Box box = new Box();
+            worldArray[x][y] = 200;
+            box.setPosition(Position.getPosition((room.pos.getX() + x) * tileSize, (room.pos.getY() + y) * tileSize));
+            areas[box.getPosition().getX() / areaSize][box.getPosition().getY() / areaSize].add(box);
             //addItem(box,box.getPosition());
         }
     }
@@ -222,63 +225,32 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     private void createWorld() {
-        Random random = new Random();
-        File[] WallPaths = {
-                new File(this.getClass().getClassLoader().getResource("image/source/1-18.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/1-15.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/1-23.png").getFile())
-        };
-        File[] CorridorPaths = {
-                new File(this.getClass().getClassLoader().getResource("image/source/1-45.png").getFile())
-        };
-        File[] RoomPath = {
-                new File(this.getClass().getClassLoader().getResource("image/source/3-28.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-29.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-30.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-31.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-32.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-33.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-34.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-35.png").getFile()),
-                new File(this.getClass().getClassLoader().getResource("image/source/3-36.png").getFile())
-        };
-        File[] DoorPath = {
-                new File(this.getClass().getClassLoader().getResource("image/source/0-39.png").getFile())
-        };
         for (int i = 0; i < tileHeight; i++) {
             for (int j = 0; j < tileWidth; j++) {
-                File srcpath = null;
                 switch (worldArray[i][j]) {
                     case 0 -> {
-                        srcpath = WallPaths[random.nextInt(WallPaths.length)];
-                        Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        thing.setBeCoverAble(false);
-                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        Wall wall = new Wall();
+                        addItem(wall, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 1 -> {
-                        srcpath = CorridorPaths[random.nextInt(CorridorPaths.length)];
-                        Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        CorridorFloor corridorFloor = new CorridorFloor();
+                        addItem(corridorFloor, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 5 -> {
-                        srcpath = DoorPath[random.nextInt(DoorPath.length)];
-                        Thing backThing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(backThing, Position.getPosition(i * tileSize, j * tileSize));
+                        Door door = new Door();
+                        addItem(door, Position.getPosition(i * tileSize, j * tileSize));
 
-                        Thing thing = new ExitPlace();
-                        //addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
-                        thing.setPosition(Position.getPosition(i*tileSize,j*tileSize));
-                        areas[thing.getPosition().getX()/areaSize][thing.getPosition().getY()/areaSize].add(thing);
+                        ExitPlace exitPlace = new ExitPlace();
+                        exitPlace.setPosition(Position.getPosition(i * tileSize, j * tileSize));
+                        areas[exitPlace.getPosition().getX() / areaSize][exitPlace.getPosition().getY() / areaSize].add(exitPlace);
                     }
                     case 4 -> {
-                        srcpath = DoorPath[random.nextInt(DoorPath.length)];
-                        Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        Door door = new Door();
+                        addItem(door, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     case 2, 3, 6 -> {
-                        srcpath = RoomPath[random.nextInt(RoomPath.length)];
-                        Thing thing = new Thing(srcpath, tileSize, tileSize);
-                        addItem(thing, Position.getPosition(i * tileSize, j * tileSize));
+                        RoomFloor roomFloor = new RoomFloor();
+                        addItem(roomFloor, Position.getPosition(i * tileSize, j * tileSize));
                     }
                     default -> {
                     }
@@ -461,12 +433,11 @@ public class World extends PGraphicScene implements Runnable {
                             for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
                                 if (thing instanceof Creature && thing != operational) {
-                                    areas[area.x][area.y].add( thing);
+                                    areas[area.x][area.y].add(thing);
                                     if (((Creature) thing).getController() instanceof AlogrithmController)
                                         ((AlogrithmController) ((Creature) thing).getController()).stop();
                                     removeItem(thing);
-                                }
-                                else if(thing instanceof GameThread){
+                                } else if (thing instanceof GameThread) {
                                     areas[area.x][area.y].add(thing);
                                     ((GameThread) thing).stop();
                                     removeItem(thing);
@@ -498,7 +469,7 @@ public class World extends PGraphicScene implements Runnable {
                 Log.ErrorLog(this, "thread failed");
                 break;
             }
-            System.out.println("The number of all gameThreads at this time is "+GameThread.threadSet.size());
+            System.out.println("The number of all gameThreads at this time is " + GameThread.threadSet.size());
         }
     }
 

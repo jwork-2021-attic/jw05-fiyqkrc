@@ -1,6 +1,6 @@
 package game.controller;
 
-import game.graphic.Controllable;
+import game.graphic.creature.Controllable;
 
 abstract public class CreatureController{
     protected Controllable controllable;

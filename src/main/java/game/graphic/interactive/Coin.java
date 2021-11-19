@@ -1,7 +1,9 @@
-package game.graphic;
+package game.graphic.interactive;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import game.graphic.Direction;
+import game.graphic.Thing;
 import game.graphic.interactive.GameThread;
 import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
