@@ -2,7 +2,7 @@ package game.controller;
 
 import com.pFrame.Position;
 import com.pFrame.pwidget.ObjectUserInteractive;
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import game.graphic.Controllable;
 import game.graphic.Direction;
 

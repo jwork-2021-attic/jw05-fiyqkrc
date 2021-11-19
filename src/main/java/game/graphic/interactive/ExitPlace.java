@@ -2,8 +2,6 @@ package game.graphic.interactive;
 
 import com.pFrame.Position;
 import com.pFrame.pwidget.ObjectUserInteractive;
-import game.GameThread;
-import game.controller.KeyBoardThingController;
 import game.graphic.Thing;
 import game.graphic.creature.operational.Operational;
 import game.graphic.effect.Dialog;
@@ -14,7 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive {
+public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,GameThread {
     Thread thread;
 
     public ExitPlace() {
@@ -43,11 +41,11 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive 
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                GameThread.threadSet.remove(Thread.currentThread());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 
 
@@ -110,5 +108,15 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive 
     @Override
     public Position getRealPosition() {
         return Position.getPosition(0, 0);
+    }
+
+    @Override
+    public Thread getThread() {
+        return thread;
+    }
+
+    @Override
+    public void stop() {
+        thread.interrupt();
     }
 }

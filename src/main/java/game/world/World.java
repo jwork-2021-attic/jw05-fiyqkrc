@@ -4,15 +4,15 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
-import com.pFrame.pwidget.ObjectUserInteractive;
 import game.Attack;
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import game.Location;
 import game.controller.AlogrithmController;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
+import game.graphic.interactive.Box;
 import game.graphic.interactive.ExitPlace;
 import game.screen.UI;
 import log.Log;
@@ -100,9 +100,21 @@ public class World extends PGraphicScene implements Runnable {
     protected void createMonster() {
         Random random = new Random();
         for (Room room : rooms) {
+            //generate box
+            int x=random.nextInt(room.height);
+            int y=random.nextInt(room.width);
+            Box box=new Box();
+            worldArray[x][y]=200;
+            box.setPosition(Position.getPosition((room.pos.getX()+x)*tileSize,(room.pos.getY()+y)*tileSize));
+            //areas[box.getPosition().getX()][box.getPosition().getX()].add(box);
+            addItem(box,box.getPosition());
+
+
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.55) {
+
+
+                    if (random.nextDouble(1) > 0.95) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -124,7 +136,7 @@ public class World extends PGraphicScene implements Runnable {
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.85) {
+                    if (random.nextDouble(1) > 0.95) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {

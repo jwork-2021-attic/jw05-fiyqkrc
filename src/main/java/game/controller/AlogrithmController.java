@@ -1,6 +1,6 @@
 package game.controller;
 
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 
 import java.util.Random;
 

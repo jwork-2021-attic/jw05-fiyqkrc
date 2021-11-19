@@ -2,7 +2,7 @@ package game.graphic.effect;
 
 import com.pFrame.PTimer;
 import com.pFrame.PTimerTask;
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import game.graphic.Thing;
 
 public class Effect extends Thing {

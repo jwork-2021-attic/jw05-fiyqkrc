@@ -13,12 +13,14 @@ import game.graphic.Coin;
 import game.graphic.Controllable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
+import game.graphic.interactive.buff.Addition;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Creature extends Thing implements Controllable {
     protected static HashMap<String, Body[]> SourceMap = new HashMap<>();
@@ -45,9 +47,13 @@ public abstract class Creature extends Thing implements Controllable {
 
     protected long lastMove;
 
+    protected CopyOnWriteArrayList<Addition> additions;
+
 
     public Creature(String path, int width, int height) {
         super(null);
+
+        additions=new CopyOnWriteArrayList<>();
 
         beCoverAble = false;
 
@@ -74,6 +80,16 @@ public abstract class Creature extends Thing implements Controllable {
         switchImage(1);
     }
 
+    public CopyOnWriteArrayList<Addition> getAdditions()
+    {
+        return additions;
+    }
+
+    public void addAddition(Addition addition){
+        additions.add(addition);
+        addition.useAddition();
+    }
+
     public int getGroup(){
         return group;
     }
@@ -86,8 +102,24 @@ public abstract class Creature extends Thing implements Controllable {
         return attack;
     }
 
+    public double getAttackLimit(){
+        return attackLimit;
+    }
+
+    public void addAttack(double attack){
+        this.attack+=attack;
+    }
+
     public double getHealthLimit(){
         return healthLimit;
+    }
+
+    public void addSpeed(int speed){
+        this.speed+=speed;
+    }
+
+    public void addResistance(double resistance){
+        this.resistance+=resistance;
     }
 
     public void addCoin(int n){
@@ -113,7 +145,13 @@ public abstract class Creature extends Thing implements Controllable {
     }
 
     public void deHealth(double i){
-        health-=i;
+        if(i>0) {
+            i = (1 - resistance) * i;
+            health -= i;
+        }
+        else if(i<0){
+            health=Math.min(health-i,healthLimit);
+        }
         BloodChange bloodChange=new BloodChange((int)-i,this.getPosition());
         world.addItem(bloodChange);
     }

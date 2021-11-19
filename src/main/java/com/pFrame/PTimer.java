@@ -1,6 +1,6 @@
 package com.pFrame;
 
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import log.Log;
 
 public class PTimer implements Runnable {

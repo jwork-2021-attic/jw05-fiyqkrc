@@ -2,7 +2,7 @@ package game.graphic.bullet;
 
 import com.pFrame.Position;
 import game.Attack;
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import game.Location;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;

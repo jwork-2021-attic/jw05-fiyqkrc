@@ -2,7 +2,7 @@ package game.graphic;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import game.GameThread;
+import game.graphic.interactive.GameThread;
 import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
 import game.world.World;
