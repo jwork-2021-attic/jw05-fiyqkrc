@@ -47,86 +47,89 @@ public class PGraphicScene implements ObjectUserInteractive {
 
     public ArrayList<PGraphicItem> getItemsAt(Position p) {
         Block block = positionToBlock(p);
-        ArrayList<PGraphicItem> items=new ArrayList<>();
-        synchronized (this) {
-            for (PGraphicItem item : blocks[block.x][block.y]) {
-                if(item.includePosition(p)) {
-                    items.add(item);
-                }
+        ArrayList<PGraphicItem> items = new ArrayList<>();
+        ArrayList<PGraphicItem> copy;
+        synchronized (blocks[block.x][block.y]) {
+            copy= (ArrayList<PGraphicItem>) blocks[block.x][block.y].clone();
+        }
+        for (PGraphicItem item : copy) {
+            if (item.includePosition(p)) {
+                items.add(item);
             }
         }
         return items;
     }
 
-    protected  ObjectUserInteractive[] keyListenerTable=new ObjectUserInteractive[256];
+    protected ObjectUserInteractive[] keyListenerTable = new ObjectUserInteractive[256];
     protected ObjectUserInteractive mouseListener;
     protected ObjectUserInteractive mouseWheelListener;
-    public void addKeyListener(char ch,ObjectUserInteractive objectUserInteractive){
-        keyListenerTable[(int)ch]=objectUserInteractive;
+
+    public void addKeyListener(char ch, ObjectUserInteractive objectUserInteractive) {
+        keyListenerTable[(int) ch] = objectUserInteractive;
     }
 
-    public void addMouseListener(ObjectUserInteractive objectUserInteractive){
-        mouseListener=objectUserInteractive;
+    public void addMouseListener(ObjectUserInteractive objectUserInteractive) {
+        mouseListener = objectUserInteractive;
     }
 
-    public void addMouseWheelListener(ObjectUserInteractive objectUserInteractive){
-        mouseWheelListener=objectUserInteractive;
+    public void addMouseWheelListener(ObjectUserInteractive objectUserInteractive) {
+        mouseWheelListener = objectUserInteractive;
     }
 
     @Override
     public void mouseClicked(MouseEvent e, Position p) {
-        if(mouseListener!=null)
-            mouseListener.mouseClicked(e,p);
+        if (mouseListener != null)
+            mouseListener.mouseClicked(e, p);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+        if (e.getKeyChar() <= 256 && keyListenerTable[e.getKeyChar()] != null) {
             keyListenerTable[e.getKeyChar()].keyPressed(e);
         }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+        if (e.getKeyChar() <= 256 && keyListenerTable[e.getKeyChar()] != null) {
             keyListenerTable[e.getKeyChar()].keyTyped(e);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyChar()<=256&&keyListenerTable[e.getKeyChar()]!=null){
+        if (e.getKeyChar() <= 256 && keyListenerTable[e.getKeyChar()] != null) {
             keyListenerTable[e.getKeyChar()].keyReleased(e);
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent arg0) {
-        if(mouseListener!=null)
+        if (mouseListener != null)
             mouseListener.mouseEntered(arg0);
     }
 
     @Override
     public void mouseExited(MouseEvent arg0) {
-        if(mouseListener!=null)
+        if (mouseListener != null)
             mouseListener.mouseExited(arg0);
     }
 
     @Override
     public void mousePressed(MouseEvent arg0, Position p) {
-        if(mouseListener!=null)
-            mouseListener.mousePressed(arg0,p);
+        if (mouseListener != null)
+            mouseListener.mousePressed(arg0, p);
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0, Position p) {
-        if(mouseListener!=null)
-            mouseListener.mouseReleased(arg0,p);
+        if (mouseListener != null)
+            mouseListener.mouseReleased(arg0, p);
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(mouseWheelListener!=null)
+        if (mouseWheelListener != null)
             mouseWheelListener.mouseWheelMoved(e);
     }
 
@@ -143,8 +146,8 @@ public class PGraphicScene implements ObjectUserInteractive {
     }
 
     public PGraphicItem getTopItemAt(Position p) {
-        ArrayList<PGraphicItem> items=getItemsAt(p);
-        return items.get(items.size()-1);
+        ArrayList<PGraphicItem> items = getItemsAt(p);
+        return items.get(items.size() - 1);
     }
 
     public Pixel[][] displayOutput(Position p, int width, int height) {
@@ -177,40 +180,42 @@ public class PGraphicScene implements ObjectUserInteractive {
     public Pixel[][] calBlockPixels(Block block) {
         Pixel[][] pixels = Pixel.emptyPixels(blockSize, blockSize);
         if (block.x >= 0 && block.x < this.blocks.length && block.y >= 0 && block.y < this.blocks[0].length) {
-            synchronized (this) {
-                for (PGraphicItem item : this.blocks[block.x][block.y]) {
-                    Pixel.pixelsAdd(pixels, item.getPixels(), Position.getPosition(item.getPosition().getX() - block.x * blockSize, item.getPosition().getY() - block.y * blockSize));
-                }
+            ArrayList<PGraphicItem> items;
+            synchronized (blocks[block.x][block.y]) {
+                items = (ArrayList<PGraphicItem>) this.blocks[block.x][block.y].clone();
+            }
+            for (PGraphicItem item : items) {
+                Pixel.pixelsAdd(pixels, item.getPixels(), Position.getPosition(item.getPosition().getX() - block.x * blockSize, item.getPosition().getY() - block.y * blockSize));
             }
         }
         return pixels;
     }
 
     public void repaintItem(PGraphicItem item) {
-        ArrayList<Block> oldBlocks = calBlock(item.getOldPos(), item.getWidth(), item.getHeight());
-        ArrayList<Block> newBlocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
-        ArrayList<ArrayList<PGraphicItem>> toremove = new ArrayList<>();
-        ArrayList<ArrayList<PGraphicItem>> toadd = new ArrayList<>();
-        for (Block block : oldBlocks) {
-            toremove.add(blocks[block.x][block.y]);
-        }
-        for (Block block : newBlocks) {
-            synchronized (this) {
+        synchronized (item) {
+            ArrayList<Block> oldBlocks = calBlock(item.getOldPos(), item.getWidth(), item.getHeight());
+            ArrayList<Block> newBlocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
+            ArrayList<ArrayList<PGraphicItem>> toremove = new ArrayList<>();
+            ArrayList<ArrayList<PGraphicItem>> toadd = new ArrayList<>();
+            for (Block block : oldBlocks) {
+                toremove.add(blocks[block.x][block.y]);
+            }
+            for (Block block : newBlocks) {
                 if (toremove.contains(blocks[block.x][block.y])) {
                     toremove.remove(blocks[block.x][block.y]);
                 } else {
                     toadd.add(blocks[block.x][block.y]);
                 }
             }
-        }
-        synchronized (this) {
             for (ArrayList<PGraphicItem> list : toremove)
-                list.remove(item);
-        }
-        synchronized (this) {
+                synchronized (list) {
+                    list.remove(item);
+                }
             for (ArrayList<PGraphicItem> list : toadd) {
-                list.add(item);
-                Collections.sort(list);
+                synchronized (list) {
+                    list.add(item);
+                    Collections.sort(list);
+                }
             }
         }
     }
@@ -231,40 +236,43 @@ public class PGraphicScene implements ObjectUserInteractive {
 
 
     public boolean removeItem(PGraphicItem item) {
-        boolean res;
-        synchronized (this) {
-            res = this.Items.remove(item);
-        }
-        if (res) {
-            item.removeParentScene();
-            ArrayList<Block> blocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
-            for (Block block : blocks) {
-                synchronized (this) {
-                    this.blocks[block.x][block.y].remove(item);
+        synchronized (item) {
+            boolean res;
+            synchronized (this.Items) {
+                res = this.Items.remove(item);
+            }
+            if (res) {
+                item.removeParentScene();
+                ArrayList<Block> blocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
+                for (Block block : blocks) {
+                    synchronized (this.blocks[block.x][block.y]) {
+                        this.blocks[block.x][block.y].remove(item);
+                    }
                 }
             }
+            return res;
         }
-        return res;
     }
 
     public boolean addItem(PGraphicItem item) {
-        synchronized (this) {
-            this.Items.add(item);
-        }
-        ArrayList<Block> blocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
-        for (Block block : blocks) {
-            synchronized (this) {
-                this.blocks[block.x][block.y].add(item);
-                Collections.sort(this.blocks[block.x][block.y]);
+        synchronized (item) {
+            synchronized (this.Items) {
+                this.Items.add(item);
             }
+            ArrayList<Block> blocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
+            for (Block block : blocks) {
+                synchronized (this.blocks[block.x][block.y]) {
+                    this.blocks[block.x][block.y].add(item);
+                    Collections.sort(this.blocks[block.x][block.y]);
+                }
+            }
+            item.setParentScene(this);
+            return true;
         }
-        item.setParentScene(this);
-        return true;
     }
 
     public boolean addItem(PGraphicItem item, Position p) {
         item.setPosition(p);
         return addItem(item);
     }
-
 }

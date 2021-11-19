@@ -263,10 +263,10 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     @Override
-    public synchronized boolean removeItem(PGraphicItem item) {
+    public boolean removeItem(PGraphicItem item) {
         if (item instanceof Thing) {
             if (!((Thing) item).isBeCoverAble()) {
-                synchronized (this) {
+                synchronized (item) {
                     if (((Thing) item).getTile() != null)
                         ((Thing) item).getTile().setThing(null);
                 }
@@ -282,7 +282,7 @@ public class World extends PGraphicScene implements Runnable {
             ((Thing) item).whenBeAddedToScene();
 
 
-            synchronized (this) {
+            synchronized (this.tiles) {
                 if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
                     if (!((Thing) item).isBeCoverAble())
                         tiles[((Thing) item).getCentralPosition().getX() / tileSize][((Thing) item).getCentralPosition().getY() / tileSize].setThing((Thing) item);
@@ -329,7 +329,7 @@ public class World extends PGraphicScene implements Runnable {
             } else
                 return false;
         } else {
-            synchronized (this) {
+            synchronized (this.tiles) {
                 if (isLocationReachable(thing, position) && thing.getTile().getLocation() != getTileByLocation(position) && !locationOutOfBound(getTileByLocation(position))) {
                     thing.getTile().setThing(null);
                     tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
@@ -394,7 +394,7 @@ public class World extends PGraphicScene implements Runnable {
             for (int a = x - i; a <= x + i; a++) {
                 for (int b = y - i; b <= y + i; b++) {
                     if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
-                        synchronized (this) {
+                        synchronized (this.tiles) {
                             if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup())
                                 return new Location(a, b);
                         }
