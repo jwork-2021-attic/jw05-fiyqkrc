@@ -16,6 +16,10 @@ public class SnowMonster extends Monster{
         attack=20;
         speed=2;
         resistance=0.1;
+        speedLimit=speed;
+        healthLimit=health;
+        resistanceLimit=resistance;
+        attackLimit=attack;
     }
 
     @Override

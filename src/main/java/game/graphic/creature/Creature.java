@@ -39,10 +39,10 @@ public abstract class Creature extends Thing implements Controllable {
     protected double resistance;
     protected boolean beControlled;
 
-    protected double healthLimit;
-    protected double attackLimit;
-    protected double resistanceLimit;
-    protected int speedLimit;
+    protected double healthLimit=health;
+    protected double attackLimit=attack;
+    protected double resistanceLimit=resistance;
+    protected int speedLimit=speed;
     protected int coin;
 
     protected long lastMove;
@@ -61,10 +61,6 @@ public abstract class Creature extends Thing implements Controllable {
         attack = 10;
         resistance = 0.2;
         beControlled = false;
-        healthLimit=health;
-        attackLimit=attack;
-        resistanceLimit=resistance;
-        speedLimit=speed;
         coin=1;
 
         Bodys = new Body[8];

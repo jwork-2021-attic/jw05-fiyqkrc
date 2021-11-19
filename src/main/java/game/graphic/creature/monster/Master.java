@@ -16,6 +16,10 @@ public class Master extends Monster{
         attack=20;
         resistance=0.2;
         speed=4;
+        speedLimit=speed;
+        healthLimit=health;
+        resistanceLimit=resistance;
+        attackLimit=attack;
     }
 
     @Override

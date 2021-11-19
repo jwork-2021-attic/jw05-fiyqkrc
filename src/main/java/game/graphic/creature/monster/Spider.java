@@ -16,6 +16,10 @@ public class Spider extends Monster {
         speed=3;
         health=45;
         resistance=0.1;
+        speedLimit=speed;
+        healthLimit=health;
+        resistanceLimit=resistance;
+        attackLimit=attack;
     }
 
     @Override

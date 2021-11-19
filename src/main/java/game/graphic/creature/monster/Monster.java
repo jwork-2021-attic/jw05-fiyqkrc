@@ -1,11 +1,13 @@
 package game.graphic.creature.monster;
 
+import com.pFrame.Pixel;
 import game.Location;
 import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.graphic.creature.Creature;
 import game.graphic.effect.Dialog;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
 abstract public class Monster extends Creature {
@@ -15,20 +17,20 @@ abstract public class Monster extends Creature {
     public Monster(String path, int width, int height) {
         super(path, width, height);
         group = 1;
-        speed=2;
+        speed = 2;
     }
 
     @Override
     public void pause() {
         oldController = controller;
-        if(controller instanceof AlogrithmController)
+        if (controller instanceof AlogrithmController)
             ((AlogrithmController) controller).stop();
     }
 
     @Override
     public void Continue() {
         try {
-            controller =(CreatureController) oldController.getClass().getDeclaredConstructor().newInstance();
+            controller = (CreatureController) oldController.getClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -47,7 +49,7 @@ abstract public class Monster extends Creature {
                 Location location = world.searchNearestEnemy(this, 7);
                 if (location != null && world.findThing(location) instanceof Creature) {
                     aim = (Creature) world.findThing(location);
-                    Dialog dialog=new Dialog("Ya!!!",this.getPosition());
+                    Dialog dialog = new Dialog("Ya!!!", this.getPosition());
                     world.addItem(dialog);
                     return true;
                 } else
@@ -70,7 +72,26 @@ abstract public class Monster extends Creature {
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        controller=new AlogrithmController();
+        controller = new AlogrithmController();
         controller.setThing(this);
+    }
+
+
+    /*
+    重写scene获取Item图像的方法，为怪物加上血量条
+    */
+    @Override
+    public Pixel[][] getPixels() {
+        Pixel[][] pixels = super.getPixels();
+        int length = (int) (health * width / healthLimit);
+        if (height > 1) {
+            for (int b = 0; b < width; b++) {
+                if (b < length) {
+                    pixels[0][b] = Pixel.getPixel(Color.GREEN, (char) 0xf0);
+                } else
+                    pixels[0][b] = null;
+            }
+        }
+        return pixels;
     }
 }

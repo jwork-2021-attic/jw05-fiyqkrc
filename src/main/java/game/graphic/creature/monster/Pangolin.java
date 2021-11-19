@@ -25,6 +25,10 @@ public class Pangolin extends Monster {
         resistance=0.5;
         attack=40;
         health=80;
+        speedLimit=speed;
+        healthLimit=health;
+        resistanceLimit=resistance;
+        attackLimit=attack;
     }
 
     @Override

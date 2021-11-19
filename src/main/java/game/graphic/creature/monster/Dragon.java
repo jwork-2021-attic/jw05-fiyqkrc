@@ -16,6 +16,10 @@ public class Dragon extends Monster {
         health=400;
         resistance=0.4;
         attack=70;
+        speedLimit=speed;
+        healthLimit=health;
+        resistanceLimit=resistance;
+        attackLimit=attack;
     }
 
     @Override
