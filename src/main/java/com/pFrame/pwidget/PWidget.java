@@ -97,19 +97,21 @@ public class PWidget implements ObjectUserInteractive {
     }
 
     public Pixel[][] displayOutput() {
-        if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
-            return null;
-        } else {
-            Pixel.pixelsClean(pixels);
-            if (this.background == null) {
+        synchronized (this) {
+            if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
+                return null;
             } else {
-                pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
-            }
-            for(PWidget widget:this.childWidgets){
+                Pixel.pixelsClean(pixels);
+                if (this.background == null) {
+                } else {
+                    pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
+                }
+                for (PWidget widget : this.childWidgets) {
 
-                Pixel.pixelsAdd(pixels,widget.displayOutput(),widget.getPosition());
+                    Pixel.pixelsAdd(pixels, widget.displayOutput(), widget.getPosition());
+                }
+                return pixels;
             }
-            return pixels;
         }
     }
 
@@ -136,9 +138,11 @@ public class PWidget implements ObjectUserInteractive {
     }
 
     public void changeWidgetSize(int width, int height) {
-        this.widgetHeight = height;
-        this.widgetWidth = width;
-        this.sizeChanged();
+        synchronized (this) {
+            this.widgetHeight = height;
+            this.widgetWidth = width;
+            this.sizeChanged();
+        }
     }
 
     protected void sizeChanged() {
@@ -157,7 +161,6 @@ public class PWidget implements ObjectUserInteractive {
 
     public Position getPosition() {
         return this.position;
-
     }
 
     public ArrayList<PWidget> getChildWidget() {

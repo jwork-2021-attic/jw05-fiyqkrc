@@ -471,7 +471,7 @@ public class WorldGenerate {
         generate.generate();
         PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));
-        PHeadWidget pHeadWidget = new PHeadWidget(null, null, new PFrame(300, 250));
+        PHeadWidget pHeadWidget = new PHeadWidget(null, null);
         PGraphicScene scene = new PGraphicScene(250, 250);
         scene.addItem(item2, Position.getPosition(0, 0));
         PGraphicView view = new PGraphicView(pHeadWidget, null, scene);

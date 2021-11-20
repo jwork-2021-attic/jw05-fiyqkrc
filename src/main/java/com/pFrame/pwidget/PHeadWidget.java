@@ -6,10 +6,10 @@ public class PHeadWidget extends PWidget {
 
     PFrame pFrame;
 
-    public PHeadWidget(PWidget parent, Position p, PFrame pFrame) {
+    public PHeadWidget(PWidget parent, Position p) {
         super(parent, p);
+        this.pFrame = new PFrame(400,300);
         this.changeWidgetSize(pFrame.getFrameWidth(), pFrame.getFrameHeight());
-        this.pFrame = pFrame;
         this.pFrame.setHeadWidget(this);
         this.pFrame.setVisible(true);
         this.pFrame.repaint();

@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
@@ -17,7 +19,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     protected int frameWidth;
     protected int frameHeight;
-    protected static final int charWidth=2;
+    protected static final int charWidth = 2;
 
     protected BufferedImage graphicImage;
     protected Pixel[][] pixels;
@@ -33,9 +35,9 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     public void setHeadWidget(PWidget widget) {
         this.headWidget = widget;
-        this.headWidget.changeWidgetSize((getWidth()-getInsets().left-getInsets().right)/charWidth,(getHeight()-getInsets().top-getInsets().bottom)/charWidth);
-        this.frameWidth=(getWidth()-getInsets().left-getInsets().right)/charWidth;
-        this.frameHeight=(getHeight()-getInsets().top-getInsets().bottom)/charWidth;
+        this.headWidget.changeWidgetSize((getWidth() - getInsets().left - getInsets().right) / charWidth, (getHeight() - getInsets().top - getInsets().bottom) / charWidth);
+        this.frameWidth = (getWidth() - getInsets().left - getInsets().right) / charWidth;
+        this.frameHeight = (getHeight() - getInsets().top - getInsets().bottom) / charWidth;
     }
 
     public PFrame(int width, int height) {
@@ -51,37 +53,37 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         addMouseWheelListener(this);
         graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
     }
-    long last = System.currentTimeMillis();
-    int fps=0;
 
 
     @Override
     public void paint(Graphics g) {
+        try {
+            pixels = this.headWidget.displayOutput();
 
-        pixels = this.headWidget.displayOutput();
-        if (pixels != null) {
-            for(int i=0;i<frameWidth*charWidth;i++){
-                for(int j=0;j<frameHeight*charWidth;j++){
-                    if (pixels[j / charWidth][i / charWidth] == null) {
-                        graphicImage.setRGB(i, j , 0xff000000);
-                    } else
-                        graphicImage.setRGB(i, j , pixels[j/charWidth][i / charWidth].getColor().getRGB() + (pixels[j/charWidth][i / charWidth].getColor().getAlpha() >> 24));
+            if (pixels != null) {
+                for (int i = 0; i < frameWidth * charWidth; i++) {
+                    for (int j = 0; j < frameHeight * charWidth; j++) {
+                        if (pixels[j / charWidth][i / charWidth] == null) {
+                            graphicImage.setRGB(i, j, 0xff000000);
+                        } else
+                            graphicImage.setRGB(i, j, pixels[j / charWidth][i / charWidth].getColor().getRGB() + (pixels[j / charWidth][i / charWidth].getColor().getAlpha() >> 24));
+                    }
                 }
+                g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
             }
+        }catch (ArrayIndexOutOfBoundsException ignored){
 
-            g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
         }
-        //System.out.println(System.currentTimeMillis() - last);
-        if(System.currentTimeMillis()-last<1000)
-            fps++;
-        else{
-            last=System.currentTimeMillis();
-            System.out.println("fps "+fps);
-            fps=0;
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
-
     }
 
+    @Override
+    public void repaint() {
+        super.repaint();
+    }
 
     @Override
     public void update(Graphics g) {
@@ -166,14 +168,12 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void run() {
-        long last=System.currentTimeMillis();
-        int fps=0;
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 this.repaint();
-                Thread.sleep(25);
+                Thread.sleep(30);
 
-                if((getWidth()-getInsets().left-getInsets().right)/charWidth!=frameWidth||this.frameHeight!=(getHeight()-getInsets().top-getInsets().bottom)/charWidth){
+                if ((getWidth() - getInsets().left - getInsets().right) / charWidth != frameWidth || this.frameHeight != (getHeight() - getInsets().top - getInsets().bottom) / charWidth) {
                     setHeadWidget(headWidget);
                     graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
                 }

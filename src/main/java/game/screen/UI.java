@@ -40,10 +40,7 @@ public class UI {
     public PLayout settingPage;
 
     public void createUI(){
-        PFrame pFrame=new PFrame(600,400);
-        pFrame.setName("Dungeon Adventure");
-
-        this.ui=new PHeadWidget(null,null,pFrame);
+        this.ui=new PHeadWidget(null,null);
 
         this.startPage=new PLayout(null,null,3,3,false);
         this.startPage.setRCNumStyle(3,3,"2x,1x,2x","2x,1x,2x");
