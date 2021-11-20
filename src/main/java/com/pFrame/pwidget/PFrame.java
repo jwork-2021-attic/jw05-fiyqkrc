@@ -1,25 +1,27 @@
 package com.pFrame.pwidget;
 
-import asciiPanel.AsciiFont;
-import asciiPanel.AsciiPanel;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
-    private final AsciiPanel terminal;
     protected PWidget headWidget;
 
     protected ObjectUserInteractive focusWidget;
 
     protected int frameWidth;
     protected int frameHeight;
-    protected int charWidth;
+    protected static final int charWidth=2;
+
+    protected BufferedImage graphicImage;
+    protected Pixel[][] pixels;
+
 
     public int getFrameWidth() {
         return this.frameWidth;
@@ -31,39 +33,50 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     public void setHeadWidget(PWidget widget) {
         this.headWidget = widget;
+        this.headWidget.changeWidgetSize((getWidth()-getInsets().left-getInsets().right)/charWidth,(getHeight()-getInsets().top-getInsets().bottom)/charWidth);
+        this.frameWidth=(getWidth()-getInsets().left-getInsets().right)/charWidth;
+        this.frameHeight=(getHeight()-getInsets().top-getInsets().bottom)/charWidth;
     }
 
-    public PFrame(int width, int height, AsciiFont asciiFont) {
+    public PFrame(int width, int height) {
         super();
+        setSize(width * charWidth, height * charWidth);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frameHeight = height;
         this.frameWidth = width;
         this.focusWidget = null;
-        terminal = new AsciiPanel(width, height, asciiFont);
-        this.charWidth = terminal.getCharWidth();
-        add(terminal);
-        pack();
         addKeyListener(this);
         addMouseListener(this);
         addMouseWheelListener(this);
+        graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
+    }
+
+
+    @Override
+    public void paint(Graphics g) {
+        //long last = System.currentTimeMillis();
+
+        pixels = this.headWidget.displayOutput();
+        if (pixels != null) {
+            for(int i=0;i<frameWidth*charWidth;i++){
+                for(int j=0;j<frameHeight*charWidth;j++){
+                    if (pixels[j / charWidth][i / charWidth] == null) {
+                        graphicImage.setRGB(i, j , 0xff000000);
+                    } else
+                        graphicImage.setRGB(i, j , pixels[j/charWidth][i / charWidth].getColor().getRGB() + (pixels[j/charWidth][i / charWidth].getColor().getAlpha() >> 24));
+                }
+            }
+
+            g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
+        }
+        //System.out.println(System.currentTimeMillis() - last);
 
     }
 
+
     @Override
-    public void repaint() {
-        Pixel[][] pixels = this.headWidget.displayOutput();
-        if (pixels != null) {
-            int height = pixels.length;
-            int width = pixels[0].length;
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    if (pixels[i][j] != null)
-                        this.terminal.write(pixels[i][j].getCh(), j, i, pixels[i][j].getColor());
-                    else
-                        this.terminal.write((char) 0x00, j, i, Color.BLACK);
-                }
-            }
-        }
-        super.repaint();
+    public void update(Graphics g) {
+        paint(g);
     }
 
     @Override
@@ -121,7 +134,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     @Override
     public void mousePressed(MouseEvent arg0) {
         Position p = mouseToPosition(arg0);
-
         if (this.focusWidget != null) {
             this.focusWidget.mousePressed(arg0, Position.getPosition(p.getX() - focusWidget.getRealPosition().getX(),
                     p.getY() - focusWidget.getRealPosition().getY()));
@@ -149,13 +161,15 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 this.repaint();
-                Thread.sleep(30);
-            }catch (InterruptedException e){
-                Thread.currentThread().interrupt();
-            }
-            catch (Exception e) {
+                //Thread.sleep(30);
+                if((getWidth()-getInsets().left-getInsets().right)/charWidth!=frameWidth||this.frameHeight!=(getHeight()-getInsets().top-getInsets().bottom)/charWidth){
+                    setHeadWidget(headWidget);
+                    graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 }

@@ -11,7 +11,6 @@ public class PHeadWidget extends PWidget {
         this.changeWidgetSize(pFrame.getFrameWidth(), pFrame.getFrameHeight());
         this.pFrame = pFrame;
         this.pFrame.setHeadWidget(this);
-        this.pFrame.setDefaultCloseOperation(PFrame.EXIT_ON_CLOSE);
         this.pFrame.setVisible(true);
         this.pFrame.repaint();
         this.layout = new PLayout(this, null, 1, 1);

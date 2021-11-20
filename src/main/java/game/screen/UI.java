@@ -1,6 +1,5 @@
 package game.screen;
 
-import asciiPanel.AsciiFont;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
@@ -41,13 +40,9 @@ public class UI {
     public PLayout settingPage;
 
     public void createUI(){
-        PFrame pFrame=new PFrame(600,400, AsciiFont.pFrame_2x2);
+        PFrame pFrame=new PFrame(600,400);
         pFrame.setName("Dungeon Adventure");
-        try {
-            pFrame.setIconImage(ImageIO.read(this.getClass().getClassLoader().getResourceAsStream("image/source/19-36.png")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         this.ui=new PHeadWidget(null,null,pFrame);
 
         this.startPage=new PLayout(null,null,3,3,false);

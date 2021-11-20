@@ -1,21 +1,19 @@
 package worldGenerate;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-
-import com.pFrame.pwidget.PFrame;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
+import com.pFrame.pwidget.PFrame;
 import com.pFrame.pwidget.PHeadWidget;
-
-import asciiPanel.AsciiFont;
 import mazeGenerator.MazeGenerator;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
 
 public class WorldGenerate {
     private final int width;
@@ -473,7 +471,7 @@ public class WorldGenerate {
         generate.generate();
         PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));
-        PHeadWidget pHeadWidget = new PHeadWidget(null, null, new PFrame(300, 250, AsciiFont.pFrame_4x4));
+        PHeadWidget pHeadWidget = new PHeadWidget(null, null, new PFrame(300, 250));
         PGraphicScene scene = new PGraphicScene(250, 250);
         scene.addItem(item2, Position.getPosition(0, 0));
         PGraphicView view = new PGraphicView(pHeadWidget, null, scene);
