@@ -4,7 +4,6 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.graphic.Direction;
 import game.graphic.Thing;
-import game.graphic.interactive.GameThread;
 import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
 import game.world.World;
@@ -18,10 +17,12 @@ public class Coin extends Thing implements Runnable {
     int coin;
     Thread thread;
 
+    public static Pixel[][] coinImage=GraphicItemGenerator.generateItem(Coin.class.getClassLoader().getResource("image/effect/coin.png").getFile(), World.tileSize, World.tileSize).getPixels();
+
+
     public Coin(Creature creature) {
         super(null);
-        Pixel[][] pixels = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/coin.png").getFile(), World.tileSize, World.tileSize).getPixels();
-        this.graphic = pixels;
+        this.graphic = coinImage;
         this.p = creature.getPosition();
         this.width = World.tileSize;
         this.height = World.tileSize;

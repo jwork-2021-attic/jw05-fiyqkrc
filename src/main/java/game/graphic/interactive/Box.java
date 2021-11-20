@@ -1,5 +1,6 @@
 package game.graphic.interactive;
 
+import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.graphic.Thing;
 import game.graphic.interactive.buff.Buff;
@@ -10,11 +11,14 @@ import imageTransFormer.GraphicItemGenerator;
 
 import java.util.Random;
 
-public class Box extends Thing implements Runnable,GameThread{
+public class Box extends Thing implements Runnable, GameThread {
+    public static Pixel[][] boxImage = GraphicItemGenerator.generateItem(Box.class.getClassLoader().getResource("image/effect/box/1.png").getFile(), World.tileSize, World.tileSize).getPixels();
+
     protected Thread thread;
+
     public Box() {
         super(null);
-        graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/box/1.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        graphic = boxImage;
         width = World.tileSize;
         height = World.tileSize;
         beCoverAble = true;
@@ -28,11 +32,11 @@ public class Box extends Thing implements Runnable,GameThread{
                     Thing thing = world.findThing(getLocation());
                     if (thing instanceof Operational) {
                         graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/box/2.png").getFile(), World.tileSize, World.tileSize).getPixels();
-                        Random random=new Random();
-                        Class<? extends Buff> buffClass=Buff.buffs.get(random.nextInt(Buff.buffs.size()));
-                        Buff buff=buffClass.getDeclaredConstructor().newInstance();
-                        buff.creature= (Creature) thing;
-                        buff.setPosition(Position.getPosition(getPosition().getX()+ random.nextInt(World.tileSize), getPosition().getY()+World.tileSize));
+                        Random random = new Random();
+                        Class<? extends Buff> buffClass = Buff.buffs.get(random.nextInt(Buff.buffs.size()));
+                        Buff buff = buffClass.getDeclaredConstructor().newInstance();
+                        buff.creature = (Creature) thing;
+                        buff.setPosition(Position.getPosition(getPosition().getX() + random.nextInt(World.tileSize), getPosition().getY() + World.tileSize));
                         world.addItem(buff);
                         break;
                     }

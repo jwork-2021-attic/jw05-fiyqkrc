@@ -1,5 +1,6 @@
 package game.graphic.interactive;
 
+import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pwidget.ObjectUserInteractive;
 import game.graphic.Thing;
@@ -12,12 +13,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,GameThread {
+public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive, GameThread {
+    public static Pixel[][] exitImage = GraphicItemGenerator.generateItem(ExitPlace.class.getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
+
     Thread thread;
 
     public ExitPlace() {
         super(null);
-        graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        graphic = exitImage;
         width = World.tileSize;
         height = World.tileSize;
         beCoverAble = true;
@@ -32,10 +35,9 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,
                     if (thing instanceof Operational) {
                         Dialog dialog = new Dialog("Press f to exit maze", p, 3000);
                         world.addItem(dialog);
-                        world.addKeyListener('f',this);
-                    }
-                    else{
-                        world.addKeyListener('f',null);
+                        world.addKeyListener('f', this);
+                    } else {
+                        world.addKeyListener('f', null);
                     }
                 }
                 Thread.sleep(1000);

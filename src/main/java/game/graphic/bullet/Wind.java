@@ -6,14 +6,20 @@ import game.graphic.creature.monster.Dragon;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
-public class Wind extends Bullet{
+public class Wind extends Bullet {
+    public static Pixel[][] image;
+
+    static {
+        image = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/wind.png").getFile(), World.tileSize, World.tileSize).getPixels();
+    }
+
     public Wind(Dragon dragon, double angle) {
-        super(dragon,angle);
-        Pixel[][] pixels = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/wind.png").getFile(), World.tileSize , World.tileSize ).getPixels();
+        super(dragon, angle);
+        Pixel[][] pixels = image;
         this.width = World.tileSize;
         this.height = World.tileSize;
         graphic = pixels;
-        speed=60;
-        this.p= Position.getPosition(creature.getCentralPosition().getX()-height/2, creature.getCentralPosition().getY()-width/2);
+        speed = 60;
+        this.p = Position.getPosition(creature.getCentralPosition().getX() - height / 2, creature.getCentralPosition().getY() - width / 2);
     }
 }

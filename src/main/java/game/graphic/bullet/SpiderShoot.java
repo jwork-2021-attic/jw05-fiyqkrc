@@ -8,9 +8,15 @@ import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
 public class SpiderShoot extends Bullet {
+    public static Pixel[][] image;
+
+    static {
+        image = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/spider.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
+    }
+
     public SpiderShoot(Spider spider, double angle) {
         super(spider,angle);
-        Pixel[][] pixels = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/spider.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
+        Pixel[][] pixels = image;
         this.width = World.tileSize/4;
         this.height = World.tileSize/4;
         graphic = pixels;

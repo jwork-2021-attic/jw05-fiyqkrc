@@ -15,14 +15,19 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class IceAttack extends Effect {
-    public Pixel[][] image;
+    public static Pixel[][][] images;
+    static {
+        images=new Pixel[3][][];
+        images[0]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/1.png").getFile(),World.tileSize,World.tileSize).getPixels();
+        images[1]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/2.png").getFile(),World.tileSize,World.tileSize).getPixels();
+        images[2]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/3.png").getFile(),World.tileSize,World.tileSize).getPixels();
+    }
 
     public IceAttack(Creature creature,Position position){
         super();
         this.width= World.tileSize;
         this.height=World.tileSize;
-        image= GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/shoot/ice/"+String.valueOf(new Random().nextInt(3)+1)+".png").getFile(),width,height).getPixels();
-        this.graphic=image;
+        this.graphic=images[new Random().nextInt(3)];
         time=1500;
         repeat=true;
         this.p=position;
