@@ -17,6 +17,8 @@ public class PWidget implements ObjectUserInteractive {
     protected PLayout layout;
     protected PWidget parent;
     protected PWidget background;
+    protected Pixel[][] pixels ;
+
 
     protected ArrayList<PWidget> childWidgets;
 
@@ -44,6 +46,7 @@ public class PWidget implements ObjectUserInteractive {
             this.widgetWidth = 0;
             this.position = Position.getPosition(0, 0);
         }
+        pixels= Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
     }
 
     public void addChildWidget(PWidget widget, Position p) {
@@ -97,7 +100,7 @@ public class PWidget implements ObjectUserInteractive {
         if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
             return null;
         } else {
-            Pixel[][] pixels = Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
+            Pixel.pixelsClean(pixels);
             if (this.background == null) {
             } else {
                 pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
@@ -145,6 +148,7 @@ public class PWidget implements ObjectUserInteractive {
         if(this.layout!=null){
             this.layout.changeWidgetSize(this.widgetWidth,this.widgetHeight);
         }
+        pixels = Pixel.emptyPixels(this.widgetWidth, this.widgetHeight);
     }
 
     public void setPosition(Position position) {

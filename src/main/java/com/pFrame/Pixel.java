@@ -1,12 +1,11 @@
 package com.pFrame;
 
-import java.awt.Color;
-
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pwidget.PImage;
 import imageTransFormer.ObjectTransFormer;
 
-import java.awt.image.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Pixel {
     private Color color;
@@ -63,6 +62,18 @@ public class Pixel {
                 }
             }
             return src;
+        }
+    }
+
+    static public void pixelsClean(Pixel[][] pixels){
+        if(pixels==null)
+        {}
+        else{
+            for(int i=0;i<pixels.length;i++){
+                for(int j=0;j<pixels[0].length;j++){
+                    pixels[i][j]=null;
+                }
+            }
         }
     }
 

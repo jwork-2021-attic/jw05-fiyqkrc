@@ -40,6 +40,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     public PFrame(int width, int height) {
         super();
+        pack();
         setSize(width * charWidth, height * charWidth);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frameHeight = height;
@@ -50,11 +51,12 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         addMouseWheelListener(this);
         graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
     }
+    long last = System.currentTimeMillis();
+    int fps=0;
 
 
     @Override
     public void paint(Graphics g) {
-        //long last = System.currentTimeMillis();
 
         pixels = this.headWidget.displayOutput();
         if (pixels != null) {
@@ -70,6 +72,13 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
             g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
         }
         //System.out.println(System.currentTimeMillis() - last);
+        if(System.currentTimeMillis()-last<1000)
+            fps++;
+        else{
+            last=System.currentTimeMillis();
+            System.out.println("fps "+fps);
+            fps=0;
+        }
 
     }
 
@@ -111,7 +120,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         Position pos = Position.getPosition(p.getX() - realPosition.getX(), p.getY() - realPosition.getY());
 
         this.focusWidget.mouseClicked(arg0, pos);
-
     }
 
     protected Position mouseToPosition(MouseEvent e) {
@@ -158,10 +166,13 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     @Override
     public void run() {
+        long last=System.currentTimeMillis();
+        int fps=0;
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 this.repaint();
-                //Thread.sleep(30);
+                Thread.sleep(25);
+
                 if((getWidth()-getInsets().left-getInsets().right)/charWidth!=frameWidth||this.frameHeight!=(getHeight()-getInsets().top-getInsets().bottom)/charWidth){
                     setHeadWidget(headWidget);
                     graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);

@@ -2,7 +2,6 @@ package com.pFrame.pgraphic;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pwidget.ObjectUserInteractive;
 import com.pFrame.pwidget.PWidget;
 
 import java.awt.event.KeyEvent;
@@ -41,7 +40,7 @@ public class PGraphicView extends PWidget implements PView {
         if(scene!=null)
             return this.scene.displayOutput(this.getViewPosition(), this.getWidgetWidth(), this.getWidgetHeight());
         else
-            return Pixel.emptyPixels(widgetWidth,widgetHeight);
+            return null;
     }
 
     @Override
