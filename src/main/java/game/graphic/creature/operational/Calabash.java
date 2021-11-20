@@ -22,7 +22,7 @@ public class Calabash extends Operational {
     }
 
     @Override
-    public void attack() {
+    public void responseToEnemy() {
         Location l = world.searchNearestEnemy(this, 5);
         double angle;
         if (l == null) {

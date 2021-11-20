@@ -102,12 +102,10 @@ public class PWidget implements ObjectUserInteractive {
                 return null;
             } else {
                 Pixel.pixelsClean(pixels);
-                if (this.background == null) {
-                } else {
+                if (this.background != null){
                     pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
                 }
                 for (PWidget widget : this.childWidgets) {
-
                     Pixel.pixelsAdd(pixels, widget.displayOutput(), widget.getPosition());
                 }
                 return pixels;

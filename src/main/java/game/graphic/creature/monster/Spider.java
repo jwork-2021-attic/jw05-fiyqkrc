@@ -23,9 +23,9 @@ public class Spider extends Monster {
     }
 
     @Override
-    public void attack() {
-        super.attack();
-        if (new Date().getTime() - lastAttack > coldTime) {
+    public void responseToEnemy() {
+        super.responseToEnemy();
+        if (new Date().getTime() - lastAttack > coldTime && !world.hasWallBetweenPositions(getCentralPosition(),aim.getCentralPosition())) {
             try {
                 if (aim != null) {
                     direction = Direction.calDirection(getCentralPosition(), aim.getCentralPosition());

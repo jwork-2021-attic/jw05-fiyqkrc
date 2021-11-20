@@ -45,7 +45,7 @@ public class KeyBoardThingController extends CreatureController implements PFram
     @Override
     public void keyTyped(KeyEvent e) {
         if(e.getKeyChar()=='j')
-            controllable.attack();
+            controllable.responseToEnemy();
     }
 
     @Override

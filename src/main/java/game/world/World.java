@@ -392,14 +392,35 @@ public class World extends PGraphicScene implements Runnable {
                 for (int b = y - i; b <= y + i; b++) {
                     if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
                         synchronized (this.tiles) {
-                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup())
-                                return new Location(a, b);
+                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup()){
+                                try{
+                                    if(!hasWallBetweenPositions(creature.getCentralPosition(),tiles[a][b].getThing().getCentralPosition())){
+                                        return new Location(a,b);
+                                    }
+                                }catch (Exception ignored){
+
+                                }
+                            }
                         }
                     }
                 }
             }
         }
         return null;
+    }
+
+    public boolean hasWallBetweenPositions(Position src,Position dest){
+        double distance=Position.distance(dest, src);
+        double direction=Direction.calDirection(src, dest);
+        boolean has=false;
+        for(int k=0;k<distance;k++){
+            Location location=getTileByLocation(Position.getPosition(src.getX()-(int)(k*Math.sin(direction)), src.getY()+(int)(k*Math.cos(direction))));
+            if(findThing(location) instanceof Wall){
+                has=true;
+                break;
+            }
+        }
+        return has;
     }
 
     @Override

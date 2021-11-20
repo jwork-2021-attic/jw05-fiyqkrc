@@ -46,11 +46,12 @@ public class AlogrithmController extends CreatureController implements Runnable 
                 if (controllable.isDead()) {
                     controllable.dead();
                     break;
-                } else if (!aim) {
+                }
+                trySearchAim();
+                if (!aim) {
                     tryMove();
-                    trySearchAim();
                 } else {
-                    controllable.attack();
+                    controllable.responseToEnemy();
                 }
                 Thread.sleep(50);
             } catch (InterruptedException e) {

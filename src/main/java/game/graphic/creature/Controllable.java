@@ -7,7 +7,7 @@ public interface Controllable {
 
     CreatureController getController();
 
-    void attack();
+    void responseToEnemy();
 
     boolean move(double direction);
 

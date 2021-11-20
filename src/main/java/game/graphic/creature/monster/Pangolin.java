@@ -32,8 +32,8 @@ public class Pangolin extends Monster {
     }
 
     @Override
-    public void attack() {
-        super.attack();
+    public void responseToEnemy() {
+        super.responseToEnemy();
         if (new Date().getTime() - lastAttack > this.codeTime) {
             try {
                 if (aim != null) {

@@ -4,6 +4,7 @@ import com.pFrame.Pixel;
 import game.Location;
 import game.controller.AlogrithmController;
 import game.controller.CreatureController;
+import game.graphic.Direction;
 import game.graphic.creature.Creature;
 import game.graphic.effect.Dialog;
 
@@ -76,6 +77,18 @@ abstract public class Monster extends Creature {
         controller.setThing(this);
     }
 
+    public void tryMoveToEnemy(){
+        if(aim!=null){
+            try{
+                double direction= Direction.calDirection(getCentralPosition(),aim.getCentralPosition());
+                if(!move(direction)){
+                    move(direction-Math.PI/2);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 
     /*
     重写scene获取Item图像的方法，为怪物加上血量条

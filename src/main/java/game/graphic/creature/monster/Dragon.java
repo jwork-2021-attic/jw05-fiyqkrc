@@ -23,9 +23,9 @@ public class Dragon extends Monster {
     }
 
     @Override
-    public void attack() {
-        super.attack();
-        if (new Date().getTime() - lastAttack > this.codeTime) {
+    public void responseToEnemy() {
+        super.responseToEnemy();
+        if (new Date().getTime() - lastAttack > this.codeTime && !world.hasWallBetweenPositions(getCentralPosition(),aim.getCentralPosition())) {
             try {
                 if (aim != null) {
                     direction = Direction.calDirection(getCentralPosition(), aim.getCentralPosition());

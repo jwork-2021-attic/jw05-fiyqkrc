@@ -165,7 +165,7 @@ public abstract class Creature extends Thing implements Controllable {
     }
 
     @Override
-    public void attack() {
+    public void responseToEnemy() {
     }
 
     @Override
@@ -229,8 +229,6 @@ public abstract class Creature extends Thing implements Controllable {
         Location location=world.searchNearestEnemy(this,7);
         return location!=null;
     }
-
-
 }
 
 
