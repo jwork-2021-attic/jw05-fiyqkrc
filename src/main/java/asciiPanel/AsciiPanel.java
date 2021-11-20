@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * This simulates a code page 437 ASCII terminal display.
@@ -118,7 +118,6 @@ public class AsciiPanel extends JPanel {
     private final Color[][] oldBackgroundColors;
     private final Color[][] oldForegroundColors;
     private AsciiFont asciiFont;
-    private final ExecutorService es=Executors.newFixedThreadPool(16);
 
     /**
      * Gets the height, in pixels, of a character.
@@ -362,9 +361,14 @@ public class AsciiPanel extends JPanel {
         if (g == null)
             throw new NullPointerException();
         try {
+            ThreadPoolExecutor es= (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
             for (int x = 0; x < widthInCharacters; x++) {
                 es.submit(new Accelerator(x,this));
             }
+            while (es.getQueue().size()!=0){
+
+            }
+            es.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
         }
