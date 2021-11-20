@@ -327,13 +327,15 @@ public class World extends PGraphicScene implements Runnable {
                 return false;
         } else {
             synchronized (this.tiles) {
-                if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
-                    thing.getTile().setThing(null);
-                    tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
-                    thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
-                    return true;
-                } else
-                    return false;
+                synchronized (thing) {
+                    if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
+                        thing.getTile().setThing(null);
+                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
+                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
+                        return true;
+                    } else
+                        return false;
+                }
             }
         }
     }

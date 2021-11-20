@@ -47,7 +47,7 @@ public class PGraphicScene {
         ArrayList<PGraphicItem> items = new ArrayList<>();
         ArrayList<PGraphicItem> copy;
         synchronized (blocks[block.x][block.y]) {
-            copy= (ArrayList<PGraphicItem>) blocks[block.x][block.y].clone();
+            copy = (ArrayList<PGraphicItem>) blocks[block.x][block.y].clone();
         }
         for (PGraphicItem item : copy) {
             if (item.includePosition(p)) {
@@ -58,18 +58,16 @@ public class PGraphicScene {
     }
 
     public void addKeyListener(char ch, PFrameKeyListener pFrameKeyListener) {
-        if(parentView!=null){
-            parentView.addPFrameKeyListener(ch,pFrameKeyListener);
+        if (parentView != null) {
+            parentView.addPFrameKeyListener(ch, pFrameKeyListener);
         }
     }
 
-    public void freeKeyListener(char ch,PFrameKeyListener pFrameKeyListener){
-        if(parentView!=null){
-            parentView.addPFrameKeyListener(ch,pFrameKeyListener);
+    public void freeKeyListener(char ch, PFrameKeyListener pFrameKeyListener) {
+        if (parentView != null) {
+            parentView.addPFrameKeyListener(ch, pFrameKeyListener);
         }
     }
-
-
 
 
     record Block(int x, int y) {
@@ -131,11 +129,11 @@ public class PGraphicScene {
             ArrayList<Block> newBlocks = calBlock(item.getPosition(), item.getWidth(), item.getHeight());
             ArrayList<ArrayList<PGraphicItem>> toremove = new ArrayList<>();
             ArrayList<ArrayList<PGraphicItem>> toadd = new ArrayList<>();
-            synchronized (blocks) {
-                for (Block block : oldBlocks) {
-                    toremove.add(blocks[block.x][block.y]);
-                }
-                for (Block block : newBlocks) {
+            for (Block block : oldBlocks) {
+                toremove.add(blocks[block.x][block.y]);
+            }
+            for (Block block : newBlocks) {
+                synchronized (blocks[block.x][block.y]) {
                     if (toremove.contains(blocks[block.x][block.y])) {
                         toremove.remove(blocks[block.x][block.y]);
                     } else {
