@@ -318,19 +318,19 @@ public class World extends PGraphicScene implements Runnable {
     }
 
 
-    public boolean ThingMove(Thing thing, Position position) {
+    public boolean ThingMove(Thing thing, Position centralPosition) {
         if (thing.isBeCoverAble()) {
-            if (!positionOutOfBound(position)) {
-                thing.setPosition(Position.getPosition(position.getX() - thing.getHeight() / 2, position.getY() - thing.getWidth() / 2));
+            if (!positionOutOfBound(centralPosition)) {
+                thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
                 return true;
             } else
                 return false;
         } else {
             synchronized (this.tiles) {
-                if (isLocationReachable(thing, position) && thing.getTile().getLocation() != getTileByLocation(position) && !locationOutOfBound(getTileByLocation(position))) {
+                if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
                     thing.getTile().setThing(null);
-                    tiles[getTileByLocation(position).x()][getTileByLocation(position).y()].setThing(thing);
-                    thing.setPosition(Position.getPosition(position.getX() - thing.getHeight() / 2, position.getY() - thing.getWidth() / 2));
+                    tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
+                    thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
                     return true;
                 } else
                     return false;

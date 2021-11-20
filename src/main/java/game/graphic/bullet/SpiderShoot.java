@@ -21,6 +21,6 @@ public class SpiderShoot extends Bullet {
         this.height = World.tileSize/4;
         graphic = pixels;
         this.speed = 200;
-        this.p= Position.getPosition(creature.getCentralPosition().getX()-height/2, creature.getCentralPosition().getY()-width/2);
+        this.p= Position.getPosition(parent.getCentralPosition().getX()-height/2, parent.getCentralPosition().getY()-width/2);
     }
 }

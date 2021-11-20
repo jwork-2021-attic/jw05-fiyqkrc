@@ -5,6 +5,8 @@ import game.Attack;
 import game.Location;
 import game.graphic.Direction;
 import game.graphic.Thing;
+import game.graphic.creature.Creature;
+import game.graphic.effect.Hit;
 import game.graphic.effect.Swoon;
 import game.world.World;
 
@@ -52,8 +54,22 @@ public class Pangolin extends Monster {
                         t.add(world.getTileByLocation(nextCentral));
                         world.handleAttack(new Attack(Attack.HIT, t, this.getAttack(), group));
                         lastAttack = System.currentTimeMillis();
+                        //effect
                         Swoon swoon = new Swoon(this.p);
                         world.addItem(swoon);
+                        //hit effect
+                        Hit hit=new Hit();
+                        hit.setPosition(this.p);
+                        world.addItem(hit);
+                        //if creature,hit away some distance
+                        if(thing instanceof Creature) {
+                            synchronized (thing) {
+                                double d = Direction.calDirection(getCentralPosition(), thing.getCentralPosition());
+                                double next_x = thing.getCentralPosition().getX() - Math.sin(d) * World.tileSize / 2;
+                                double next_y = thing.getCentralPosition().getY() + Math.cos(d) * World.tileSize / 2;
+                                world.ThingMove(thing, Position.getPosition((int) next_x, (int) next_y));
+                            }
+                        }
                     } else if (world.positionOutOfBound(nextCentral)) {
                     } else {
                         this.world.ThingMove(this, nextCentral);
