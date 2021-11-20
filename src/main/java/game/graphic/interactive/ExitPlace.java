@@ -1,8 +1,7 @@
 package game.graphic.interactive;
 
 import com.pFrame.Pixel;
-import com.pFrame.Position;
-import com.pFrame.pwidget.ObjectUserInteractive;
+import com.pFrame.pwidget.PFrameKeyListener;
 import game.graphic.Thing;
 import game.graphic.creature.operational.Operational;
 import game.graphic.effect.Dialog;
@@ -10,10 +9,8 @@ import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
-public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive, GameThread {
+public class ExitPlace extends Thing implements Runnable, PFrameKeyListener, GameThread {
     public static Pixel[][] exitImage = GraphicItemGenerator.generateItem(ExitPlace.class.getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
 
     Thread thread;
@@ -37,7 +34,7 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,
                         world.addItem(dialog);
                         world.addKeyListener('f', this);
                     } else {
-                        world.addKeyListener('f', null);
+                        world.freeKeyListener('f', this);
                     }
                 }
                 Thread.sleep(1000);
@@ -59,10 +56,7 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,
         GameThread.threadSet.add(thread);
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e, Position p) {
 
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -82,35 +76,6 @@ public class ExitPlace extends Thing implements Runnable, ObjectUserInteractive,
 
     }
 
-    @Override
-    public void mouseEntered(MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent arg0, Position p) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent arg0, Position p) {
-
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-
-    }
-
-    @Override
-    public Position getRealPosition() {
-        return Position.getPosition(0, 0);
-    }
 
     @Override
     public Thread getThread() {

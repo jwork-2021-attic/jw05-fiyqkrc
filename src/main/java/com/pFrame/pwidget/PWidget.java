@@ -213,8 +213,7 @@ public class PWidget implements ObjectUserInteractive {
     }
 
     public void mouseClicked(MouseEvent mouseEvent, Position p) {
-        if(background!=null)
-            background.mouseClicked(mouseEvent,p);
+
         if(clickMethod!=null&&clickMethodObject!=null) {
             try {
                 clickMethod.invoke(clickMethodObject, null);
@@ -227,43 +226,46 @@ public class PWidget implements ObjectUserInteractive {
     }
 
     public void keyPressed(KeyEvent e) {
-        if(background!=null)
-            background.keyPressed(e);
+
     }
 
     public void keyTyped(KeyEvent e) {
-        if(background!=null)
-            background.keyTyped(e);
+
     }
 
     public void keyReleased(KeyEvent e) {
-        if(background!=null)
-            background.keyReleased(e);
+
     }
 
     public void mouseEntered(MouseEvent arg0) {
-        if(background!=null)
-            background.mouseEntered(arg0);
+
     }
 
     public void mouseExited(MouseEvent arg0) {
-        if(background!=null)
-            background.mouseExited(arg0);
+
     }
 
     public void mousePressed(MouseEvent arg0, Position p) {
-        if(background!=null)
-            background.mousePressed(arg0,p);
+
     }
 
     public void mouseReleased(MouseEvent arg0, Position p) {
-        if(background!=null)
-            background.mouseReleased(arg0,p);
+
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(background!=null)
-            background.mouseWheelMoved(e);
 
+    }
+
+    public void addPFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        if(this.parent!=null){
+            this.parent.addPFrameKeyListener(ch,pFrameKeyListener);
+        }
+    }
+
+    public void freePFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        if(this.parent!=null){
+            this.parent.freePFrameKeyListener(ch,pFrameKeyListener);
+        }
     }
 }

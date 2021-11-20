@@ -23,4 +23,11 @@ public class PHeadWidget extends PWidget {
         Thread thread = new Thread(pFrame, "window flash thread");
         thread.start();
     }
+    public void addPFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        pFrame.addPFrameKeyListener(ch,pFrameKeyListener);
+    }
+
+    public void freePFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        pFrame.freePFrameKeyListener(ch,pFrameKeyListener);
+    }
 }

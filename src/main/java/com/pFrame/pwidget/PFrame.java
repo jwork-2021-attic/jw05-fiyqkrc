@@ -8,8 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
 
@@ -23,6 +21,8 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     protected BufferedImage graphicImage;
     protected Pixel[][] pixels;
+
+    protected PFrameKeyListener[] pFrameKeyListeners;
 
 
     public int getFrameWidth() {
@@ -48,6 +48,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         this.frameHeight = height;
         this.frameWidth = width;
         this.focusWidget = null;
+        pFrameKeyListeners=new PFrameKeyListener[256];
         addKeyListener(this);
         addMouseListener(this);
         addMouseWheelListener(this);
@@ -90,23 +91,40 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         paint(g);
     }
 
+    public void addPFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        pFrameKeyListeners[ch]=pFrameKeyListener;
+    }
+
+    public void freePFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
+        pFrameKeyListeners[ch]=null;
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+            pFrameKeyListeners[e.getKeyChar()].keyTyped(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyTyped(e);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+            pFrameKeyListeners[e.getKeyChar()].keyPressed(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyPressed(e);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (this.focusWidget != null) {
+        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+            pFrameKeyListeners[e.getKeyChar()].keyReleased(e);
+        }
+        else if (this.focusWidget != null) {
             this.focusWidget.keyReleased(e);
         }
     }

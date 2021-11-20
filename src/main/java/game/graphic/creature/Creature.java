@@ -3,21 +3,18 @@ package game.graphic.creature;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
-import com.pFrame.pgraphic.PGraphicItem;
-import com.pFrame.pwidget.ObjectUserInteractive;
 import game.Location;
 import game.controller.AlogrithmController;
 import game.controller.CreatureController;
 import game.controller.KeyBoardThingController;
-import game.graphic.interactive.Coin;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
-import game.graphic.interactive.buff.Addition;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
+import game.graphic.interactive.Coin;
+import game.graphic.interactive.buff.Addition;
 import imageTransFormer.GraphicItemGenerator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -233,17 +230,7 @@ public abstract class Creature extends Thing implements Controllable {
         return location!=null;
     }
 
-    @Override
-    public ArrayList<ObjectUserInteractive> getAroundInteractive() {
-        ArrayList<PGraphicItem> items=world.getItemsAt(this.getCentralPosition());
-        ArrayList<ObjectUserInteractive> res=new ArrayList<>();
-        for(PGraphicItem item:items){
-            if(item instanceof ObjectUserInteractive){
-                res.add((ObjectUserInteractive) item);
-            }
-        }
-        return res;
-    }
+
 }
 
 

@@ -1,18 +1,15 @@
 package game.controller;
 
-import com.pFrame.Position;
-import com.pFrame.pwidget.ObjectUserInteractive;
-import game.graphic.interactive.GameThread;
-import game.graphic.creature.Controllable;
+import com.pFrame.pwidget.PFrameKeyListener;
 import game.graphic.Direction;
+import game.graphic.creature.Controllable;
+import game.graphic.interactive.GameThread;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class KeyBoardThingController extends CreatureController implements ObjectUserInteractive, Runnable {
+public class KeyBoardThingController extends CreatureController implements PFrameKeyListener, Runnable {
 
     Thread thread;
 
@@ -35,10 +32,6 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     CopyOnWriteArrayList<Character> keyArray = new CopyOnWriteArrayList<>();
 
-    @Override
-    public void mouseClicked(MouseEvent e, Position p) {
-        controllable.attack();
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -51,48 +44,19 @@ public class KeyBoardThingController extends CreatureController implements Objec
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(!allKeyCode.contains(e.getKeyChar())){
-            ArrayList<ObjectUserInteractive> objectUserInteractives=controllable.getAroundInteractive();
-            for(ObjectUserInteractive objectUserInteractive:objectUserInteractives)
-                objectUserInteractive.keyTyped(e);
-        }
+        if(e.getKeyChar()=='j')
+            controllable.attack();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (keyArray.contains(e.getKeyChar()))
-            keyArray.remove((Character) e.getKeyChar());
+        if(allKeyCode.contains(e.getKeyChar())) {
+            if (keyArray.contains(e.getKeyChar()))
+                keyArray.remove((Character) e.getKeyChar());
+        }
     }
 
-    @Override
-    public void mouseEntered(MouseEvent arg0) {
 
-    }
-
-    @Override
-    public void mouseExited(MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent arg0, Position p) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent arg0, Position p) {
-
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-
-    }
-
-    @Override
-    public Position getRealPosition() {
-        return Position.getPosition(0, 0);
-    }
 
     @Override
     public void run() {

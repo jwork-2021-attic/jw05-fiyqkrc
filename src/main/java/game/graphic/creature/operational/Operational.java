@@ -1,6 +1,6 @@
 package game.graphic.creature.operational;
 
-import com.pFrame.pwidget.ObjectUserInteractive;
+import com.pFrame.pwidget.PFrameKeyListener;
 import game.controller.KeyBoardThingController;
 import game.graphic.creature.Creature;
 
@@ -14,20 +14,20 @@ abstract public class Operational extends Creature {
 
     @Override
     public void pause() {
-        this.world.addKeyListener('w',null);
-        this.world.addMouseListener(null);
-        this.world.addKeyListener('a',null);
-        this.world.addKeyListener('s',null);
-        this.world.addKeyListener('d',null);
+        this.world.freeKeyListener('w',(PFrameKeyListener) this.controller);
+        this.world.freeKeyListener('a',(PFrameKeyListener) this.controller);
+        this.world.freeKeyListener('s',(PFrameKeyListener) this.controller);
+        this.world.freeKeyListener('d',(PFrameKeyListener) this.controller);
+        this.world.freeKeyListener('j',(PFrameKeyListener) this.controller);
     }
 
     @Override
     public void Continue() {
-        this.world.addKeyListener('w', (ObjectUserInteractive) this.controller);
-        this.world.addMouseListener((ObjectUserInteractive) this.controller);
-        this.world.addKeyListener('a', (ObjectUserInteractive) this.controller);
-        this.world.addKeyListener('s', (ObjectUserInteractive) this.controller);
-        this.world.addKeyListener('d', (ObjectUserInteractive) this.controller);
+        this.world.addKeyListener('w', (PFrameKeyListener) this.controller);
+        this.world.addKeyListener('a', (PFrameKeyListener) this.controller);
+        this.world.addKeyListener('s', (PFrameKeyListener) this.controller);
+        this.world.addKeyListener('d', (PFrameKeyListener) this.controller);
+        this.world.addKeyListener('j',(PFrameKeyListener) this.controller);
     }
 
     @Override
