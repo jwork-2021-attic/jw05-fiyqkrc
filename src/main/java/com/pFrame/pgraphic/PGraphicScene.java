@@ -100,12 +100,15 @@ public class PGraphicScene {
         int w = (endy - starty + 1) * blockSize;
         int h = (endx - startx + 1) * blockSize;
 
+
         Pixel[][] pixels = Pixel.emptyPixels(w, h);
+
         for (int i = starty; i <= endy; i++) {
             for (int j = startx; j <= endx; j++) {
                 Pixel.pixelsAdd(pixels, calBlockPixels(new Block(j, i)), Position.getPosition((j - startx) * blockSize, (i - starty) * blockSize));
             }
         }
+
         return Pixel.subPixels(pixels, Position.getPosition(p.getX() - startx * blockSize, p.getY() - starty * blockSize), width, height);
     }
 

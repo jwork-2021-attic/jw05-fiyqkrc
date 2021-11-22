@@ -11,7 +11,7 @@ public class PFont {
     public static int fontBaseSize = 8;
 
     static {
-        fontImagePixels = GraphicItemGenerator.generateItem(new File(PFont.class.getClassLoader().getResource("cp437_8x8.png").getFile()), 128, 128).getPixels();
+        fontImagePixels = GraphicItemGenerator.generateItem(new File(PFont.class.getClassLoader().getResource("cp437_8x8.png").getFile()), 16*PFont.fontBaseSize, 16*PFont.fontBaseSize).getPixels();
     }
 
     public static Pixel[][] getCharByPixels(char ch) {
@@ -22,7 +22,7 @@ public class PFont {
         if (fontsPixels[ch] != null) {
             return fontsPixels[ch];
         } else {
-            Pixel[][] res = Pixel.subPixels(fontImagePixels, Position.getPosition(ch / 16 * 8, (ch % 16) * 8), 8, 8);
+            Pixel[][] res = Pixel.subPixels(fontImagePixels, Position.getPosition(ch / 16 * PFont.fontBaseSize, (ch % 16) * PFont.fontBaseSize), PFont.fontBaseSize, PFont.fontBaseSize);
             for (int i = 0; i < fontBaseSize; i++) {
                 for (int j = 0; j < fontBaseSize; j++) {
                     if (res[i][j] != null && (res[i][j].getColor().getRGB() & 0x00ffffff) == 0x00000000) {

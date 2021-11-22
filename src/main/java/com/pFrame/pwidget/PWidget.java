@@ -101,13 +101,14 @@ public class PWidget implements ObjectUserInteractive {
             if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
                 return null;
             } else {
-                Pixel.pixelsClean(pixels);
+                Pixel[][] frame=Pixel.emptyPixels(widgetWidth,widgetHeight);
                 if (this.background != null){
-                    pixels = Pixel.pixelsAdd(pixels, this.background.displayOutput(), this.background.getPosition());
+                    frame = Pixel.pixelsAdd(frame, this.background.displayOutput(), this.background.getPosition());
                 }
                 for (PWidget widget : this.childWidgets) {
-                    Pixel.pixelsAdd(pixels, widget.displayOutput(), widget.getPosition());
+                    Pixel.pixelsAdd(frame, widget.displayOutput(), widget.getPosition());
                 }
+                pixels=frame;
                 return pixels;
             }
         }

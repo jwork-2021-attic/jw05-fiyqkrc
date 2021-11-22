@@ -16,16 +16,16 @@ public class Dialog extends Effect {
     public Dialog(String text, Position position,int time) {
         super();
         this.string=text;
-        Pixel[][] pixels=Pixel.valueOf(GraphicItemGenerator.generateItem(Dialog.class.getClassLoader().getResource("image/dialog.png").getFile(),8*string.length()+10,12));
+        Pixel[][] pixels=Pixel.valueOf(GraphicItemGenerator.generateItem(Dialog.class.getClassLoader().getResource("image/dialog.png").getFile(),PFont.fontBaseSize*string.length()+10,12));
         for(int i=0;i<string.length();i++)
-            Pixel.pixelsAdd(pixels, PFont.getCharByPixels(string.charAt(i)),Position.getPosition(2,2+8*i));
+            Pixel.pixelsAdd(pixels, PFont.getCharByPixels(string.charAt(i)),Position.getPosition(2,2+PFont.fontBaseSize*i));
         this.graphic=pixels;
-        this.width=8*string.length()+4;
+        this.width=PFont.fontBaseSize*string.length()+4;
         this.height=12;
         repeat=false;
         this.time=time;
         task=new Task(this);
-        this.p=Position.getPosition(position.getX()-4,position.getY()-8*string.length()-4);
+        this.p=Position.getPosition(position.getX()-4,position.getY()-PFont.fontBaseSize*string.length()-4);
     }
 
     class Task implements PTimerTask{

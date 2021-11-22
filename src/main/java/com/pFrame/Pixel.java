@@ -16,6 +16,7 @@ public class Pixel {
         this.color = color;
     }
 
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -31,6 +32,8 @@ public class Pixel {
     public Pixel copy() {
         return new Pixel(color, ch);
     }
+
+
 
     public static Pixel getPixel(Color color, char ch) {
         return new Pixel(color, ch);
@@ -54,10 +57,29 @@ public class Pixel {
             int w = dest[0].length;
             for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
-                    if ((position.getX() + i < src.length && position.getX() + i >= 0)
-                            && (position.getY() + j < src[0].length && position.getY() + j >= 0)) {
-                        if (dest[i][j] != null)
-                            src[position.getX() + i][position.getY() + j] = dest[i][j];
+                    if(position.getX()+i<0) {
+                        i = -position.getX();
+                        i--;
+                        break;
+                    }
+                    if(position.getX()+i>=src.length){
+                        h=src.length-position.getX();
+                        i--;
+                        break;
+                    }
+                    if(position.getY()+j<0)
+                    {
+                        j=-position.getY();
+                        j--;
+                        continue;
+                    }
+                    if(position.getY()+j>=src[0].length){
+                        w=src[0].length-position.getY();
+                        j--;
+                        continue;
+                    }
+                    if(dest[i][j]!=null){
+                        src[position.getX()+i][position.getY()+j]=dest[i][j];
                     }
                 }
             }
@@ -199,19 +221,19 @@ public class Pixel {
         }
     }
 
-    static public Pixel[][] valueOf(BufferedImage bufferimage) {
-        if (bufferimage == null) {
+    static public Pixel[][] valueOf(BufferedImage bufferedImage) {
+        if (bufferedImage == null) {
             return null;
         } else {
-            int height = bufferimage.getHeight();
-            int width = bufferimage.getWidth();
+            int height = bufferedImage.getHeight();
+            int width = bufferedImage.getWidth();
             Pixel[][] pixels = new Pixel[height][width];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    if(bufferimage.getRGB(j, i)>>24==0)
+                    if(bufferedImage.getRGB(j, i)>>24==0)
                         pixels[i][j]=null;
                     else
-                        pixels[i][j] = Pixel.getPixel(new Color(bufferimage.getRGB(j, i)), (char) 0xf0);
+                        pixels[i][j] = Pixel.getPixel(new Color(bufferedImage.getRGB(j, i)), (char) 0xf0);
                 }
             }
             return pixels;

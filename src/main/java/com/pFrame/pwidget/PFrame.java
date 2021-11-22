@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.util.ArrayList;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
@@ -17,12 +18,16 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     protected int frameWidth;
     protected int frameHeight;
-    protected static final int charWidth = 2;
+    public static final int charWidth = 2;
 
     protected BufferedImage graphicImage;
     protected Pixel[][] pixels;
 
     protected PFrameKeyListener[] pFrameKeyListeners;
+
+    protected long averagePaintTime=0;
+    protected long averageRepaintTime=0;
+    protected int fps=0;
 
 
     public int getFrameWidth() {
@@ -48,42 +53,59 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         this.frameHeight = height;
         this.frameWidth = width;
         this.focusWidget = null;
-        pFrameKeyListeners=new PFrameKeyListener[256];
+        pFrameKeyListeners = new PFrameKeyListener[256];
         addKeyListener(this);
         addMouseListener(this);
         addMouseWheelListener(this);
-        graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
+        graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_RGB);
     }
 
+    public int getFps(){
+        return fps;
+    }
+
+    private long lastSecond=System.currentTimeMillis();
+    private int frames=0;
 
     @Override
     public void paint(Graphics g) {
         try {
-            pixels = this.headWidget.displayOutput();
-
+            long start = System.currentTimeMillis();
+            if(start-lastSecond<1000){
+                frames++;
+            }
+            else{
+                fps=frames;
+                frames=0;
+                lastSecond=start;
+            }
             if (pixels != null) {
-                for (int i = 0; i < frameWidth * charWidth; i++) {
-                    for (int j = 0; j < frameHeight * charWidth; j++) {
-                        if (pixels[j / charWidth][i / charWidth] == null) {
-                            graphicImage.setRGB(i, j, 0xff000000);
+                for (int i = 0; i < frameHeight * charWidth; i++) {
+                    for (int j = 0; j < frameWidth * charWidth; j++) {
+                        int h=i/charWidth;
+                        int w=j/charWidth;
+                        if (pixels[h][w] == null) {
+                            graphicImage.setRGB(j, i, 0xff000000);
                         } else
-                            graphicImage.setRGB(i, j, pixels[j / charWidth][i / charWidth].getColor().getRGB() + (pixels[j / charWidth][i / charWidth].getColor().getAlpha() >> 24));
+                            graphicImage.setRGB(j, i, pixels[i / charWidth][j / charWidth].getColor().getRGB() + (pixels[i / charWidth][j / charWidth].getColor().getAlpha() >> 24));
                     }
                 }
+                averagePaintTime=(averagePaintTime+System.currentTimeMillis()-start)/2;
+
                 g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
             }
-        }catch (ArrayIndexOutOfBoundsException ignored){
-
-        }
-        catch (Exception e)
-        {
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            ignored.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void repaint() {
+        pixels = this.headWidget.displayOutput();
         super.repaint();
+
     }
 
     @Override
@@ -91,40 +113,37 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         paint(g);
     }
 
-    public void addPFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
-        pFrameKeyListeners[ch]=pFrameKeyListener;
+    public void addPFrameKeyListener(int ch, PFrameKeyListener pFrameKeyListener) {
+        pFrameKeyListeners[ch] = pFrameKeyListener;
     }
 
-    public void freePFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
-        pFrameKeyListeners[ch]=null;
+    public void freePFrameKeyListener(int ch, PFrameKeyListener pFrameKeyListener) {
+        pFrameKeyListeners[ch] = null;
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+        if (pFrameKeyListeners[e.getKeyChar()] != null) {
             pFrameKeyListeners[e.getKeyChar()].keyTyped(e);
-        }
-        else if (this.focusWidget != null) {
+        } else if (this.focusWidget != null) {
             this.focusWidget.keyTyped(e);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+        if (pFrameKeyListeners[e.getKeyChar()] != null) {
             pFrameKeyListeners[e.getKeyChar()].keyPressed(e);
-        }
-        else if (this.focusWidget != null) {
+        } else if (this.focusWidget != null) {
             this.focusWidget.keyPressed(e);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(pFrameKeyListeners[e.getKeyChar()]!=null){
+        if (pFrameKeyListeners[e.getKeyChar()] != null) {
             pFrameKeyListeners[e.getKeyChar()].keyReleased(e);
-        }
-        else if (this.focusWidget != null) {
+        } else if (this.focusWidget != null) {
             this.focusWidget.keyReleased(e);
         }
     }
@@ -188,17 +207,22 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
+                long start=System.currentTimeMillis();
                 this.repaint();
-                Thread.sleep(30);
-
+                averageRepaintTime=(averageRepaintTime+System.currentTimeMillis()-start)/2;
                 if ((getWidth() - getInsets().left - getInsets().right) / charWidth != frameWidth || this.frameHeight != (getHeight() - getInsets().top - getInsets().bottom) / charWidth) {
                     setHeadWidget(headWidget);
                     graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
                 }
-            } catch (Exception e) {
+                try {
+                    Thread.sleep(Math.max(averagePaintTime-averageRepaintTime,0));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
 }

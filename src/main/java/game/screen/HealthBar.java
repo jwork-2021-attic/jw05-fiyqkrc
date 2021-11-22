@@ -26,12 +26,12 @@ public class HealthBar extends PWidget {
 
     public void updatePixels() {
         String text = String.format("health: %d / %d", (int) health, (int) healthLimit);
-        if (widgetHeight <= 8) {
+        if (widgetHeight <= PFont.fontBaseSize) {
             Log.WarningLog(this, "health widgetBar height too small:" + widgetHeight + ", will display nothing");
             return;
         }
-        if (widgetWidth < text.length() * 8) {
-            if (widgetWidth > String.format("%d/%d", (int) health, (int) healthLimit).length() * 8) {
+        if (widgetWidth < text.length() * PFont.fontBaseSize) {
+            if (widgetWidth > String.format("%d/%d", (int) health, (int) healthLimit).length() * PFont.fontBaseSize) {
                 text = String.format("%d/%d", (int) health, (int) healthLimit);
             } else {
                 Log.WarningLog(this, "health widgetBar width too small:" + widgetWidth + ", will display nothing");

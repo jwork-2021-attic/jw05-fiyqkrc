@@ -467,12 +467,12 @@ public class WorldGenerate {
     }
 
     public static void main(String[] args) {
-        WorldGenerate generate = new WorldGenerate(100, 100, 2000000, 20, 2, 20, 2);
+        WorldGenerate generate = new WorldGenerate(500, 500, 2000000, 20, 2, 20, 2);
         generate.generate();
         PGraphicItem item = generate.toPGraphicItem();
         PGraphicItem item2 = new PGraphicItem(Pixel.pixelsScaleLarger(item.getPixels(), 5));
         PHeadWidget pHeadWidget = new PHeadWidget(null, null);
-        PGraphicScene scene = new PGraphicScene(250, 250);
+        PGraphicScene scene = new PGraphicScene(2500, 2500);
         scene.addItem(item2, Position.getPosition(0, 0));
         PGraphicView view = new PGraphicView(pHeadWidget, null, scene);
         view.setViewPosition(Position.getPosition(0, 0));

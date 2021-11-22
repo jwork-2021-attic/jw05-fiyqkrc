@@ -17,12 +17,12 @@ public class BloodChange extends Effect {
         if(this.change>=0){
             string="+"+string;
         }
-        Pixel[][] pixels = Pixel.emptyPixels(string.length()*8,8);
+        Pixel[][] pixels = Pixel.emptyPixels(string.length()*PFont.fontBaseSize,PFont.fontBaseSize);
         for (int i = 0; i < string.length(); i++)
-            Pixel.pixelsAdd(pixels, PFont.getCharByPixels(string.charAt(i)), Position.getPosition(0, 8 * i));
+            Pixel.pixelsAdd(pixels, PFont.getCharByPixels(string.charAt(i)), Position.getPosition(0, PFont.fontBaseSize * i));
         this.graphic = pixels;
-        this.width = 8 * string.length();
-        this.height = 8;
+        this.width = PFont.fontBaseSize * string.length();
+        this.height = PFont.fontBaseSize;
         repeat = false;
         time = 200;
         task = new Task(this);
