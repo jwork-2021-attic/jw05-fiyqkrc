@@ -2,7 +2,7 @@
 
 ## 游戏预览
 
-![](Screenshot from 2021-11-18 00-18-49.png)
+![](Screenshot.png)
 
 ## 代码结构
 
