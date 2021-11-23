@@ -57,29 +57,31 @@ public class Pixel {
             int w = dest[0].length;
             for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
-                    if(position.getX()+i<0) {
-                        i = -position.getX();
-                        i--;
-                        break;
-                    }
-                    if(position.getX()+i>=src.length){
-                        h=src.length-position.getX();
-                        i--;
-                        break;
-                    }
-                    if(position.getY()+j<0)
-                    {
-                        j=-position.getY();
-                        j--;
-                        continue;
-                    }
-                    if(position.getY()+j>=src[0].length){
-                        w=src[0].length-position.getY();
-                        j--;
-                        continue;
-                    }
-                    if(dest[i][j]!=null){
-                        src[position.getX()+i][position.getY()+j]=dest[i][j];
+
+                    try{
+                        if(dest[i][j]!=null){
+                            src[position.getX()+i][position.getY()+j]=dest[i][j];
+                        }
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        if(position.getX()+i<0) {
+                            i = -position.getX();
+                            i--;
+                            break;
+                        }
+                        else if(position.getX()+i>=src.length){
+                            h=src.length-position.getX();
+                            i--;
+                            break;
+                        }
+                        else if(position.getY()+j<0)
+                        {
+                            j=-position.getY();
+                            j--;
+                        }
+                        else{
+                            w=src[0].length-position.getY();
+                            j--;
+                        }
                     }
                 }
             }
@@ -127,8 +129,30 @@ public class Pixel {
         int w = pixels[0].length;
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
-                if ((p.getX() + i < h && p.getX() + i >= 0) && (p.getY() + j < w && p.getY() + j > 0)) {
-                    res[i][j] = pixels[p.getX() + i][p.getY() + j];
+                try {
+                    if ((p.getX() + i < h && p.getX() + i >= 0) && (p.getY() + j < w && p.getY() + j > 0)) {
+                        res[i][j] = pixels[p.getX() + i][p.getY() + j];
+                    }
+                }
+                catch (ArrayIndexOutOfBoundsException e){
+                    if(p.getX()+i>=h){
+                        height=h-p.getX();
+                        i--;
+                        break;
+                    }
+                    else if(p.getX()+i<0){
+                        i=-p.getX();
+                        i--;
+                        break;
+                    }
+                    else if(p.getY()+j>=w){
+                        width=w-p.getY();
+                        j--;
+                    }
+                    else{
+                        j=-p.getY();
+                        j--;
+                    }
                 }
             }
         return res;

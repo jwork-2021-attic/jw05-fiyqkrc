@@ -25,9 +25,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
 
     protected PFrameKeyListener[] pFrameKeyListeners;
 
-    protected long averagePaintTime=0;
-    protected long averageRepaintTime=0;
-    protected int fps=0;
 
 
     public int getFrameWidth() {
@@ -60,39 +57,27 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_RGB);
     }
 
-    public int getFps(){
-        return fps;
-    }
 
-    private long lastSecond=System.currentTimeMillis();
-    private int frames=0;
+
 
     @Override
     public void paint(Graphics g) {
         try {
-            long start = System.currentTimeMillis();
-            if(start-lastSecond<1000){
-                frames++;
-            }
-            else{
-                fps=frames;
-                frames=0;
-                lastSecond=start;
-            }
-            if (pixels != null) {
-                for (int i = 0; i < frameHeight * charWidth; i++) {
-                    for (int j = 0; j < frameWidth * charWidth; j++) {
-                        int h=i/charWidth;
-                        int w=j/charWidth;
-                        if (pixels[h][w] == null) {
-                            graphicImage.setRGB(j, i, 0xff000000);
-                        } else
-                            graphicImage.setRGB(j, i, pixels[i / charWidth][j / charWidth].getColor().getRGB() + (pixels[i / charWidth][j / charWidth].getColor().getAlpha() >> 24));
-                    }
-                }
-                averagePaintTime=(averagePaintTime+System.currentTimeMillis()-start)/2;
+            synchronized (lock) {
 
-                g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
+                if (pixels != null) {
+                    for (int i = 0; i < frameHeight * charWidth; i++) {
+                        for (int j = 0; j < frameWidth * charWidth; j++) {
+                            int h = i / charWidth;
+                            int w = j / charWidth;
+                            if (pixels[h][w] == null) {
+                                graphicImage.setRGB(j, i, 0xff000000);
+                            } else
+                                graphicImage.setRGB(j, i, pixels[i / charWidth][j / charWidth].getColor().getRGB() + (pixels[i / charWidth][j / charWidth].getColor().getAlpha() >> 24));
+                        }
+                    }
+                    g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
+                }
             }
         } catch (ArrayIndexOutOfBoundsException ignored) {
             ignored.printStackTrace();
@@ -101,11 +86,15 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         }
     }
 
+    private final Object lock = new Object();
+
     @Override
     public void repaint() {
-        pixels = this.headWidget.displayOutput();
+        Pixel[][] newFrame = this.headWidget.displayOutput();
+        synchronized (lock) {
+            pixels = newFrame;
+        }
         super.repaint();
-
     }
 
     @Override
@@ -207,20 +196,12 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                long start=System.currentTimeMillis();
                 this.repaint();
-                averageRepaintTime=(averageRepaintTime+System.currentTimeMillis()-start)/2;
                 if ((getWidth() - getInsets().left - getInsets().right) / charWidth != frameWidth || this.frameHeight != (getHeight() - getInsets().top - getInsets().bottom) / charWidth) {
                     setHeadWidget(headWidget);
                     graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_ARGB);
                 }
-                try {
-                    Thread.sleep(Math.max(averagePaintTime-averageRepaintTime,0));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
