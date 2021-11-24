@@ -127,6 +127,13 @@
   - 怪物具体介绍：参考代码结构部分。
 - ......
 
+## 游戏操作
+
+- 'W','A','S','D':控制方向
+- 'J':攻击
+- 靠近宝箱，宝箱会自动打开，随机掉落buff,捡拾buff自动获得一定时间的加成
+- 地图中蓝色的点位（出生点）按'f'交互可以退出地图
+
 ## 外部参考
 
 - 肉鸽地牢生成算法思路参考：https://indienova.com/indie-game-development/rooms-and-mazes-a-procedural-dungeon-generator/
