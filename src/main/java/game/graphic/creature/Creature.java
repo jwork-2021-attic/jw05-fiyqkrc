@@ -4,7 +4,7 @@ package game.graphic.creature;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.Location;
-import game.controller.AlogrithmController;
+import game.controller.AlgorithmController;
 import game.controller.CreatureController;
 import game.controller.KeyBoardThingController;
 import game.graphic.Thing;
@@ -211,8 +211,8 @@ public abstract class Creature extends Thing implements Controllable {
 
     @Override
     public void dead() {
-        if(controller instanceof AlogrithmController)
-            ((AlogrithmController) controller).stop();
+        if(controller instanceof AlgorithmController)
+            ((AlgorithmController) controller).stop();
         else if(controller instanceof KeyBoardThingController){
             pause();
         }

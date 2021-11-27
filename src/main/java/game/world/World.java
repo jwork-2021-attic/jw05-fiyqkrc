@@ -12,7 +12,7 @@ import game.graphic.env.RoomFloor;
 import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.Location;
-import game.controller.AlogrithmController;
+import game.controller.AlgorithmController;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
@@ -46,7 +46,7 @@ public class World extends PGraphicScene implements Runnable {
     private ArrayList<Thing> areas[][];
     int areaWidth;
     int areaHeight;
-    int areaSize = 200;
+    int areaSize = 400;
 
     Operational operational;
     Thread daemonThread;
@@ -457,8 +457,8 @@ public class World extends PGraphicScene implements Runnable {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
                                 if (thing instanceof Creature && thing != operational) {
                                     areas[area.x][area.y].add(thing);
-                                    if (((Creature) thing).getController() instanceof AlogrithmController)
-                                        ((AlogrithmController) ((Creature) thing).getController()).stop();
+                                    if (((Creature) thing).getController() instanceof AlgorithmController)
+                                        ((AlgorithmController) ((Creature) thing).getController()).stop();
                                     removeItem(thing);
                                 } else if (thing instanceof GameThread) {
                                     areas[area.x][area.y].add(thing);

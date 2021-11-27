@@ -4,7 +4,7 @@ import game.graphic.interactive.GameThread;
 
 import java.util.Random;
 
-public class AlogrithmController extends CreatureController implements Runnable {
+public class AlgorithmController extends CreatureController implements Runnable {
     protected boolean aim;
     protected double direction;
     protected double lastSearchAim = System.currentTimeMillis();
@@ -12,19 +12,16 @@ public class AlogrithmController extends CreatureController implements Runnable 
     protected Thread thread;
 
 
-
-    public AlogrithmController() {
+    public AlgorithmController() {
         thread = new Thread(this);
         GameThread.threadSet.add(thread);
         thread.start();
     }
 
     public void tryMove() {
-        if (random.nextDouble(1) > 0.65) {
-            if (!controllable.move(direction)) {
-                if (random.nextDouble(1) > 0.8)
-                    direction = random.nextDouble(Math.PI * 2);
-            }
+        if (!controllable.move(direction)) {
+            if (random.nextDouble(1) > 0.8)
+                direction = random.nextDouble(Math.PI * 2);
         }
     }
 

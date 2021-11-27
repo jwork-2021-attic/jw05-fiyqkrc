@@ -38,15 +38,21 @@ public class Log {
 
     public static void ErrorLog(Object obj, String message) {
         String msg = String.format("LOG: <%s> report Error: %s", obj.getClass().getName(), message);
-        if (Log.logLevel >= Error) {
-            if (Log.terminalOutPut == true)
-                System.out.println(msg);
-            if (Log.path != null) {
-                try {
-                    Log.stream.write((msg + "\n").getBytes());
-                    Log.stream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        logOutPut(msg, Error);
+    }
+
+    private static void logOutPut(String msg, int error) {
+        synchronized (Log.class) {
+            if (Log.logLevel >= error) {
+                if (Log.terminalOutPut)
+                    System.out.println(msg);
+                if (Log.path != null) {
+                    try {
+                        Log.stream.write((msg + "\n").getBytes());
+                        Log.stream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -54,34 +60,12 @@ public class Log {
 
     public static void WarningLog(Object obj, String message) {
         String msg = String.format("LOG: <%s> report Warning: %s", obj.getClass().getName(), message);
-        if (Log.logLevel >= Warning) {
-            if (Log.terminalOutPut == true)
-                System.out.println(msg);
-            if (Log.path != null) {
-                try {
-                    Log.stream.write((msg + "\n").getBytes());
-                    Log.stream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        logOutPut(msg, Warning);
     }
 
     public static void InfoLog(Object obj, String message) {
 
         String msg = String.format("LOG: <%s> report Info: %s", obj.getClass().getName(), message);
-        if (Log.logLevel >= Info) {
-            if (Log.terminalOutPut == true)
-                System.out.println(msg);
-            if (Log.path != null) {
-                try {
-                    Log.stream.write((msg + "\n").getBytes());
-                    Log.stream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        logOutPut(msg, Info);
     }
 }

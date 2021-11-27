@@ -2,7 +2,7 @@ package game.graphic.creature.monster;
 
 import com.pFrame.Pixel;
 import game.Location;
-import game.controller.AlogrithmController;
+import game.controller.AlgorithmController;
 import game.controller.CreatureController;
 import game.graphic.Direction;
 import game.graphic.creature.Creature;
@@ -24,8 +24,8 @@ abstract public class Monster extends Creature {
     @Override
     public void pause() {
         oldController = controller;
-        if (controller instanceof AlogrithmController)
-            ((AlogrithmController) controller).stop();
+        if (controller instanceof AlgorithmController)
+            ((AlgorithmController) controller).stop();
     }
 
     @Override
@@ -73,7 +73,7 @@ abstract public class Monster extends Creature {
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        controller = new AlogrithmController();
+        controller = new AlgorithmController();
         controller.setThing(this);
     }
 
