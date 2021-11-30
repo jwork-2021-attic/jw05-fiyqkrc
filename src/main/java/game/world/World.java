@@ -97,7 +97,7 @@ public class World extends PGraphicScene implements Runnable {
                 pixels[i][j] = Pixel.getPixel(color, (char) 0xf0);
             }
         assert pixels != null;
-        pixels[operational.getLocation().x() / worldScale][operational.getLocation().y() / worldScale] = Pixel.getPixel(Color.RED, (char) 0xf0);
+        pixels[operational.getLocation().x()][operational.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
         return pixels;
     }
 
