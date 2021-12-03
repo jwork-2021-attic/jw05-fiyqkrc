@@ -2,7 +2,6 @@ package game.world;
 
 import game.Location;
 import game.graphic.Thing;
-import jdk.jshell.execution.LoaderDelegate;
 
 public class Tile<T extends Thing> {
 

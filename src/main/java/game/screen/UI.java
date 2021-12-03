@@ -10,9 +10,7 @@ import game.graphic.creature.operational.Calabash;
 import game.world.World;
 import log.Log;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class UI {

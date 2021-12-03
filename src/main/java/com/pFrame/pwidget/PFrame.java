@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.util.ArrayList;
 
 public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
@@ -153,8 +152,8 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     protected Position mouseToPosition(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
-        return Position.getPosition((y - this.getInsets().top) / this.charWidth,
-                (x - this.getInsets().left) / this.charWidth);
+        return Position.getPosition((y - this.getInsets().top) / charWidth,
+                (x - this.getInsets().left) / charWidth);
     }
 
     @Override
