@@ -218,7 +218,6 @@ public class Pixel {
 
     static public PImage toImage(Pixel[][] pixels) {
         return new PImage(null, null,pixels);
-        // TODO
     }
 
     static public BufferedImage toBufferedImage(Pixel[][] pixels) {

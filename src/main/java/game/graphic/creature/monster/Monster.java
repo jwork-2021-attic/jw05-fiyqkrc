@@ -44,7 +44,7 @@ abstract public class Monster extends Creature {
     }
 
     @Override
-    public boolean searchAim() {
+    public Creature searchAim() {
         try {
             if (aim == null) {
                 Location location = world.searchNearestEnemy(this, 7);
@@ -52,21 +52,21 @@ abstract public class Monster extends Creature {
                     aim = (Creature) world.findThing(location);
                     Dialog dialog = new Dialog("Ya!!!", this.getPosition());
                     world.addItem(dialog);
-                    return true;
+                    return aim;
                 } else
-                    return false;
+                    return null;
             } else {
                 if (Math.abs(aim.getLocation().y() - this.getLocation().y()) < 7 && Math.abs(aim.getLocation().x() - getLocation().x()) < 7) {
-                    return true;
+                    return aim;
                 } else {
                     aim = null;
-                    return false;
+                    return null;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             aim = null;
-            return false;
+            return aim;
         }
     }
 

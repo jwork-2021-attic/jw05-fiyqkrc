@@ -5,7 +5,6 @@ import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
-import com.pFrame.pwidget.PFrame;
 import com.pFrame.pwidget.PHeadWidget;
 import mazeGenerator.MazeGenerator;
 

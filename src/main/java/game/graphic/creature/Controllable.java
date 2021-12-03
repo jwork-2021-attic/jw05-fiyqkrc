@@ -17,5 +17,5 @@ public interface Controllable {
 
     boolean isDead();
 
-    boolean searchAim();
+    Creature searchAim();
 }

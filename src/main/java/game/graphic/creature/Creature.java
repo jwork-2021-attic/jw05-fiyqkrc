@@ -225,9 +225,13 @@ public abstract class Creature extends Thing implements Controllable {
     }
 
     @Override
-    public boolean searchAim() {
+    public Creature searchAim() {
         Location location=world.searchNearestEnemy(this,7);
-        return location!=null;
+        Thing thing=world.findThing(location);
+        if(thing instanceof Creature)
+            return (Creature)thing;
+        else 
+            return null;
     }
 }
 
