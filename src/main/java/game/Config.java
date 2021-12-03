@@ -20,11 +20,6 @@ public class Config {
     public double monsterOnGolang;
     public double monsterOnRoom;
 
-
-    public int ScreenFlash;
-
-    public boolean AsciiPanelAccelerate;
-
     public int LogOutPutLevel;
     public boolean LogTerminalOutput;
     public String LogPath;
