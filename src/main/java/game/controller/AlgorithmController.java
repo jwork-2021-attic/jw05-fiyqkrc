@@ -1,6 +1,7 @@
 package game.controller;
 
 import com.pFrame.Position;
+import game.Config;
 import game.graphic.creature.Creature;
 import game.graphic.interactive.GameThread;
 
@@ -81,7 +82,8 @@ class DataAnalysis implements Runnable{
 
     static{
         try {
-            File file=new File("/home/fiyqkrc/data.txt");
+            File file;
+            file=new File(Config.LearningDataPath+"/data.txt");
             if(!file.exists())
                 file.createNewFile();
             stream=new FileOutputStream(file);
@@ -92,7 +94,7 @@ class DataAnalysis implements Runnable{
         }
     }
 
-    public static void wirteInfo(String str){
+    public static void writeInfo(String str){
         try {
             stream.write(str.getBytes());
         } catch (IOException e) {
@@ -115,7 +117,7 @@ class DataAnalysis implements Runnable{
                     //health,distance,enemy health,nenmy attack
                     String str=String.format("%f\t%f\t%f\t%f\n",me.getHealth(),Position.distance(me.getCentralPosition(), enemy.getCentralPosition()),
                             enemy.getHealth(),enemy.getAttack());
-                    wirteInfo(str);
+                    writeInfo(str);
                 }
             }
             catch(InterruptedException e){

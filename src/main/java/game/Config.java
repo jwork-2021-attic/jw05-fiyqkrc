@@ -2,6 +2,7 @@ package game;
 
 import com.alibaba.fastjson.JSONObject;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,46 +10,71 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Config {
-    public int WindowWidth;
-    public int WindowHeight;
+    public static int WindowWidth;
+    public static int WindowHeight;
+    public static String DataPath;
+    public static String LearningDataPath;
 
-    public int SceneWidth;
-    public int SceneHeight;
-    public int worldScale;
-    public int tileSize;
+    public static int SceneWidth;
+    public static int SceneHeight;
+    public static int worldScale;
+    public static int tileSize;
 
-    public double monsterOnGolang;
-    public double monsterOnRoom;
+    public static double monsterOnGolang;
+    public static double monsterOnRoom;
 
-    public int LogOutPutLevel;
-    public boolean LogTerminalOutput;
-    public String LogPath;
+    public static int LogOutPutLevel;
+    public static boolean LogTerminalOutput;
+    public static String LogPath;
 
-    private JSONObject creatureInfos;
-    public HashMap<String,String[]> gameEnvInfos;
-    public String ExitNodeSource;
+    private static JSONObject creatureInfos;
+    public static HashMap<String, String[]> gameEnvInfos = new HashMap<>();
+    public static String ExitNodeSource;
 
-    public CreatureProperty getCreatureInfo(String name){
+    public static CreatureProperty getCreatureInfo(String name) {
         return null;
     }
 
-
-
-    static public void loadConfig(String path){
-        try{
-            FileInputStream stream=new FileInputStream(new File(path));
-            byte[] bytes=stream.readAllBytes();
-            JSONObject object=(JSONObject) JSONObject.parse(bytes);
-            System.out.println(object.get("Calabash"));
+    public static String pathConvert(String path) {
+        if (path.startsWith("~")) {
+            return System.getProperty("user.home")+path.substring(1);
+        } else if (path.startsWith("$")) {
+            return Config.DataPath+path.substring(1);
         }
-        catch (FileNotFoundException e){
+        return path;
+    }
+
+    static public void loadConfig(String path) {
+        try {
+            FileInputStream stream = new FileInputStream(new File(path));
+            byte[] bytes = stream.readAllBytes();
+            JSONObject object = (JSONObject) JSONObject.parse(bytes);
+
+            //load main data path
+            JSONObject pathSet = (JSONObject) object.get("DataPath");
+            if (System.getProperty("os.name").startsWith("win"))
+                DataPath = (String) pathSet.get("win");
+            else if (System.getProperty("os.name").startsWith("linux")) {
+                DataPath = (String) pathSet.get("linux");
+            } else
+                DataPath = (String) pathSet.get("default");
+            DataPath=Config.pathConvert(DataPath);
+            if(!new File(DataPath).exists())
+                new File(DataPath).mkdir();
+
+            //load learningDataPath
+            LearningDataPath=Config.pathConvert((String)object.get("learningDataPath"));
+            if(!new File(LearningDataPath).exists())
+                new File(LearningDataPath).mkdir();
+
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    static public void main(String[] args){
+    static public void main(String[] args) {
         loadConfig(Config.class.getClassLoader().getResource("config.json").getFile());
     }
 

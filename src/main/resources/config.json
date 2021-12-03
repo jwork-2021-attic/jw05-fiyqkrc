@@ -4,6 +4,7 @@
     "linux": "~/.pGame",
     "default": "~/.pGame"
   },
+  "learningDataPath": "$/learning",
   "DefalutWindowSize": {
     "width": 500,
     "height": 300
