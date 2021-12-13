@@ -27,12 +27,15 @@ public class UI {
     public PButton PauseButton;
     public PButton MapButton;
     public PButton QuitButton;
+    public PButton ScreenShotButton;
+    public PButton RecordButton;
+
     public MessageLabel messageLabel;
 
     public HealthBar healthBar;
 
 
-    public PLayout gamePage;
+    public RecordablePage gamePage;
 
     public PLayout settingPage;
 
@@ -48,7 +51,7 @@ public class UI {
         settingButton.addBackground(PImage.getPureImage(Color.GRAY));
         settingButton.setText("Setting",1, Color.BLUE);
 
-        this.gamePage=new PLayout(null,null,3,3,false);
+        this.gamePage=new RecordablePage(null,null,3,3,false);
         this.gamePage.setRCNumStyle(3,3,"1x,4x,1x","1x,4x,1x");
 
         PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
@@ -61,7 +64,11 @@ public class UI {
         PauseButton=new PButton(leftUpPanelLayout,null);
         PauseButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/pause.png").getFile()));
 
+        ScreenShotButton=new PButton(leftUpPanelLayout,null);
+        ScreenShotButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/screenshot.png").getFile()));
 
+        RecordButton=new PButton(leftUpPanelLayout,null);
+        RecordButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/record.png").getFile()));
 
         MapButton=new PButton(leftUpPanelLayout,null);
         MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/map.png").getFile()));
@@ -98,6 +105,8 @@ public class UI {
             MapButton.setClickFunc(this,this.getClass().getMethod("MapButtonBeClicked"));
             PauseButton.setClickFunc(this,this.getClass().getMethod("PauseButtonClicked"));
             QuitButton.setClickFunc(this,this.getClass().getMethod("QuitButtonClicked"));
+            ScreenShotButton.setClickFunc(this,this.getClass().getMethod("ScreenShotButtonClicked"));
+            RecordButton.setClickFunc(this,this.getClass().getMethod("RecordButtonClicked"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -123,6 +132,8 @@ public class UI {
     }
 
     public void gameExit() {
+        if(gamePage.isRecording())
+            gamePage.finishRecord();
         gameWorld = null;
         this.gamePage.addBackground(null);
         setPage(UI.START_PAGE);
@@ -135,6 +146,17 @@ public class UI {
     }
 
     public World gameWorld;
+
+    public void RecordButtonClicked(){
+        if(gamePage.isRecording())
+            gamePage.finishRecord();
+        else
+            gamePage.startRecord();
+    }
+
+    public void ScreenShotButtonClicked(){
+        gamePage.getScreenShot();
+    }
 
     public void QuitButtonClicked(){
         gameWorld.gameFinish();

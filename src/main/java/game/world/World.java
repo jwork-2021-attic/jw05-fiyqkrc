@@ -543,7 +543,6 @@ public class World extends PGraphicScene implements Runnable {
                 Log.ErrorLog(this, "thread failed");
                 break;
             }
-            System.out.println("The number of all gameThreads at this time is " + activeCreature.size());
         }
     }
 
