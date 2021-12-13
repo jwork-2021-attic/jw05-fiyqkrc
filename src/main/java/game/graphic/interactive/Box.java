@@ -3,7 +3,7 @@ package game.graphic.interactive;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.graphic.Thing;
-import game.graphic.interactive.buff.Buff;
+import game.graphic.drop.buff.Buff;
 import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
 import game.world.World;

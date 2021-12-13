@@ -12,7 +12,7 @@ import game.graphic.Tombstone;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
 import game.graphic.drop.Coin;
-import game.graphic.interactive.buff.Addition;
+import game.graphic.drop.buff.Addition;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;

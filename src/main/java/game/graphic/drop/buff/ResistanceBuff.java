@@ -1,4 +1,4 @@
-package game.graphic.interactive.buff;
+package game.graphic.drop.buff;
 
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
