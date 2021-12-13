@@ -99,7 +99,7 @@ public class RecordablePage extends PLayout {
     }
 
     public void createMP4() throws FrameRecorder.Exception {
-        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(path+"/"+new Date().getTime()+".mp4", widgetWidth, widgetHeight);
+        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(path+"/"+new Date().getTime()+".mp4", widgetWidth-widgetWidth%2, widgetHeight-widgetHeight%2);
         recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
         recorder.setFrameRate(60);
         recorder.setFormat("mp4");
@@ -108,7 +108,7 @@ public class RecordablePage extends PLayout {
             Java2DFrameConverter converter = new Java2DFrameConverter();
             for(Pixel[][] pixels:queue) {
                 BufferedImage image=Pixel.toBufferedImage(pixels);
-                BufferedImage copyImage=new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
+                BufferedImage copyImage=new BufferedImage(image.getWidth()-image.getWidth()%2,image.getHeight()-image.getHeight()%2,BufferedImage.TYPE_3BYTE_BGR);
                 copyImage.getGraphics().drawImage(image,0,0,null);
                 recorder.record(converter.getFrame(copyImage));
             }
