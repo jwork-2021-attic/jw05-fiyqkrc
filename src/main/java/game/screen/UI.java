@@ -26,6 +26,7 @@ public class UI {
     public PLabel coinValueLabel;
     public PButton PauseButton;
     public PButton MapButton;
+    public PButton QuitButton;
     public MessageLabel messageLabel;
 
     public HealthBar healthBar;
@@ -52,13 +53,18 @@ public class UI {
 
         PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
         rightUpPanel.setColumnLayout("15,3x");
-        PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),2,2,true);
+        PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),2,3,true);
+
+        QuitButton=new PButton(leftUpPanelLayout,null);
+        QuitButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/quit.png").getFile()));
 
         PauseButton=new PButton(leftUpPanelLayout,null);
         PauseButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/pause.png").getFile()));
 
+
+
         MapButton=new PButton(leftUpPanelLayout,null);
-        MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/icons/17-12.png").getFile()));
+        MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/map.png").getFile()));
 
         messageLabel=new MessageLabel(gamePage,Position.getPosition(1,2));
 
@@ -91,6 +97,7 @@ public class UI {
             settingButton.setClickFunc(this,this.getClass().getMethod("settingButtonBeClicked"));
             MapButton.setClickFunc(this,this.getClass().getMethod("MapButtonBeClicked"));
             PauseButton.setClickFunc(this,this.getClass().getMethod("PauseButtonClicked"));
+            QuitButton.setClickFunc(this,this.getClass().getMethod("QuitButtonClicked"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -115,17 +122,23 @@ public class UI {
         }
     }
 
-    public void gameExit(){
-        gameWorld=null;
+    public void gameExit() {
+        gameWorld = null;
         this.gamePage.addBackground(null);
         setPage(UI.START_PAGE);
     }
+
+
 
     public void setCoinValue(int n){
         this.coinValueLabel.setText("x"+ n,2,Color.WHITE);
     }
 
     public World gameWorld;
+
+    public void QuitButtonClicked(){
+        gameWorld.gameFinish();
+    }
 
     public void startGameButtonBeClicked(){
         this.setPage(UI.GAME_PAGE);

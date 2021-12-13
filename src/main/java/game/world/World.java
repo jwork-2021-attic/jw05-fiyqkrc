@@ -398,6 +398,7 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     public void gameFinish() {
+        gamePause();
         Thread thread = new Thread(new GameResourceRecycle());
         thread.start();
     }
