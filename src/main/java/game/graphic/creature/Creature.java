@@ -11,7 +11,7 @@ import game.graphic.Thing;
 import game.graphic.Tombstone;
 import game.graphic.effect.BloodChange;
 import game.graphic.effect.Dialog;
-import game.graphic.interactive.Coin;
+import game.graphic.drop.Coin;
 import game.graphic.interactive.buff.Addition;
 import imageTransFormer.GraphicItemGenerator;
 

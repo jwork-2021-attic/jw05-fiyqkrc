@@ -1,4 +1,4 @@
-package game.graphic.interactive;
+package game.graphic.drop;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
@@ -6,6 +6,7 @@ import game.graphic.Direction;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
+import game.graphic.interactive.GameThread;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
