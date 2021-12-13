@@ -19,14 +19,12 @@ public class UI {
     public static int SETTING_PAGE=2;
 
     public PHeadWidget ui;
-
-    public PGraphicScene world;
-
     public PLayout startPage;
     public PButton startGameButton;
     public PButton settingButton;
 
     public PLabel coinValueLabel;
+    public PButton PauseButton;
     public PButton MapButton;
     public MessageLabel messageLabel;
 
@@ -55,6 +53,9 @@ public class UI {
         PLayout rightUpPanel=new PLayout(gamePage,Position.getPosition(1,3),4,2);
         rightUpPanel.setColumnLayout("15,3x");
         PLayout leftUpPanelLayout=new PLayout(gamePage,Position.getPosition(1,1),2,2,true);
+
+        PauseButton=new PButton(leftUpPanelLayout,null);
+        PauseButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/pause.png").getFile()));
 
         MapButton=new PButton(leftUpPanelLayout,null);
         MapButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/icons/17-12.png").getFile()));
@@ -89,6 +90,7 @@ public class UI {
             startGameButton.setClickFunc(this,this.getClass().getMethod("startGameButtonBeClicked"));
             settingButton.setClickFunc(this,this.getClass().getMethod("settingButtonBeClicked"));
             MapButton.setClickFunc(this,this.getClass().getMethod("MapButtonBeClicked"));
+            PauseButton.setClickFunc(this,this.getClass().getMethod("PauseButtonClicked"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -102,6 +104,7 @@ public class UI {
         view.setViewPosition(Position.getPosition(0,0));
         this.gamePage.addBackground(view);
     }
+
 
     public void setPage(int page){
         switch (page){
@@ -135,6 +138,18 @@ public class UI {
         gameWorld.addOperational(calabash);
         gameWorld.getParentView().setFocus(calabash);
     }
+
+    public void PauseButtonClicked(){
+        if(gameWorld.isPause()){
+            PauseButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/pause.png").getFile()));
+            gameWorld.gameContinue();
+        }
+        else{
+            PauseButton.addBackground(new PImage(null,null,UI.class.getClassLoader().getResource("image/continue.png").getFile()));
+            gameWorld.gamePause();
+        }
+    }
+
 
     public void settingButtonBeClicked(){
         this.setPage(UI.SETTING_PAGE);

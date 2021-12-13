@@ -65,7 +65,7 @@ public class PGraphicScene {
 
     public void freeKeyListener(char ch, PFrameKeyListener pFrameKeyListener) {
         if (parentView != null) {
-            parentView.addPFrameKeyListener(ch, pFrameKeyListener);
+            parentView.addPFrameKeyListener(ch, null);
         }
     }
 

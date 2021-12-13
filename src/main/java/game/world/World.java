@@ -43,7 +43,12 @@ public class World extends PGraphicScene implements Runnable {
 
     private Position startPosition;
 
-    private ArrayList<Thing> areas[][];
+    private final ArrayList<Creature> activeCreature=new ArrayList<>();
+
+    private final ArrayList<Thing>[][] areas;
+
+    private boolean isPause=false;
+
     int areaWidth;
     int areaHeight;
     int areaSize = 400;
@@ -87,6 +92,10 @@ public class World extends PGraphicScene implements Runnable {
 
         daemonThread = new Thread(this);
         daemonThread.start();
+    }
+
+    public boolean isPause(){
+        return isPause;
     }
 
     public Pixel[][] getWorldMap() {
@@ -269,6 +278,13 @@ public class World extends PGraphicScene implements Runnable {
                 }
             }
         }
+        if(item instanceof Creature ){
+            synchronized (activeCreature){
+                if(activeCreature.contains(item)){
+                    activeCreature.remove(item);
+                }
+            }
+        }
         return super.removeItem(item);
     }
 
@@ -278,6 +294,11 @@ public class World extends PGraphicScene implements Runnable {
             ((Thing) item).setWorld(this);
             ((Thing) item).whenBeAddedToScene();
 
+            if(item instanceof Creature) {
+                synchronized (activeCreature) {
+                    activeCreature.add((Creature) item);
+                }
+            }
 
             synchronized (this.tiles) {
                 if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
@@ -381,6 +402,33 @@ public class World extends PGraphicScene implements Runnable {
         thread.start();
     }
 
+    public void gameSaveData(){
+        gamePause();
+        gameContinue();
+    }
+
+    public void gamePause(){
+        isPause=true;
+        for(Creature creature:activeCreature){
+            creature.pause();
+        }
+        if(operational!=null){
+            operational.pause();
+        }
+        Log.InfoLog(this,"Game pause...");
+    }
+
+    public void gameContinue(){
+        isPause=false;
+        for(Creature creature:activeCreature){
+            creature.Continue();
+        }
+        if(operational!=null){
+            operational.Continue();
+        }
+        Log.InfoLog(this,"Game continue...");
+    }
+
     public Location searchNearestEnemy(Creature creature, int bound) {
         int x, y;
         if (creature.getTile() == null) {
@@ -460,6 +508,7 @@ public class World extends PGraphicScene implements Runnable {
                                     if (((Creature) thing).getController() instanceof AlgorithmController)
                                         ((AlgorithmController) ((Creature) thing).getController()).stop();
                                     removeItem(thing);
+
                                 } else if (thing instanceof GameThread) {
                                     areas[area.x][area.y].add(thing);
                                     ((GameThread) thing).stop();
@@ -476,6 +525,7 @@ public class World extends PGraphicScene implements Runnable {
                                     //System.out.println(creature.getPosition());
                                 } else {
                                     addItem(thing);
+
                                     added.add(thing);
                                 }
                             }
@@ -492,7 +542,7 @@ public class World extends PGraphicScene implements Runnable {
                 Log.ErrorLog(this, "thread failed");
                 break;
             }
-            //System.out.println("The number of all gameThreads at this time is " + GameThread.threadSet.size());
+            System.out.println("The number of all gameThreads at this time is " + activeCreature.size());
         }
     }
 

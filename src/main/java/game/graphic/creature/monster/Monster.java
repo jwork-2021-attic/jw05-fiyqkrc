@@ -31,7 +31,8 @@ abstract public class Monster extends Creature {
     @Override
     public void Continue() {
         try {
-            controller = (CreatureController) oldController.getClass().getDeclaredConstructor().newInstance();
+            controller = oldController.getClass().getDeclaredConstructor().newInstance();
+            controller.setThing(this);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

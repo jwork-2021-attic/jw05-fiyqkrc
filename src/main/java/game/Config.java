@@ -2,7 +2,6 @@ package game;
 
 import com.alibaba.fastjson.JSONObject;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
