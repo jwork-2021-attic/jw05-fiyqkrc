@@ -611,7 +611,7 @@ public class World extends PGraphicScene implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.ErrorLog(this, "thread failed");
-                break;
+                //break;
             }
         }
     }

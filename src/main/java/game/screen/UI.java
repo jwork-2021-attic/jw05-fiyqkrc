@@ -185,7 +185,7 @@ public class UI {
 
     public void startGameButtonBeClicked() {
         this.setPage(UI.GAME_PAGE);
-        gameWorld = new World(2000, 2000);
+        gameWorld = new World(20000, 20000);
         gameWorld.mapInit();
         this.setWorld(gameWorld);
         this.sendMessage("Game start now!");
