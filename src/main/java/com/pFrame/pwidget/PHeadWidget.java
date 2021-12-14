@@ -17,10 +17,21 @@ public class PHeadWidget extends PWidget {
         this.layout.setPosition(Position.getPosition(0,0));
     }
 
+    public void dispose(){
+        if(repaintThread!=null)
+            repaintThread.interrupt();
+        pFrame.dispose();
+    }
+
+    public PFrame getPFrame(){
+        return pFrame;
+    }
+
+    Thread repaintThread;
 
     public void startRepaintThread() {
-        Thread thread = new Thread(pFrame, "window flash thread");
-        thread.start();
+        repaintThread = new Thread(pFrame, "window flash thread");
+        repaintThread.start();
     }
     public void addPFrameKeyListener(int ch,PFrameKeyListener pFrameKeyListener){
         pFrame.addPFrameKeyListener(ch,pFrameKeyListener);

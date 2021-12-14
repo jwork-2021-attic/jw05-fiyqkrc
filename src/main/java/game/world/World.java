@@ -409,25 +409,29 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     public void gamePause(){
-        isPause=true;
-        for(Creature creature:activeCreature){
-            creature.pause();
+        if(!isPause) {
+            isPause = true;
+            for (Creature creature : activeCreature) {
+                creature.pause();
+            }
+            if (operational != null) {
+                operational.pause();
+            }
+            Log.InfoLog(this, "Game pause...");
         }
-        if(operational!=null){
-            operational.pause();
-        }
-        Log.InfoLog(this,"Game pause...");
     }
 
     public void gameContinue(){
-        isPause=false;
-        for(Creature creature:activeCreature){
-            creature.Continue();
+        if(isPause) {
+            isPause = false;
+            for (Creature creature : activeCreature) {
+                creature.Continue();
+            }
+            if (operational != null) {
+                operational.Continue();
+            }
+            Log.InfoLog(this, "Game continue...");
         }
-        if(operational!=null){
-            operational.Continue();
-        }
-        Log.InfoLog(this,"Game continue...");
     }
 
     public Location searchNearestEnemy(Creature creature, int bound) {

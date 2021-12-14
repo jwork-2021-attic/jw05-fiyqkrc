@@ -63,7 +63,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
     public void paint(Graphics g) {
         try {
             synchronized (lock) {
-
                 if (pixels != null) {
                     for (int i = 0; i < frameHeight * charWidth; i++) {
                         for (int j = 0; j < frameWidth * charWidth; j++) {
@@ -78,10 +77,8 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
                     g.drawImage(graphicImage, getInsets().left, getInsets().top, this);
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignored) {
+        } catch (Exception ignored) {
             ignored.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
