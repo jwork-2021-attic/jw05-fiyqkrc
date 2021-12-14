@@ -90,8 +90,6 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         synchronized (lock) {
             pixels = newFrame;
         }
-        System.out.println(this.toString());
-
         super.repaint();
     }
 

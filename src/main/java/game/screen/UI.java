@@ -160,15 +160,15 @@ public class UI {
 
     public void QuitButtonClicked() {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                gameWorld.gamePause();
-                int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
-                if (option == 1) {
-                    //todo
-                } else
-                    gameWorld.gameFinish();
+        new Thread(() -> {
+            gameWorld.gamePause();
+            int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
+            if (option == 1) {
+                //todo
+                sendMessage("This module waits implementation...");
+                gameWorld.gameContinue();
+            } else {
+                gameWorld.gameFinish();
             }
         }).start();
     }
