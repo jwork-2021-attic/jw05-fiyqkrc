@@ -22,6 +22,14 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
     protected PGraphicScene world;
     protected int id;
 
+    public static int getIdCount(){
+        return idCount;
+    }
+
+    public static void setIdCount(int idCount){
+        PGraphicItem.idCount=idCount;
+    }
+
     public void setParentScene(PGraphicScene scene){
         this.world =scene;
     }

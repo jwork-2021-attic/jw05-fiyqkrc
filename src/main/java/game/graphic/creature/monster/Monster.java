@@ -1,17 +1,19 @@
 package game.graphic.creature.monster;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import game.Location;
 import game.controller.AlgorithmController;
 import game.controller.CreatureController;
 import game.graphic.Direction;
+import game.graphic.StatedSavable;
 import game.graphic.creature.Creature;
 import game.graphic.effect.Dialog;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
-abstract public class Monster extends Creature {
+abstract public class Monster extends Creature implements StatedSavable {
     private CreatureController oldController;
     protected Creature aim;
 
@@ -108,4 +110,6 @@ abstract public class Monster extends Creature {
         }
         return pixels;
     }
+
+
 }

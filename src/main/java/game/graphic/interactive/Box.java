@@ -1,7 +1,9 @@
 package game.graphic.interactive;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.drop.buff.Buff;
 import game.graphic.creature.Creature;
@@ -11,10 +13,12 @@ import imageTransFormer.GraphicItemGenerator;
 
 import java.util.Random;
 
-public class Box extends Thing implements Runnable, GameThread {
+public class Box extends Thing implements Runnable, GameThread, StatedSavable {
     public static Pixel[][] boxImage = GraphicItemGenerator.generateItem(Box.class.getClassLoader().getResource("image/effect/box/1.png").getFile(), World.tileSize, World.tileSize).getPixels();
 
     protected Thread thread;
+
+    protected boolean opened;
 
     public Box() {
         super(null);
@@ -22,11 +26,12 @@ public class Box extends Thing implements Runnable, GameThread {
         width = World.tileSize;
         height = World.tileSize;
         beCoverAble = true;
+        opened = false;
     }
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted() && !opened) {
             try {
                 if (world != null) {
                     Thing thing = world.findThing(getLocation());
@@ -38,7 +43,7 @@ public class Box extends Thing implements Runnable, GameThread {
                         buff.creature = (Creature) thing;
                         buff.setPosition(Position.getPosition(getPosition().getX() + random.nextInt(World.tileSize), getPosition().getY() + World.tileSize));
                         world.addItem(buff);
-                        break;
+                        opened = true;
                     }
                 }
                 Thread.sleep(1000);
@@ -68,5 +73,23 @@ public class Box extends Thing implements Runnable, GameThread {
     @Override
     public void stop() {
         thread.interrupt();
+    }
+
+
+    @Override
+    public JSONObject saveState() {
+        JSONObject jsonObject = save();
+        jsonObject.put("opened", opened);
+        return jsonObject;
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
+        opened = jsonObject.getObject("opened", Boolean.class);
+        if (opened)
+            graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/box/2.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        else
+            graphic = boxImage;
     }
 }

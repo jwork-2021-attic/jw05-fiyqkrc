@@ -1,6 +1,8 @@
 package game.graphic.env;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
@@ -8,7 +10,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.io.File;
 import java.util.Random;
 
-public class CorridorFloor extends Thing {
+public class CorridorFloor extends Thing implements StatedSavable {
     static public File[] FloorPaths = {
             new File(CorridorFloor.class.getClassLoader().getResource("image/source/1-45.png").getFile())
     };
@@ -25,5 +27,15 @@ public class CorridorFloor extends Thing {
         graphic=AllPixels[random.nextInt(FloorPaths.length)];
         height=World.tileSize;
         width=World.tileSize;
+    }
+
+    @Override
+    public JSONObject saveState() {
+        return save();
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
     }
 }

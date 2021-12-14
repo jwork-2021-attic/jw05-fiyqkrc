@@ -1,10 +1,13 @@
 package game.world;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.Attack;
+import game.Config;
 import game.graphic.*;
 import game.graphic.env.CorridorFloor;
 import game.graphic.env.Door;
@@ -24,6 +27,9 @@ import worldGenerate.WorldGenerate;
 import worldGenerate.WorldGenerate.Room;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -43,11 +49,11 @@ public class World extends PGraphicScene implements Runnable {
 
     private Position startPosition;
 
-    private final ArrayList<Creature> activeCreature=new ArrayList<>();
+    private final ArrayList<Creature> activeCreature = new ArrayList<>();
 
-    private final ArrayList<Thing>[][] areas;
+    private final ArrayList<JSONObject>[][] areas;
 
-    private boolean isPause=false;
+    private boolean isPause = false;
 
     int areaWidth;
     int areaHeight;
@@ -79,9 +85,15 @@ public class World extends PGraphicScene implements Runnable {
         areas = new ArrayList[areaHeight][areaWidth];
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
-                areas[i][j] = new ArrayList<Thing>();
+                areas[i][j] = new ArrayList<JSONObject>();
             }
 
+
+        daemonThread = new Thread(this);
+        daemonThread.start();
+    }
+
+    public void mapInit() {
         generateWorld();
         if (worldScale >= 2) {
             scaleWorld();
@@ -89,12 +101,9 @@ public class World extends PGraphicScene implements Runnable {
         createWorld();
         createBox();
         createMonster();
-
-        daemonThread = new Thread(this);
-        daemonThread.start();
     }
 
-    public boolean isPause(){
+    public boolean isPause() {
         return isPause;
     }
 
@@ -119,7 +128,7 @@ public class World extends PGraphicScene implements Runnable {
             Box box = new Box();
             worldArray[x][y] = 200;
             box.setPosition(Position.getPosition((room.pos.getX() + x) * tileSize, (room.pos.getY() + y) * tileSize));
-            areas[box.getPosition().getX() / areaSize][box.getPosition().getY() / areaSize].add(box);
+            areas[box.getPosition().getX() / areaSize][box.getPosition().getY() / areaSize].add(box.saveState());
             //addItem(box,box.getPosition());
         }
     }
@@ -137,7 +146,7 @@ public class World extends PGraphicScene implements Runnable {
                         try {
                             Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
                             m.setPosition(Position.getPosition((room.pos.getX() + j) * tileSize, (room.pos.getY() + i) * tileSize));
-                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m);
+                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m.saveState());
                         } catch (InstantiationException e) {
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
@@ -161,7 +170,7 @@ public class World extends PGraphicScene implements Runnable {
                         try {
                             Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
                             m.setPosition(Position.getPosition((i) * tileSize, (j) * tileSize));
-                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m);
+                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m.saveState());
                         } catch (InstantiationException e) {
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
@@ -251,7 +260,7 @@ public class World extends PGraphicScene implements Runnable {
 
                         ExitPlace exitPlace = new ExitPlace();
                         exitPlace.setPosition(Position.getPosition(i * tileSize, j * tileSize));
-                        areas[exitPlace.getPosition().getX() / areaSize][exitPlace.getPosition().getY() / areaSize].add(exitPlace);
+                        areas[exitPlace.getPosition().getX() / areaSize][exitPlace.getPosition().getY() / areaSize].add(exitPlace.saveState());
                     }
                     case 4 -> {
                         Door door = new Door();
@@ -278,9 +287,9 @@ public class World extends PGraphicScene implements Runnable {
                 }
             }
         }
-        if(item instanceof Creature ){
-            synchronized (activeCreature){
-                if(activeCreature.contains(item)){
+        if (item instanceof Creature) {
+            synchronized (activeCreature) {
+                if (activeCreature.contains(item)) {
                     activeCreature.remove(item);
                 }
             }
@@ -294,7 +303,7 @@ public class World extends PGraphicScene implements Runnable {
             ((Thing) item).setWorld(this);
             ((Thing) item).whenBeAddedToScene();
 
-            if(item instanceof Creature) {
+            if (item instanceof Creature) {
                 synchronized (activeCreature) {
                     activeCreature.add((Creature) item);
                 }
@@ -403,13 +412,64 @@ public class World extends PGraphicScene implements Runnable {
         thread.start();
     }
 
-    public void gameSaveData(){
+    public void gameSaveData() {
         gamePause();
+        try {
+            JSONObject data = new JSONObject();
+            JSONArray itemData = new JSONArray();
+            for (PGraphicItem item : Items) {
+                if (item instanceof StatedSavable) {
+                    itemData.add(((StatedSavable) item).saveState());
+                }
+            }
+            for (ArrayList<JSONObject>[] list : areas) {
+                for (ArrayList<JSONObject> list1 : list) {
+                    itemData.addAll(list1);
+                }
+            }
+            data.put("itemData", itemData);
+            data.put("idCount", PGraphicItem.getIdCount());
+            data.put("width", width);
+            data.put("height", height);
+
+            FileOutputStream stream = new FileOutputStream(new File(Config.DataPath + "/saved.json"));
+            stream.write(data.toJSONString().getBytes());
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         gameContinue();
     }
 
-    public void gamePause(){
-        if(!isPause) {
+    public void loadSavedData(JSONObject jsonObject) {
+        JSONArray itemsData = jsonObject.getObject("itemData", JSONArray.class);
+        PGraphicItem.setIdCount(jsonObject.getObject("idCount", Integer.class));
+        for (Object item : itemsData) {
+            StatedSavable thing;
+            try {
+                Class[] types = null;
+                Object[] parameters = null;
+                thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
+                thing.resumeState((JSONObject) item);
+                if (thing instanceof Thing) {
+                    if (thing instanceof Creature || thing instanceof GameThread)
+                        if (thing instanceof Operational) {
+                            addOperational((Operational) thing);
+                        } else
+                            areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add((JSONObject) item);
+                    else
+                        addItem((PGraphicItem) thing);
+                }
+            } catch
+            (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException
+                            e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void gamePause() {
+        if (!isPause) {
             isPause = true;
             for (Creature creature : activeCreature) {
                 creature.pause();
@@ -421,8 +481,8 @@ public class World extends PGraphicScene implements Runnable {
         }
     }
 
-    public void gameContinue(){
-        if(isPause) {
+    public void gameContinue() {
+        if (isPause) {
             isPause = false;
             for (Creature creature : activeCreature) {
                 creature.Continue();
@@ -447,12 +507,12 @@ public class World extends PGraphicScene implements Runnable {
                 for (int b = y - i; b <= y + i; b++) {
                     if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
                         synchronized (this.tiles) {
-                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup()){
-                                try{
-                                    if(!hasWallBetweenPositions(creature.getCentralPosition(),tiles[a][b].getThing().getCentralPosition())){
-                                        return new Location(a,b);
+                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup()) {
+                                try {
+                                    if (!hasWallBetweenPositions(creature.getCentralPosition(), tiles[a][b].getThing().getCentralPosition())) {
+                                        return new Location(a, b);
                                     }
-                                }catch (Exception ignored){
+                                } catch (Exception ignored) {
 
                                 }
                             }
@@ -464,14 +524,14 @@ public class World extends PGraphicScene implements Runnable {
         return null;
     }
 
-    public boolean hasWallBetweenPositions(Position src,Position dest){
-        double distance=Position.distance(dest, src);
-        double direction=Direction.calDirection(src, dest);
-        boolean has=false;
-        for(int k=0;k<distance;k++){
-            Location location=getTileByLocation(Position.getPosition(src.getX()-(int)(k*Math.sin(direction)), src.getY()+(int)(k*Math.cos(direction))));
-            if(findThing(location) instanceof Wall){
-                has=true;
+    public boolean hasWallBetweenPositions(Position src, Position dest) {
+        double distance = Position.distance(dest, src);
+        double direction = Direction.calDirection(src, dest);
+        boolean has = false;
+        for (int k = 0; k < distance; k++) {
+            Location location = getTileByLocation(Position.getPosition(src.getX() - (int) (k * Math.sin(direction)), src.getY() + (int) (k * Math.cos(direction))));
+            if (findThing(location) instanceof Wall) {
+                has = true;
                 break;
             }
         }
@@ -509,13 +569,13 @@ public class World extends PGraphicScene implements Runnable {
                             for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
                                 Thing thing = findThing(new Location(i / tileSize, j / tileSize));
                                 if (thing instanceof Creature && thing != operational) {
-                                    areas[area.x][area.y].add(thing);
+                                    areas[area.x][area.y].add(((Creature) thing).saveState());
                                     if (((Creature) thing).getController() instanceof AlgorithmController)
                                         ((AlgorithmController) ((Creature) thing).getController()).stop();
                                     removeItem(thing);
 
-                                } else if (thing instanceof GameThread) {
-                                    areas[area.x][area.y].add(thing);
+                                } else if (thing instanceof GameThread && thing instanceof StatedSavable) {
+                                    areas[area.x][area.y].add(((StatedSavable) thing).saveState());
                                     ((GameThread) thing).stop();
                                     removeItem(thing);
                                 }
@@ -523,15 +583,21 @@ public class World extends PGraphicScene implements Runnable {
                         }
                     }
                     for (Area area : curAreas) {
-                        ArrayList<Thing> added = new ArrayList<>();
-                        for (Thing thing : areas[area.x][area.y]) {
+                        ArrayList<JSONObject> added = new ArrayList<>();
+                        for (JSONObject item : areas[area.x][area.y]) {
                             synchronized (this) {
-                                if (!thing.isBeCoverAble() && !isLocationReachable(thing, thing.getPosition())) {
-                                    //System.out.println(creature.getPosition());
-                                } else {
-                                    addItem(thing);
+                                Class[] types = null;
+                                Object[] parameters = null;
+                                StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(item.getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
+                                thing.resumeState(item);
+                                if (thing instanceof Thing) {
+                                    if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
+                                        //System.out.println(creature.getPosition());
+                                    } else {
+                                        addItem((PGraphicItem) thing);
 
-                                    added.add(thing);
+                                        added.add(item);
+                                    }
                                 }
                             }
                         }

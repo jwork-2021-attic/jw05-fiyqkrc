@@ -1,6 +1,8 @@
 package game.graphic.env;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
@@ -8,7 +10,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.io.File;
 import java.util.Random;
 
-public class RoomFloor extends Thing {
+public class RoomFloor extends Thing implements StatedSavable {
     static public File[] FloorPaths = {
             new File(RoomFloor.class.getClassLoader().getResource("image/source/3-28.png").getFile()),
             new File(RoomFloor.class.getClassLoader().getResource("image/source/3-29.png").getFile()),
@@ -41,5 +43,15 @@ public class RoomFloor extends Thing {
         graphic=AllPixels[random.nextInt(FloorPaths.length)];
         height=World.tileSize;
         width=World.tileSize;
+    }
+
+    @Override
+    public JSONObject saveState() {
+        return save();
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
     }
 }

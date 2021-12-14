@@ -1,12 +1,14 @@
 package game.graphic.creature;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.Location;
 import game.controller.AlgorithmController;
 import game.controller.CreatureController;
 import game.controller.KeyBoardThingController;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
 import game.graphic.effect.BloodChange;
@@ -18,7 +20,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class Creature extends Thing implements Controllable {
+public abstract class Creature extends Thing implements Controllable , StatedSavable {
     protected static HashMap<String, Body[]> SourceMap = new HashMap<>();
 
     protected Body[] Bodys;
@@ -232,6 +234,28 @@ public abstract class Creature extends Thing implements Controllable {
             return (Creature)thing;
         else 
             return null;
+    }
+    @Override
+    public JSONObject saveState() {
+        JSONObject jsonObject=save();
+        jsonObject.put("health",health);
+        jsonObject.put("attack",attack);
+        jsonObject.put("resistance",resistance);
+        jsonObject.put("group",group);
+        jsonObject.put("speed",speed);
+        jsonObject.put("coin",coin);
+        return jsonObject;
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
+        health=jsonObject.getObject("health",Double.class);
+        speed=jsonObject.getObject("speed",Integer.class);
+        group=jsonObject.getObject("group",Integer.class);
+        resistance=jsonObject.getObject("resistance",Double.class);
+        attack=jsonObject.getObject("attack",Double.class);
+        coin=jsonObject.getObject("coin",Integer.class);
     }
 }
 

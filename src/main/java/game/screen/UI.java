@@ -1,18 +1,22 @@
 package game.screen;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
+import game.Config;
 import game.graphic.creature.operational.Calabash;
 import game.world.World;
 import log.Log;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Arrays;
 
 public class UI {
     public static int START_PAGE = 0;
@@ -23,6 +27,7 @@ public class UI {
     public PLayout startPage;
     public PButton startGameButton;
     public PButton settingButton;
+    public PButton loadSavedDataButton;
 
     public PLabel coinValueLabel;
     public PButton PauseButton;
@@ -45,9 +50,12 @@ public class UI {
 
         this.startPage = new PLayout(null, null, 3, 3, false);
         this.startPage.setRCNumStyle(3, 3, "2x,1x,2x", "2x,1x,2x");
-        PLayout layout = new PLayout(startPage, Position.getPosition(2, 2), 2, 1, true);
+        PLayout layout = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
         startGameButton = new PButton(layout, null);
         startGameButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/startButton.png").getFile()));
+        loadSavedDataButton=new PButton(layout,null);
+        loadSavedDataButton.addBackground(PImage.getPureImage(Color.GRAY));
+        loadSavedDataButton.setText("Continue",1,Color.BLUE);
         settingButton = new PButton(layout, null);
         settingButton.addBackground(PImage.getPureImage(Color.GRAY));
         settingButton.setText("Setting", 1, Color.BLUE);
@@ -102,6 +110,7 @@ public class UI {
 
         try {
             startGameButton.setClickFunc(this, this.getClass().getMethod("startGameButtonBeClicked"));
+            loadSavedDataButton.setClickFunc(this,this.getClass().getMethod("loadSavedDataButtonBeClicked"));
             settingButton.setClickFunc(this, this.getClass().getMethod("settingButtonBeClicked"));
             MapButton.setClickFunc(this, this.getClass().getMethod("MapButtonBeClicked"));
             PauseButton.setClickFunc(this, this.getClass().getMethod("PauseButtonClicked"));
@@ -164,9 +173,10 @@ public class UI {
             gameWorld.gamePause();
             int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
             if (option == 1) {
-                //todo
+                gameWorld.gameSaveData();
                 sendMessage("This module waits implementation...");
                 gameWorld.gameContinue();
+                gameWorld.gameFinish();
             } else {
                 gameWorld.gameFinish();
             }
@@ -176,6 +186,7 @@ public class UI {
     public void startGameButtonBeClicked() {
         this.setPage(UI.GAME_PAGE);
         gameWorld = new World(2000, 2000);
+        gameWorld.mapInit();
         this.setWorld(gameWorld);
         this.sendMessage("Game start now!");
         gameWorld.screen = this;
@@ -183,6 +194,30 @@ public class UI {
         calabash.setPosition(gameWorld.getStartPosition());
         gameWorld.addOperational(calabash);
         gameWorld.getParentView().setFocus(calabash);
+    }
+
+    public void loadSavedDataButtonBeClicked(){
+        File file=new File(Config.DataPath+"/saved.json");
+        if(file.exists()){
+            FileInputStream stream= null;
+            try {
+                stream = new FileInputStream(file);
+                String jsonString=new String(stream.readAllBytes());
+                System.out.println(jsonString);
+                JSONObject jsonObject= JSON.parseObject(jsonString);
+                int width=jsonObject.getObject("width",Integer.class);
+                int height=jsonObject.getObject("height",Integer.class);
+                this.setPage(UI.GAME_PAGE);
+                gameWorld=new World(width,height);
+                this.setWorld(gameWorld);
+                this.sendMessage("game continue");
+                gameWorld.loadSavedData(jsonObject);
+                gameWorld.screen=this;
+                gameWorld.getParentView().setFocus(gameWorld.getOperational());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void PauseButtonClicked() {

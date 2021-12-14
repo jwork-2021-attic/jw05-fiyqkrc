@@ -1,6 +1,8 @@
 package game.graphic.env;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
@@ -8,7 +10,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.io.File;
 import java.util.Random;
 
-public class Wall extends Thing {
+public class Wall extends Thing implements StatedSavable {
     static public File[] WallPaths = {
             new File(Wall.class.getClassLoader().getResource("image/source/1-18.png").getFile()),
             new File(Wall.class.getClassLoader().getResource("image/source/1-15.png").getFile()),
@@ -33,4 +35,13 @@ public class Wall extends Thing {
         beCoverAble=false;
     }
 
+    @Override
+    public JSONObject saveState() {
+        return save();
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
+    }
 }

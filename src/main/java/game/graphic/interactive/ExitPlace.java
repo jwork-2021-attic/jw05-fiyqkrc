@@ -1,7 +1,9 @@
 package game.graphic.interactive;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.pwidget.PFrameKeyListener;
+import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.creature.operational.Operational;
 import game.graphic.effect.Dialog;
@@ -10,7 +12,7 @@ import imageTransFormer.GraphicItemGenerator;
 
 import java.awt.event.KeyEvent;
 
-public class ExitPlace extends Thing implements Runnable, PFrameKeyListener, GameThread {
+public class ExitPlace extends Thing implements Runnable, PFrameKeyListener, GameThread , StatedSavable {
     public static Pixel[][] exitImage = GraphicItemGenerator.generateItem(ExitPlace.class.getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
 
     Thread thread;
@@ -85,5 +87,15 @@ public class ExitPlace extends Thing implements Runnable, PFrameKeyListener, Gam
     @Override
     public void stop() {
         thread.interrupt();
+    }
+
+    @Override
+    public JSONObject saveState() {
+        return save();
+    }
+
+    @Override
+    public void resumeState(JSONObject jsonObject) {
+        resume(jsonObject);
     }
 }
