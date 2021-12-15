@@ -3,7 +3,6 @@ package game.world;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Position;
-import game.Config;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Calabash;
 import game.graphic.env.CorridorFloor;
@@ -15,7 +14,6 @@ import game.graphic.interactive.ExitPlace;
 import worldGenerate.WorldGenerate;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +22,7 @@ import java.util.Random;
 
 import static game.world.World.tileSize;
 
-public class WorldDataGenerator {
+public class GameArchiveGenerator {
     private WorldGenerate worldGenerator;
     private int[][] worldArray;
     protected static ArrayList<WorldGenerate.Room> rooms;
@@ -43,7 +41,7 @@ public class WorldDataGenerator {
     int tileHeight;
     int tileWidth;
 
-    public WorldDataGenerator(int width, int height, String path, int scale) {
+    public GameArchiveGenerator(int width, int height, String path, int scale) {
         this.width = width;
         this.height = height;
         this.path = path;
@@ -58,8 +56,6 @@ public class WorldDataGenerator {
         monster.add(Pangolin.class);
         monster.add(SnowMonster.class);
         monster.add(Spider.class);
-
-
     }
 
     public void generateWorldData() {

@@ -6,9 +6,11 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
+import com.pFrame.pgraphic.PGraphicView;
 import game.Attack;
 import game.Location;
 import game.controller.AlgorithmController;
+import game.controller.KeyBoardThingController;
 import game.graphic.Direction;
 import game.graphic.StatedSavable;
 import game.graphic.Thing;
@@ -95,6 +97,14 @@ public class World extends PGraphicScene implements Runnable {
 
     public static int getTileSize() {
         return World.tileSize;
+    }
+
+    @Override
+    public void setParentView(PGraphicView view) {
+        super.setParentView(view);
+        if(operational!=null){
+            operational.setController(new KeyBoardThingController());
+        }
     }
 
     @Override
@@ -465,4 +475,6 @@ public class World extends PGraphicScene implements Runnable {
             }
         }
     }
+
+
 }

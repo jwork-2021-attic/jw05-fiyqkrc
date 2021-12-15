@@ -30,10 +30,6 @@ public class Config {
     public static HashMap<String, String[]> gameEnvInfos = new HashMap<>();
     public static String ExitNodeSource;
 
-    public static CreatureProperty getCreatureInfo(String name) {
-        return null;
-    }
-
     public static String pathConvert(String path) {
         if (path.startsWith("~")) {
             return System.getProperty("user.home")+path.substring(1);

@@ -1,4 +1,8 @@
-package game.server;
+package game.server.server;
+
+import game.server.Accepter;
+import game.server.HandlerPool;
+import game.server.Listener;
 
 public class ServerMain {
     final public Accepter accepter;

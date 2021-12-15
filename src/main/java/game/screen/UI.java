@@ -9,15 +9,12 @@ import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
 import game.Config;
-import game.graphic.creature.operational.Calabash;
 import game.world.World;
-import game.world.WorldDataGenerator;
+import game.world.GameArchiveGenerator;
 import log.Log;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.util.Arrays;
 
 public class UI {
     public static int START_PAGE = 0;
@@ -185,26 +182,15 @@ public class UI {
     }
 
     public void startGameButtonBeClicked() {
-        WorldDataGenerator worldDataGenerator=new WorldDataGenerator(20000,20000,Config.DataPath+"/saved.json",2);
-        worldDataGenerator.generateWorldData();
+        GameArchiveGenerator gameArchiveGenerator =new GameArchiveGenerator(2000,2000,Config.DataPath+"/saved.json",2);
+        gameArchiveGenerator.generateWorldData();
         loadSavedDataButtonBeClicked();
-        /*
-        this.setPage(UI.GAME_PAGE);
-        gameWorld = new World(20000, 20000);
-        gameWorld.mapInit();
-        this.setWorld(gameWorld);
-        this.sendMessage("Game start now!");
-        gameWorld.screen = this;
-        Calabash calabash = new Calabash();
-        calabash.setPosition(gameWorld.getStartPosition());
-        gameWorld.addOperational(calabash);
-        gameWorld.getParentView().setFocus(calabash);*/
     }
 
     public void loadSavedDataButtonBeClicked(){
         File file=new File(Config.DataPath+"/saved.json");
         if(file.exists()){
-            FileInputStream stream= null;
+            FileInputStream stream;
             try {
                 stream = new FileInputStream(file);
                 String jsonString=new String(stream.readAllBytes());
@@ -214,7 +200,6 @@ public class UI {
                 gameWorld=new World(jsonObject);
                 this.setWorld(gameWorld);
                 this.sendMessage("game continue");
-                //gameWorld.loadSavedData(jsonObject);
                 gameWorld.screen=this;
                 gameWorld.getParentView().setFocus(gameWorld.getOperational());
             } catch (IOException e) {

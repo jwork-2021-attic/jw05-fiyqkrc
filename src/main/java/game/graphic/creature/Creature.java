@@ -159,6 +159,7 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
     @Override
     public void setController(CreatureController controller) {
         this.controller = controller;
+        controller.setThing(this);
     }
 
     @Override
