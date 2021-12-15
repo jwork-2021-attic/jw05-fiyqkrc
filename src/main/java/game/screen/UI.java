@@ -11,6 +11,7 @@ import com.pFrame.pwidget.*;
 import game.Config;
 import game.graphic.creature.operational.Calabash;
 import game.world.World;
+import game.world.WorldDataGenerator;
 import log.Log;
 
 import javax.swing.*;
@@ -184,6 +185,10 @@ public class UI {
     }
 
     public void startGameButtonBeClicked() {
+        WorldDataGenerator worldDataGenerator=new WorldDataGenerator(20000,20000,Config.DataPath+"/saved.json",2);
+        worldDataGenerator.generateWorldData();
+        loadSavedDataButtonBeClicked();
+        /*
         this.setPage(UI.GAME_PAGE);
         gameWorld = new World(20000, 20000);
         gameWorld.mapInit();
@@ -193,7 +198,7 @@ public class UI {
         Calabash calabash = new Calabash();
         calabash.setPosition(gameWorld.getStartPosition());
         gameWorld.addOperational(calabash);
-        gameWorld.getParentView().setFocus(calabash);
+        gameWorld.getParentView().setFocus(calabash);*/
     }
 
     public void loadSavedDataButtonBeClicked(){
@@ -205,13 +210,11 @@ public class UI {
                 String jsonString=new String(stream.readAllBytes());
                 System.out.println(jsonString);
                 JSONObject jsonObject= JSON.parseObject(jsonString);
-                int width=jsonObject.getObject("width",Integer.class);
-                int height=jsonObject.getObject("height",Integer.class);
                 this.setPage(UI.GAME_PAGE);
-                gameWorld=new World(width,height);
+                gameWorld=new World(jsonObject);
                 this.setWorld(gameWorld);
                 this.sendMessage("game continue");
-                gameWorld.loadSavedData(jsonObject);
+                //gameWorld.loadSavedData(jsonObject);
                 gameWorld.screen=this;
                 gameWorld.getParentView().setFocus(gameWorld.getOperational());
             } catch (IOException e) {

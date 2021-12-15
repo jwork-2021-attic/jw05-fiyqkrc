@@ -8,46 +8,31 @@ import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.Attack;
 import game.Config;
-import game.graphic.*;
-import game.graphic.env.CorridorFloor;
-import game.graphic.env.Door;
-import game.graphic.env.RoomFloor;
-import game.graphic.env.Wall;
-import game.graphic.interactive.GameThread;
 import game.Location;
 import game.controller.AlgorithmController;
+import game.graphic.Direction;
+import game.graphic.StatedSavable;
+import game.graphic.Thing;
 import game.graphic.creature.Creature;
-import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Operational;
-import game.graphic.interactive.Box;
-import game.graphic.interactive.ExitPlace;
+import game.graphic.env.Wall;
+import game.graphic.interactive.GameThread;
 import game.screen.UI;
 import log.Log;
-import worldGenerate.WorldGenerate;
-import worldGenerate.WorldGenerate.Room;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class World extends PGraphicScene implements Runnable {
     private final Tile<Thing>[][] tiles;
     private final int tileWidth;
     private final int tileHeight;
-    private int[][] worldArray;
-    private final int worldScale;
-    private WorldGenerate worldGenerator;
     public static int tileSize = 20;
-    protected static ArrayList<Room> rooms;
     public UI screen;
-
-    protected ArrayList<Class> monster = new ArrayList<>();
-
-    private Position startPosition;
+    public int[][] worldArray;
 
     private final ArrayList<Creature> activeCreature = new ArrayList<>();
 
@@ -63,45 +48,28 @@ public class World extends PGraphicScene implements Runnable {
     Thread daemonThread;
 
 
-    public World(int width, int height) {
-        super(width, height);
-        worldScale = 2;
+    public World(JSONObject jsonObject) {
+        super(jsonObject.getObject("width",Integer.class),jsonObject.getObject("height",Integer.class));
+
         tileWidth = width / tileSize;
         tileHeight = height / tileSize;
+        worldArray=jsonObject.getObject("worldArray",int[][].class);
         tiles = new Tile[tileHeight][tileWidth];
         for (int i = 0; i < tileHeight; i++)
             for (int j = 0; j < tileWidth; j++)
-                tiles[i][j] = new Tile<Thing>(new Location(i, j));
-
-        monster.add(Dragon.class);
-        monster.add(Master.class);
-        monster.add(Pangolin.class);
-        monster.add(SnowMonster.class);
-        monster.add(Spider.class);
-
+                tiles[i][j] = new Tile<>(new Location(i, j));
         areaHeight = this.height / areaSize + 1;
         areaWidth = this.width / areaSize + 1;
-
         areas = new ArrayList[areaHeight][areaWidth];
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
-                areas[i][j] = new ArrayList<JSONObject>();
+                areas[i][j] = new ArrayList<>();
             }
-
-
         daemonThread = new Thread(this);
         daemonThread.start();
+        loadSavedData(jsonObject);
     }
 
-    public void mapInit() {
-        generateWorld();
-        if (worldScale >= 2) {
-            scaleWorld();
-        }
-        createWorld();
-        createBox();
-        createMonster();
-    }
 
     public boolean isPause() {
         return isPause;
@@ -119,162 +87,8 @@ public class World extends PGraphicScene implements Runnable {
         return pixels;
     }
 
-    protected void createBox() {
-        Random random = new Random();
-        for (Room room : rooms) {
-            //generate box
-            int x = random.nextInt(room.height);
-            int y = random.nextInt(room.width);
-            Box box = new Box();
-            worldArray[x][y] = 200;
-            box.setPosition(Position.getPosition((room.pos.getX() + x) * tileSize, (room.pos.getY() + y) * tileSize));
-            areas[box.getPosition().getX() / areaSize][box.getPosition().getY() / areaSize].add(box.saveState());
-            //addItem(box,box.getPosition());
-        }
-    }
-
-    protected void createMonster() {
-        Random random = new Random();
-
-        //generate for rooms
-        for (Room room : rooms) {
-            for (int i = 0; i < room.width; i++)
-                for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.75) {
-                        int index = random.nextInt(monster.size());
-                        worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
-                        try {
-                            Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
-                            m.setPosition(Position.getPosition((room.pos.getX() + j) * tileSize, (room.pos.getY() + i) * tileSize));
-                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m.saveState());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        }
-
-        //generate for corridor
-        for (int i = 0; i < worldArray.length; i++) {
-            for (int j = 0; j < worldArray[0].length; j++) {
-                if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.90) {
-                        int index = random.nextInt(monster.size());
-                        worldArray[i][j] = 100 + index;
-                        try {
-                            Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
-                            m.setPosition(Position.getPosition((i) * tileSize, (j) * tileSize));
-                            areas[m.getPosition().getX() / areaSize][m.getPosition().getY() / areaSize].add(m.saveState());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public Position getStartPosition() {
-        return this.startPosition;
-    }
-
-    public int[][] scaleWorld() {
-        if (worldArray != null && worldScale >= 2) {
-            int width = worldArray[0].length * worldScale;
-            int height = worldArray.length * worldScale;
-            int[][] array = new int[height][width];
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    array[i][j] = worldArray[i / worldScale][j / worldScale];
-                }
-            }
-            worldArray = array;
-        }
-
-
-        rooms = worldGenerator.getRoomsArray();
-        for (Room room : rooms) {
-            room.pos = Position.getPosition(room.pos.getX() * worldScale, room.pos.getY() * worldScale);
-            room.height = room.height * worldScale;
-            room.width = room.width * worldScale;
-        }
-
-        return worldArray;
-    }
-
-    public int getWorldScale() {
-        return worldScale;
-    }
-
     public static int getTileSize() {
         return World.tileSize;
-    }
-
-
-    private void generateWorld() {
-        boolean success = false;
-        int tryTimes = 0;
-        while (tryTimes <= 3 && !success) {
-            try {
-                worldGenerator = new WorldGenerate(this.width / (tileSize * worldScale), this.height / (tileSize * worldScale), 2000000,
-                        20, 2,
-                        20, 2
-                );
-                worldArray = worldGenerator.generate();
-                startPosition = Position.getPosition(worldGenerator.getStart().getX() * tileSize * worldScale, worldGenerator.getStart().getY() * tileSize * worldScale);
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                tryTimes++;
-            }
-        }
-    }
-
-    private void createWorld() {
-        for (int i = 0; i < tileHeight; i++) {
-            for (int j = 0; j < tileWidth; j++) {
-                switch (worldArray[i][j]) {
-                    case 0 -> {
-                        Wall wall = new Wall();
-                        addItem(wall, Position.getPosition(i * tileSize, j * tileSize));
-                    }
-                    case 1 -> {
-                        CorridorFloor corridorFloor = new CorridorFloor();
-                        addItem(corridorFloor, Position.getPosition(i * tileSize, j * tileSize));
-                    }
-                    case 5 -> {
-                        Door door = new Door();
-                        addItem(door, Position.getPosition(i * tileSize, j * tileSize));
-
-                        ExitPlace exitPlace = new ExitPlace();
-                        exitPlace.setPosition(Position.getPosition(i * tileSize, j * tileSize));
-                        areas[exitPlace.getPosition().getX() / areaSize][exitPlace.getPosition().getY() / areaSize].add(exitPlace.saveState());
-                    }
-                    case 4 -> {
-                        Door door = new Door();
-                        addItem(door, Position.getPosition(i * tileSize, j * tileSize));
-                    }
-                    case 2, 3, 6 -> {
-                        RoomFloor roomFloor = new RoomFloor();
-                        addItem(roomFloor, Position.getPosition(i * tileSize, j * tileSize));
-                    }
-                    default -> {
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -427,7 +241,7 @@ public class World extends PGraphicScene implements Runnable {
                     itemData.addAll(list1);
                 }
             }
-            data.put("itemData", itemData);
+            data.put("itemsData", itemData);
             data.put("idCount", PGraphicItem.getIdCount());
             data.put("width", width);
             data.put("height", height);
@@ -442,7 +256,7 @@ public class World extends PGraphicScene implements Runnable {
     }
 
     public void loadSavedData(JSONObject jsonObject) {
-        JSONArray itemsData = jsonObject.getObject("itemData", JSONArray.class);
+        JSONArray itemsData = jsonObject.getObject("itemsData", JSONArray.class);
         PGraphicItem.setIdCount(jsonObject.getObject("idCount", Integer.class));
         for (Object item : itemsData) {
             StatedSavable thing;
