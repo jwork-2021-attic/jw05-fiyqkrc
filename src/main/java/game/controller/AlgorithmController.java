@@ -17,18 +17,23 @@ public class AlgorithmController extends CreatureController implements Runnable 
     protected double lastSearchAim = System.currentTimeMillis();
     protected Random random = new Random();
     protected Thread thread;
+    protected boolean lastMoveSuccess;
 
 
     public AlgorithmController() {
         thread = new Thread(this);
+        lastMoveSuccess=true;
         GameThread.threadSet.add(thread);
         thread.start();
     }
 
     public void tryMove() {
-        if (!controllable.move(direction)) {
+        if (!lastMoveSuccess) {
             if (random.nextDouble(1) > 0.8)
                 direction = random.nextDouble(Math.PI * 2);
+        }
+        else{
+            controllable.move(direction);
         }
     }
 
