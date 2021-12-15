@@ -7,7 +7,6 @@ import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import com.pFrame.pgraphic.PGraphicScene;
 import game.Attack;
-import game.Config;
 import game.Location;
 import game.controller.AlgorithmController;
 import game.graphic.Direction;
@@ -21,7 +20,6 @@ import game.screen.UI;
 import log.Log;
 
 import java.awt.*;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -33,6 +31,7 @@ public class World extends PGraphicScene implements Runnable {
     public static int tileSize = 20;
     public UI screen;
     public int[][] worldArray;
+    private final String path;
 
     private final ArrayList<Creature> activeCreature = new ArrayList<>();
 
@@ -49,24 +48,31 @@ public class World extends PGraphicScene implements Runnable {
 
 
     public World(JSONObject jsonObject) {
-        super(jsonObject.getObject("width",Integer.class),jsonObject.getObject("height",Integer.class));
+        super(jsonObject.getObject("width", Integer.class), jsonObject.getObject("height", Integer.class));
 
         tileWidth = width / tileSize;
         tileHeight = height / tileSize;
-        worldArray=jsonObject.getObject("worldArray",int[][].class);
+
+        worldArray = jsonObject.getObject("worldArray", int[][].class);
+        path = jsonObject.getObject("path", String.class);
+
         tiles = new Tile[tileHeight][tileWidth];
         for (int i = 0; i < tileHeight; i++)
             for (int j = 0; j < tileWidth; j++)
                 tiles[i][j] = new Tile<>(new Location(i, j));
+
         areaHeight = this.height / areaSize + 1;
         areaWidth = this.width / areaSize + 1;
         areas = new ArrayList[areaHeight][areaWidth];
+
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
                 areas[i][j] = new ArrayList<>();
             }
+
         daemonThread = new Thread(this);
         daemonThread.start();
+
         loadSavedData(jsonObject);
     }
 
@@ -103,9 +109,7 @@ public class World extends PGraphicScene implements Runnable {
         }
         if (item instanceof Creature) {
             synchronized (activeCreature) {
-                if (activeCreature.contains(item)) {
-                    activeCreature.remove(item);
-                }
+                activeCreature.remove(item);
             }
         }
         return super.removeItem(item);
@@ -222,8 +226,7 @@ public class World extends PGraphicScene implements Runnable {
 
     public void gameFinish() {
         gamePause();
-        Thread thread = new Thread(new GameResourceRecycle());
-        thread.start();
+        new Thread(new GameResourceRecycle()).start();
     }
 
     public void gameSaveData() {
@@ -245,8 +248,10 @@ public class World extends PGraphicScene implements Runnable {
             data.put("idCount", PGraphicItem.getIdCount());
             data.put("width", width);
             data.put("height", height);
+            data.put("worldArray", worldArray);
+            data.put("path", path);
 
-            FileOutputStream stream = new FileOutputStream(new File(Config.DataPath + "/saved.json"));
+            FileOutputStream stream = new FileOutputStream(path);
             stream.write(data.toJSONString().getBytes());
             stream.close();
         } catch (Exception e) {
@@ -261,9 +266,7 @@ public class World extends PGraphicScene implements Runnable {
         for (Object item : itemsData) {
             StatedSavable thing;
             try {
-                Class[] types = null;
-                Object[] parameters = null;
-                thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
+                thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                 thing.resumeState((JSONObject) item);
                 if (thing instanceof Thing) {
                     if (thing instanceof Creature || thing instanceof GameThread)
@@ -406,7 +409,7 @@ public class World extends PGraphicScene implements Runnable {
                                 thing.resumeState(item);
                                 if (thing instanceof Thing) {
                                     if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
-                                        //System.out.println(creature.getPosition());
+
                                     } else {
                                         addItem((PGraphicItem) thing);
 
@@ -425,16 +428,11 @@ public class World extends PGraphicScene implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.ErrorLog(this, "thread failed");
-                //break;
             }
         }
     }
 
     record Area(int x, int y) {
-        public Area(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 
     class GameResourceRecycle implements Runnable {
@@ -453,12 +451,12 @@ public class World extends PGraphicScene implements Runnable {
                 for (Thread thread : GameThread.threadSet) {
                     thread.interrupt();
                 }
-                while (GameThread.threadSet.size() != 0) {
+                while (GameThread.threadSet.size() != 0 && !Thread.currentThread().isInterrupted()) {
                     System.out.println("Waiting for threads quit... now has " + GameThread.threadSet.size());
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

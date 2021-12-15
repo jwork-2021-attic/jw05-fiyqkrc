@@ -67,7 +67,6 @@ public class WorldDataGenerator {
         worldData.put("width", width);
         worldData.put("height", height);
         worldData.put("path", path);
-        worldData.put("worldScale", worldScale);
         worldData.put("itemsData", itemsData);
         worldData.put("worldArray", worldArray);
         worldData.put("idCount",0);
