@@ -7,7 +7,7 @@ import com.pFrame.Position;
 import game.Location;
 import game.controller.AlgorithmController;
 import game.controller.CreatureController;
-import game.controller.KeyBoardThingController;
+import game.controller.KeyBoardController;
 import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
@@ -216,7 +216,7 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
     public void dead() {
         if(controller instanceof AlgorithmController)
             ((AlgorithmController) controller).stop();
-        else if(controller instanceof KeyBoardThingController){
+        else if(controller instanceof KeyBoardController){
             pause();
         }
         world.removeItem(this);

@@ -76,8 +76,6 @@ abstract public class Monster extends Creature implements StatedSavable {
     @Override
     public void whenBeAddedToScene() {
         super.whenBeAddedToScene();
-        controller = new AlgorithmController();
-        controller.setThing(this);
     }
 
     public void tryMoveToEnemy(){

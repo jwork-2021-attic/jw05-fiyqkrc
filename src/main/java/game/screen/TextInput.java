@@ -1,10 +1,8 @@
 package game.screen;
 
 import com.pFrame.Position;
-import com.pFrame.pwidget.PHeadWidget;
 import com.pFrame.pwidget.PLabel;
 import com.pFrame.pwidget.PWidget;
-import org.bytedeco.opencv.presets.opencv_core;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -27,14 +25,14 @@ public class TextInput extends PLabel {
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
         switch (e.getKeyChar()) {
-            case '\n' -> inputFinishedFunc();
+            case '\n' -> inputFinished();
             case '\b' -> inputText = inputText.substring(0, inputText.length() - 1);
             default -> inputText += e.getKeyChar();
         }
         setText(foreText + ":\n" + inputText, 1, Color.WHITE);
     }
 
-    private void inputFinishedFunc() {
+    private void inputFinished() {
         try {
             Object[] objects = {inputText};
             m.invoke(c, objects);

@@ -10,21 +10,27 @@ import com.pFrame.pgraphic.PGraphicView;
 import game.Attack;
 import game.Location;
 import game.controller.AlgorithmController;
-import game.controller.KeyBoardThingController;
+import game.controller.KeyBoardController;
+import game.controller.NetAlController;
+import game.controller.NetKeyBoardController;
 import game.graphic.Direction;
 import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
+import game.graphic.creature.monster.Monster;
 import game.graphic.creature.operational.Operational;
 import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.screen.UI;
+import game.server.client.ClientMain;
 import log.Log;
 
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class World extends PGraphicScene {
     private final Tile<Thing>[][] tiles;
@@ -39,7 +45,7 @@ public class World extends PGraphicScene {
     public int[][] worldArray;
     private final String path;
 
-    private final ArrayList<Creature> activeCreature = new ArrayList<>();
+    private final HashMap<Integer, Creature> activeCreature = new HashMap<>();
 
     private final ArrayList<JSONObject>[][] areas;
 
@@ -63,7 +69,7 @@ public class World extends PGraphicScene {
 
         worldArray = jsonObject.getObject("worldArray", int[][].class);
         path = jsonObject.getObject("path", String.class);
-        controlRoleId=jsonObject.getObject("controlRole",Integer.class);
+        controlRoleId = jsonObject.getObject("controlRole", Integer.class);
 
         tiles = new Tile[tileHeight][tileWidth];
         for (int i = 0; i < tileHeight; i++)
@@ -74,18 +80,15 @@ public class World extends PGraphicScene {
         areaWidth = this.width / areaSize + 1;
         areas = new ArrayList[areaHeight][areaWidth];
 
-        operationals=new ArrayList<>();
+        operationals = new ArrayList<>();
 
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
                 areas[i][j] = new ArrayList<>();
             }
 
-        if (multiPlayerMode) {
-            if (mainClient) {
-                //daemonThread = new Thread(this);
-                //daemonThread.start();
-            }
+        if (multiPlayerMode && !mainClient) {
+
         } else {
             daemonThread = new Thread(new Runnable() {
                 @Override
@@ -95,7 +98,7 @@ public class World extends PGraphicScene {
                     ArrayList<Area> oldAreas = new ArrayList<>();
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
-                            for(Operational operational:operationals){
+                            for (Operational operational : operationals) {
                                 Position position = operational.getPosition();
                                 int x = position.getX() / areaSize;
                                 int y = position.getY() / areaSize;
@@ -122,6 +125,9 @@ public class World extends PGraphicScene {
                                                 areas[area.x][area.y].add(((Creature) thing).saveState());
                                                 if (((Creature) thing).getController() instanceof AlgorithmController)
                                                     ((AlgorithmController) ((Creature) thing).getController()).stop();
+                                                else if (((Creature) thing).getController() instanceof NetAlController) {
+                                                    ((NetAlController) ((Creature) thing).getController()).stop();
+                                                }
                                                 removeItem(thing);
 
                                             } else if (thing instanceof GameThread && thing instanceof StatedSavable) {
@@ -144,8 +150,15 @@ public class World extends PGraphicScene {
                                                 if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
 
                                                 } else {
+                                                    if(thing instanceof Monster){
+                                                        if(multiPlayerMode){
+                                                            ((Monster) thing).setController(new NetAlController());
+                                                        }
+                                                        else{
+                                                            ((Monster) thing).setController(new AlgorithmController());
+                                                        }
+                                                    }
                                                     addItem((PGraphicItem) thing);
-
                                                     added.add(item);
                                                 }
                                             }
@@ -167,7 +180,6 @@ public class World extends PGraphicScene {
             });
             daemonThread.start();
         }
-
         loadSavedData(jsonObject);
     }
 
@@ -197,18 +209,22 @@ public class World extends PGraphicScene {
         super.setParentView(view);
     }
 
-    public void setControlRole(Operational operational){
-        controlRole=operational;
-
+    public void setControlRole(Operational operational) {
+        controlRole = operational;
     }
 
-    public Operational getControlRole(){
+    public Operational getControlRole() {
         return controlRole;
     }
 
-    public void activeControlRole(){
-        if(controlRole!=null)
-            controlRole.setController(new KeyBoardThingController());
+    public void activeControlRole() {
+        if (controlRole != null) {
+            if (multiPlayerMode) {
+                controlRole.setController(new NetKeyBoardController());
+            } else {
+                controlRole.setController(new KeyBoardController());
+            }
+        }
         if (this.parentView != null) {
             parentView.setFocus(controlRole);
         } else {
@@ -230,7 +246,7 @@ public class World extends PGraphicScene {
         }
         if (item instanceof Creature) {
             synchronized (activeCreature) {
-                activeCreature.remove(item);
+                activeCreature.remove(item.getId());
             }
         }
         return super.removeItem(item);
@@ -244,7 +260,7 @@ public class World extends PGraphicScene {
 
             if (item instanceof Creature) {
                 synchronized (activeCreature) {
-                    activeCreature.add((Creature) item);
+                    activeCreature.put(item.getId(), (Creature) item);
                 }
             }
 
@@ -265,11 +281,36 @@ public class World extends PGraphicScene {
         return addItem(item);
     }
 
+    public void frameSync(JSONArray jsonArray) {
+        for (Object jsonObject : jsonArray) {
+            try {
+                JSONObject command = (JSONObject) jsonObject;
+                String action = command.getObject("action", String.class);
+                int id = command.getObject("id", Integer.class);
+                if (activeCreature.containsKey(id)) {
+                    Creature creature = activeCreature.get(id);
+                    if (Objects.equals(action, "move")) {
+                        double direction = command.getObject("direction", Double.class);
+                        creature.move(direction);
+                    } else if (Objects.equals(action, "attack")) {
+                        creature.responseToEnemy();
+                    } else if (Objects.equals(action, "dead")) {
+                        creature.dead();
+                    }
+                } else {
+                    Log.ErrorLog(this, "a id named" + id + " creature can not be found");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void addOperational(Operational operational) {
         addItem(operational);
         this.operationals.add(operational);
-        if(operational.getId()==controlRoleId){
-            controlRole=operational;
+        if (operational.getId() == controlRoleId) {
+            controlRole = operational;
         }
     }
 
@@ -392,7 +433,7 @@ public class World extends PGraphicScene {
             data.put("height", height);
             data.put("worldArray", worldArray);
             data.put("path", path);
-            data.put("controlRole",controlRole.getId());
+            data.put("controlRole", controlRole.getId());
 
             FileOutputStream stream = new FileOutputStream(path);
             stream.write(data.toJSONString().getBytes());
@@ -431,7 +472,7 @@ public class World extends PGraphicScene {
     public void gamePause() {
         if (!isPause) {
             isPause = true;
-            for (Creature creature : activeCreature) {
+            for (Creature creature : activeCreature.values()) {
                 creature.pause();
             }
             if (controlRole != null) {
@@ -444,7 +485,7 @@ public class World extends PGraphicScene {
     public void gameContinue() {
         if (isPause) {
             isPause = false;
-            for (Creature creature : activeCreature) {
+            for (Creature creature : activeCreature.values()) {
                 creature.Continue();
             }
             if (controlRole != null) {

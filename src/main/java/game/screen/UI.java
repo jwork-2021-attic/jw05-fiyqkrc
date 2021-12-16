@@ -58,7 +58,7 @@ public class UI {
         this.ui = new PHeadWidget(null, null);
 
         this.startPage = new PLayout(null, null, 3, 3, false);
-        this.startPage.setRCNumStyle(3, 3, "2x,1x,2x", "2x,1x,2x");
+        this.startPage.setRCNumStyle(3, 3, "1x,2x,1x", "1x,2x,1x");
         mainMenu = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
         startGameButton = new PButton(mainMenu, null);
         startGameButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/startButton.png").getFile()));

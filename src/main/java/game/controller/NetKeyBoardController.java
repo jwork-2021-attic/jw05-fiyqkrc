@@ -1,19 +1,22 @@
+
 package game.controller;
 
 import com.pFrame.pwidget.PFrameKeyListener;
 import game.graphic.Direction;
 import game.graphic.creature.Controllable;
 import game.graphic.interactive.GameThread;
+import game.server.client.Accepter;
+import game.server.client.ClientMain;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class KeyBoardThingController extends CreatureController implements PFrameKeyListener, Runnable {
+public class NetKeyBoardController extends CreatureController implements PFrameKeyListener, Runnable {
 
     Thread thread;
 
-    public KeyBoardThingController() {
+    public NetKeyBoardController() {
         super();
         allKeyCode.add('a');
         allKeyCode.add('s');
@@ -44,18 +47,17 @@ public class KeyBoardThingController extends CreatureController implements PFram
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyChar()=='j')
-            controllable.responseToEnemy();
+        if (e.getKeyChar() == 'j')
+            ClientMain.getInstance().getCommandListener().submit(Accepter.attackMessage(controllable));
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(allKeyCode.contains(e.getKeyChar())) {
+        if (allKeyCode.contains(e.getKeyChar())) {
             if (keyArray.contains(e.getKeyChar()))
                 keyArray.remove((Character) e.getKeyChar());
         }
     }
-
 
 
     @Override
@@ -65,11 +67,11 @@ public class KeyBoardThingController extends CreatureController implements PFram
                 if (keyArray.size() == 0) {
 
                 } else if (keyArray.size() == 1) {
-                    controllable.move(calDirection(keyArray.get(0)));
+                    ClientMain.getInstance().getCommandListener().submit(Accepter.MoveMessage(controllable, calDirection(keyArray.get(0))));
                 } else {
                     double d1 = calDirection(keyArray.get(0));
                     double d2 = calDirection(keyArray.get(1));
-                    controllable.move((d1 + d2) / 2);
+                    ClientMain.getInstance().getCommandListener().submit(Accepter.MoveMessage(controllable, (d1 + d2) / 2));
                 }
                 Thread.sleep(33);
             } catch (InterruptedException e) {

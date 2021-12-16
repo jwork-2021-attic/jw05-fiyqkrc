@@ -11,6 +11,8 @@ public interface Controllable {
 
     boolean move(double direction);
 
+    int getId();
+
     void speak(String text);
 
     void dead();
