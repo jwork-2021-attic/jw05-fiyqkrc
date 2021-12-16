@@ -23,9 +23,20 @@ public class UI {
 
     public PHeadWidget ui;
     public PLayout startPage;
+    public PLayout mainMenu;
     public PButton startGameButton;
     public PButton settingButton;
     public PButton loadSavedDataButton;
+
+    public PLayout gameModeSelectPage;
+    public PButton singleMode;
+    public PButton multiMode;
+
+    public PLayout multiGameSelectPage;
+    public PButton newMultiMode;
+    public PButton joinMultiMode;
+
+    public TextInput addressInput;
 
     public PLabel coinValueLabel;
     public PButton PauseButton;
@@ -48,15 +59,34 @@ public class UI {
 
         this.startPage = new PLayout(null, null, 3, 3, false);
         this.startPage.setRCNumStyle(3, 3, "2x,1x,2x", "2x,1x,2x");
-        PLayout layout = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
-        startGameButton = new PButton(layout, null);
+        mainMenu = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
+        startGameButton = new PButton(mainMenu, null);
         startGameButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/startButton.png").getFile()));
-        loadSavedDataButton = new PButton(layout, null);
+        loadSavedDataButton = new PButton(mainMenu, null);
         loadSavedDataButton.addBackground(PImage.getPureImage(Color.GRAY));
         loadSavedDataButton.setText("Continue", 1, Color.BLUE);
-        settingButton = new PButton(layout, null);
+        settingButton = new PButton(mainMenu, null);
         settingButton.addBackground(PImage.getPureImage(Color.GRAY));
         settingButton.setText("Setting", 1, Color.BLUE);
+
+        gameModeSelectPage=new PLayout(null,null,2,1,true);
+        singleMode=new PButton(gameModeSelectPage,null);
+        singleMode.addBackground(PImage.getPureImage(Color.GRAY));
+        singleMode.setText("singleMode",1,Color.BLUE);
+        multiMode=new PButton(gameModeSelectPage,null);
+        multiMode.addBackground(PImage.getPureImage(Color.GRAY));
+        multiMode.setText("multiMode",1,Color.BLUE);
+
+        multiGameSelectPage=new PLayout(null,null,2,1,true);
+        newMultiMode=new PButton(multiGameSelectPage,null);
+        newMultiMode.addBackground(PImage.getPureImage(Color.GRAY));
+        newMultiMode.setText("aNewMultiGame",1,Color.BLUE);
+        joinMultiMode=new PButton(multiGameSelectPage,null);
+        joinMultiMode.addBackground(PImage.getPureImage(Color.GRAY));
+        joinMultiMode.setText("join other player's world",1,Color.BLUE);
+
+        addressInput=new TextInput(null,null,"please input other player's ip here");
+        addressInput.addBackground(PImage.getPureImage(Color.GRAY));
 
         this.gamePage = new RecordablePage(null, null, 3, 3, false);
         this.gamePage.setRCNumStyle(3, 3, "1x,4x,1x", "1x,4x,1x");
@@ -115,6 +145,11 @@ public class UI {
             QuitButton.setClickFunc(this, this.getClass().getMethod("QuitButtonClicked"));
             ScreenShotButton.setClickFunc(this, this.getClass().getMethod("ScreenShotButtonClicked"));
             RecordButton.setClickFunc(this, this.getClass().getMethod("RecordButtonClicked"));
+            singleMode.setClickFunc(this,this.getClass().getMethod("newSingleGame"));
+            multiMode.setClickFunc(this,this.getClass().getMethod("multiGameBeClicked"));
+            newMultiMode.setClickFunc(this,this.getClass().getMethod("newMultiplayerGame"));
+            joinMultiMode.setClickFunc(this,this.getClass().getMethod("joinMultiModeSelected"));
+            addressInput.setInputFinishFunc(this,this.getClass().getMethod("addressInputFinished", String.class));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -182,10 +217,42 @@ public class UI {
     }
 
     public void startGameButtonBeClicked() {
+        startPage.removeWidget(mainMenu);
+        startPage.addChildWidget(gameModeSelectPage,Position.getPosition(2,2));
+    }
+
+    public void multiGameBeClicked(){
+        startPage.removeWidget(gameModeSelectPage);
+        startPage.addChildWidget(multiGameSelectPage,Position.getPosition(2,2));
+    }
+
+    public void joinMultiModeSelected(){
+        startPage.removeWidget(multiGameSelectPage);
+        startPage.addChildWidget(addressInput,Position.getPosition(2,2));
+    }
+
+    public void addressInputFinished(String str){
+        System.out.println(str);
+        System.out.println("this method need finish");
+        startPage.removeWidget(addressInput);
+        startPage.addChildWidget(mainMenu,Position.getPosition(2,2));
+    }
+
+    public void newSingleGame(){
         GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/saved.json", 2);
         gameArchiveGenerator.generateWorldData();
         loadSavedDataButtonBeClicked();
     }
+
+    public void newMultiplayerGame(){
+
+    }
+
+    public void joinMultiplayerGame(){
+
+    }
+
+
 
     public void loadSavedDataButtonBeClicked() {
         File file = new File(Config.DataPath + "/saved.json");
