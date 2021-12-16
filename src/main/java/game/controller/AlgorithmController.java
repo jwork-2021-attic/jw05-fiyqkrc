@@ -22,17 +22,16 @@ public class AlgorithmController extends CreatureController implements Runnable 
 
     public AlgorithmController() {
         thread = new Thread(this);
-        lastMoveSuccess=true;
+        lastMoveSuccess = true;
         GameThread.threadSet.add(thread);
         thread.start();
     }
 
     public void tryMove() {
-        if (!lastMoveSuccess) {
-            if (random.nextDouble(1) > 0.8)
-                direction = random.nextDouble(Math.PI * 2);
-        }
-        else{
+
+        if (random.nextDouble(1) > 0.8) {
+            direction = random.nextDouble(Math.PI * 2);
+        } else {
             controllable.move(direction);
         }
     }
@@ -50,7 +49,7 @@ public class AlgorithmController extends CreatureController implements Runnable 
 
     @Override
     public void run() {
-        Thread dataAnalysis=new Thread(new DataAnalysis(this));
+        Thread dataAnalysis = new Thread(new DataAnalysis(this));
         dataAnalysis.start();
         while (!Thread.currentThread().isInterrupted()) {
             try {
@@ -59,7 +58,7 @@ public class AlgorithmController extends CreatureController implements Runnable 
                     break;
                 }
                 trySearchAim();
-                if (aim==null) {
+                if (aim == null) {
                     tryMove();
                 } else {
                     controllable.responseToEnemy();
@@ -79,19 +78,19 @@ public class AlgorithmController extends CreatureController implements Runnable 
 
 }
 
-class DataAnalysis implements Runnable{
+class DataAnalysis implements Runnable {
 
     public static FileOutputStream stream;
 
     AlgorithmController controller;
 
-    static{
+    static {
         try {
             File file;
-            file=new File(Config.LearningDataPath+"/data.txt");
-            if(!file.exists())
+            file = new File(Config.LearningDataPath + "/data.txt");
+            if (!file.exists())
                 file.createNewFile();
-            stream=new FileOutputStream(file);
+            stream = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -99,7 +98,7 @@ class DataAnalysis implements Runnable{
         }
     }
 
-    public static void writeInfo(String str){
+    public static void writeInfo(String str) {
         try {
             stream.write(str.getBytes());
         } catch (IOException e) {
@@ -107,25 +106,24 @@ class DataAnalysis implements Runnable{
         }
     }
 
-    public DataAnalysis(AlgorithmController controller){
-        this.controller=controller;
+    public DataAnalysis(AlgorithmController controller) {
+        this.controller = controller;
     }
 
     @Override
     public void run() {
-        while(!Thread.interrupted()){
-            try{
+        while (!Thread.interrupted()) {
+            try {
                 Thread.sleep(2000);
-                if(controller.aim!=null){
-                    Creature me=((Creature)controller.controllable);
-                    Creature enemy=((Creature)controller.aim);
+                if (controller.aim != null) {
+                    Creature me = ((Creature) controller.controllable);
+                    Creature enemy = ((Creature) controller.aim);
                     //health,distance,enemy health,nenmy attack
-                    String str=String.format("%f\t%f\t%f\t%f\n",me.getHealth(),Position.distance(me.getCentralPosition(), enemy.getCentralPosition()),
-                            enemy.getHealth(),enemy.getAttack());
+                    String str = String.format("%f\t%f\t%f\t%f\n", me.getHealth(), Position.distance(me.getCentralPosition(), enemy.getCentralPosition()),
+                            enemy.getHealth(), enemy.getAttack());
                     writeInfo(str);
                 }
-            }
-            catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }

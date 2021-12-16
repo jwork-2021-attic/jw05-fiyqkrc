@@ -18,7 +18,7 @@ public class Coin extends Thing implements Runnable {
     int coin;
     Thread thread;
 
-    public static Pixel[][] coinImage=GraphicItemGenerator.generateItem(Coin.class.getClassLoader().getResource("image/effect/coin.png").getFile(), World.tileSize, World.tileSize).getPixels();
+    public static Pixel[][] coinImage = GraphicItemGenerator.generateItem(Coin.class.getClassLoader().getResource("image/effect/coin.png").getFile(), World.tileSize, World.tileSize).getPixels();
 
 
     public Coin(Creature creature) {
@@ -36,21 +36,23 @@ public class Coin extends Thing implements Runnable {
         lastFlashTime = System.currentTimeMillis();
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                if (Position.distance(getCentralPosition(), world.getOperational().getCentralPosition()) < 7*World.tileSize) {
-                    double angle = Direction.calDirection(getCentralPosition(), world.getOperational().getCentralPosition());
-                    long currentTime = System.currentTimeMillis();
-                    double y = Math.sin(angle) * speed * (currentTime - lastFlashTime) / 1000 + last_y;
-                    double x = Math.cos(angle) * speed * (currentTime - lastFlashTime) / 1000 + last_x;
-                    last_y = y - (int) y;
-                    last_x = x - (int) x;
-                    lastFlashTime = currentTime;
-                    Position nextPosition = Position.getPosition(getCentralPosition().getX() - (int) y, getCentralPosition().getY() + (int) x);
-                    world.ThingMove(this, nextPosition);
-                    Thing thing = world.findThing(world.getTileByLocation(nextPosition));
-                    if (thing instanceof Operational) {
-                        ((Operational) thing).addCoin(coin);
-                        world.removeItem(this);
-                        break;
+                for (Operational operational : world.getOperational()) {
+                    if (Position.distance(getCentralPosition(), operational.getCentralPosition()) < 7 * World.tileSize) {
+                        double angle = Direction.calDirection(getCentralPosition(), operational.getCentralPosition());
+                        long currentTime = System.currentTimeMillis();
+                        double y = Math.sin(angle) * speed * (currentTime - lastFlashTime) / 1000 + last_y;
+                        double x = Math.cos(angle) * speed * (currentTime - lastFlashTime) / 1000 + last_x;
+                        last_y = y - (int) y;
+                        last_x = x - (int) x;
+                        lastFlashTime = currentTime;
+                        Position nextPosition = Position.getPosition(getCentralPosition().getX() - (int) y, getCentralPosition().getY() + (int) x);
+                        world.ThingMove(this, nextPosition);
+                        Thing thing = world.findThing(world.getTileByLocation(nextPosition));
+                        if (thing instanceof Operational) {
+                            ((Operational) thing).addCoin(coin);
+                            world.removeItem(this);
+                            break;
+                        }
                     }
                 }
                 Thread.sleep(50);

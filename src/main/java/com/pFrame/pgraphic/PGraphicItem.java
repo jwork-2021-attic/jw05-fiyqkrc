@@ -30,6 +30,10 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
         PGraphicItem.idCount=idCount;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public void setParentScene(PGraphicScene scene){
         this.world =scene;
     }

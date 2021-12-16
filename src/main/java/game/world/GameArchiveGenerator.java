@@ -3,6 +3,7 @@ package game.world;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Position;
+import com.pFrame.pgraphic.PGraphicItem;
 import game.graphic.creature.monster.*;
 import game.graphic.creature.operational.Calabash;
 import game.graphic.env.CorridorFloor;
@@ -13,7 +14,6 @@ import game.graphic.interactive.Box;
 import game.graphic.interactive.ExitPlace;
 import worldGenerate.WorldGenerate;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -65,9 +65,9 @@ public class GameArchiveGenerator {
         worldData.put("path", path);
         worldData.put("itemsData", itemsData);
         worldData.put("worldArray", worldArray);
-        worldData.put("idCount",0);
+        worldData.put("idCount", PGraphicItem.getIdCount());
         try {
-            FileOutputStream stream = new FileOutputStream(new File(path));
+            FileOutputStream stream = new FileOutputStream(path);
             stream.write(worldData.toJSONString().getBytes());
             stream.close();
         } catch (IOException e) {
@@ -88,9 +88,10 @@ public class GameArchiveGenerator {
         createBox();
         createMonster();
 
-        Calabash calabash=new Calabash();
+        Calabash calabash = new Calabash();
         calabash.setPosition(startPosition);
         itemsData.add(calabash.saveState());
+        worldData.put("controlRole",calabash.getId());
     }
 
     public int[][] scaleWorld() {
@@ -144,13 +145,7 @@ public class GameArchiveGenerator {
                             Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
                             m.setPosition(Position.getPosition((room.pos.getX() + j) * tileSize, (room.pos.getY() + i) * tileSize));
                             itemsData.add(m.saveState());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
+                        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
@@ -168,13 +163,7 @@ public class GameArchiveGenerator {
                             Monster m = (Monster) monster.get(index).getDeclaredConstructor().newInstance();
                             m.setPosition(Position.getPosition((i) * tileSize, (j) * tileSize));
                             itemsData.add(m.saveState());
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
+                        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                             e.printStackTrace();
                         }
                     }

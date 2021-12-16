@@ -26,11 +26,15 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-public class World extends PGraphicScene implements Runnable {
+public class World extends PGraphicScene {
     private final Tile<Thing>[][] tiles;
     private final int tileWidth;
     private final int tileHeight;
     public static int tileSize = 20;
+
+    public static boolean multiPlayerMode = false;
+    public static boolean mainClient = false;
+
     public UI screen;
     public int[][] worldArray;
     private final String path;
@@ -45,7 +49,9 @@ public class World extends PGraphicScene implements Runnable {
     int areaHeight;
     int areaSize = 400;
 
-    Operational operational;
+    ArrayList<Operational> operationals;
+    int controlRoleId;
+    Operational controlRole;
     Thread daemonThread;
 
 
@@ -57,6 +63,7 @@ public class World extends PGraphicScene implements Runnable {
 
         worldArray = jsonObject.getObject("worldArray", int[][].class);
         path = jsonObject.getObject("path", String.class);
+        controlRoleId=jsonObject.getObject("controlRole",Integer.class);
 
         tiles = new Tile[tileHeight][tileWidth];
         for (int i = 0; i < tileHeight; i++)
@@ -67,13 +74,99 @@ public class World extends PGraphicScene implements Runnable {
         areaWidth = this.width / areaSize + 1;
         areas = new ArrayList[areaHeight][areaWidth];
 
+        operationals=new ArrayList<>();
+
         for (int i = 0; i < areaHeight; i++)
             for (int j = 0; j < areaWidth; j++) {
                 areas[i][j] = new ArrayList<>();
             }
 
-        daemonThread = new Thread(this);
-        daemonThread.start();
+        if (multiPlayerMode) {
+            if (mainClient) {
+                //daemonThread = new Thread(this);
+                //daemonThread.start();
+            }
+        } else {
+            daemonThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.InfoLog(this, "thread for world's monster recycle start...");
+
+                    ArrayList<Area> oldAreas = new ArrayList<>();
+                    while (!Thread.currentThread().isInterrupted()) {
+                        try {
+                            for(Operational operational:operationals){
+                                Position position = operational.getPosition();
+                                int x = position.getX() / areaSize;
+                                int y = position.getY() / areaSize;
+                                ArrayList<Area> curAreas = new ArrayList<>();
+                                for (int i = x - 1; i <= x + 1; i++)
+                                    for (int j = y - 1; j <= y + 1; j++) {
+                                        if (i >= 0 && i < areaHeight && j >= 0 && j < areaWidth) {
+                                            curAreas.add(new Area(i, j));
+                                        }
+                                    }
+                                for (Area area : curAreas) {
+                                    for (Area area1 : oldAreas) {
+                                        if (area.x == area1.x && area.y == area1.y) {
+                                            oldAreas.remove(area1);
+                                            break;
+                                        }
+                                    }
+                                }
+                                for (Area area : oldAreas) {
+                                    for (int i = area.x * areaSize; i < (area.x + 1) * areaSize; i++) {
+                                        for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
+                                            Thing thing = findThing(new Location(i / tileSize, j / tileSize));
+                                            if (thing instanceof Creature && thing != operational) {
+                                                areas[area.x][area.y].add(((Creature) thing).saveState());
+                                                if (((Creature) thing).getController() instanceof AlgorithmController)
+                                                    ((AlgorithmController) ((Creature) thing).getController()).stop();
+                                                removeItem(thing);
+
+                                            } else if (thing instanceof GameThread && thing instanceof StatedSavable) {
+                                                areas[area.x][area.y].add(((StatedSavable) thing).saveState());
+                                                ((GameThread) thing).stop();
+                                                removeItem(thing);
+                                            }
+                                        }
+                                    }
+                                }
+                                for (Area area : curAreas) {
+                                    ArrayList<JSONObject> added = new ArrayList<>();
+                                    for (JSONObject item : areas[area.x][area.y]) {
+                                        synchronized (this) {
+                                            Class[] types = null;
+                                            Object[] parameters = null;
+                                            StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(item.getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
+                                            thing.resumeState(item);
+                                            if (thing instanceof Thing) {
+                                                if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
+
+                                                } else {
+                                                    addItem((PGraphicItem) thing);
+
+                                                    added.add(item);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    areas[area.x][area.y].removeAll(added);
+                                }
+                                oldAreas = curAreas;
+                            }
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.ErrorLog(this, "thread failed");
+                        }
+                    }
+                }
+            });
+            daemonThread.start();
+        }
 
         loadSavedData(jsonObject);
     }
@@ -91,7 +184,7 @@ public class World extends PGraphicScene implements Runnable {
                 pixels[i][j] = Pixel.getPixel(color, (char) 0xf0);
             }
         assert pixels != null;
-        pixels[operational.getLocation().x()][operational.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
+        pixels[controlRole.getLocation().x()][controlRole.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
         return pixels;
     }
 
@@ -102,9 +195,27 @@ public class World extends PGraphicScene implements Runnable {
     @Override
     public void setParentView(PGraphicView view) {
         super.setParentView(view);
-        if(operational!=null){
-            operational.setController(new KeyBoardThingController());
+    }
+
+    public void setControlRole(Operational operational){
+        controlRole=operational;
+
+    }
+
+    public Operational getControlRole(){
+        return controlRole;
+    }
+
+    public void activeControlRole(){
+        if(controlRole!=null)
+            controlRole.setController(new KeyBoardThingController());
+        if (this.parentView != null) {
+            parentView.setFocus(controlRole);
+        } else {
+            Log.ErrorLog(this, "please put world on a view first");
         }
+        if (screen != null)
+            screen.displayHealth(controlRole.getHealth(), controlRole.getHealthLimit());
     }
 
     @Override
@@ -156,18 +267,14 @@ public class World extends PGraphicScene implements Runnable {
 
     public void addOperational(Operational operational) {
         addItem(operational);
-        this.operational = operational;
-        if (this.parentView != null) {
-            parentView.setFocus(operational);
-        } else {
-            Log.ErrorLog(this, "please put world on a view first");
+        this.operationals.add(operational);
+        if(operational.getId()==controlRoleId){
+            controlRole=operational;
         }
-        if (screen != null)
-            screen.displayHealth(operational.getHealth(), operational.getHealthLimit());
     }
 
-    public Operational getOperational() {
-        return this.operational;
+    public ArrayList<Operational> getOperational() {
+        return this.operationals;
     }
 
     public boolean isLocationReachable(Thing thing, Position position) {
@@ -236,7 +343,32 @@ public class World extends PGraphicScene implements Runnable {
 
     public void gameFinish() {
         gamePause();
-        new Thread(new GameResourceRecycle()).start();
+        new Thread(() -> {
+            synchronized (this) {
+                daemonThread.interrupt();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (GameThread.threadSet) {
+                for (Thread thread : GameThread.threadSet) {
+                    thread.interrupt();
+                }
+                while (GameThread.threadSet.size() != 0 && !Thread.currentThread().isInterrupted()) {
+                    System.out.println("Waiting for threads quit... now has " + GameThread.threadSet.size());
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+            if (screen != null) {
+                screen.gameExit();
+            }
+        }).start();
     }
 
     public void gameSaveData() {
@@ -260,6 +392,7 @@ public class World extends PGraphicScene implements Runnable {
             data.put("height", height);
             data.put("worldArray", worldArray);
             data.put("path", path);
+            data.put("controlRole",controlRole.getId());
 
             FileOutputStream stream = new FileOutputStream(path);
             stream.write(data.toJSONString().getBytes());
@@ -301,8 +434,8 @@ public class World extends PGraphicScene implements Runnable {
             for (Creature creature : activeCreature) {
                 creature.pause();
             }
-            if (operational != null) {
-                operational.pause();
+            if (controlRole != null) {
+                controlRole.pause();
             }
             Log.InfoLog(this, "Game pause...");
         }
@@ -314,8 +447,8 @@ public class World extends PGraphicScene implements Runnable {
             for (Creature creature : activeCreature) {
                 creature.Continue();
             }
-            if (operational != null) {
-                operational.Continue();
+            if (controlRole != null) {
+                controlRole.Continue();
             }
             Log.InfoLog(this, "Game continue...");
         }
@@ -365,116 +498,6 @@ public class World extends PGraphicScene implements Runnable {
         return has;
     }
 
-    @Override
-    public void run() {
-        Log.InfoLog(this, "thread for world's monster recycle start...");
-
-        ArrayList<Area> oldAreas = new ArrayList<>();
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                if (this.operational != null) {
-                    Position position = operational.getPosition();
-                    int x = position.getX() / areaSize;
-                    int y = position.getY() / areaSize;
-                    ArrayList<Area> curAreas = new ArrayList<>();
-                    for (int i = x - 1; i <= x + 1; i++)
-                        for (int j = y - 1; j <= y + 1; j++) {
-                            if (i >= 0 && i < areaHeight && j >= 0 && j < areaWidth) {
-                                curAreas.add(new Area(i, j));
-                            }
-                        }
-                    for (Area area : curAreas) {
-                        for (Area area1 : oldAreas) {
-                            if (area.x == area1.x && area.y == area1.y) {
-                                oldAreas.remove(area1);
-                                break;
-                            }
-                        }
-                    }
-                    for (Area area : oldAreas) {
-                        for (int i = area.x * areaSize; i < (area.x + 1) * areaSize; i++) {
-                            for (int j = area.y * areaSize; j < (area.y + 1) * areaSize; j++) {
-                                Thing thing = findThing(new Location(i / tileSize, j / tileSize));
-                                if (thing instanceof Creature && thing != operational) {
-                                    areas[area.x][area.y].add(((Creature) thing).saveState());
-                                    if (((Creature) thing).getController() instanceof AlgorithmController)
-                                        ((AlgorithmController) ((Creature) thing).getController()).stop();
-                                    removeItem(thing);
-
-                                } else if (thing instanceof GameThread && thing instanceof StatedSavable) {
-                                    areas[area.x][area.y].add(((StatedSavable) thing).saveState());
-                                    ((GameThread) thing).stop();
-                                    removeItem(thing);
-                                }
-                            }
-                        }
-                    }
-                    for (Area area : curAreas) {
-                        ArrayList<JSONObject> added = new ArrayList<>();
-                        for (JSONObject item : areas[area.x][area.y]) {
-                            synchronized (this) {
-                                Class[] types = null;
-                                Object[] parameters = null;
-                                StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(item.getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
-                                thing.resumeState(item);
-                                if (thing instanceof Thing) {
-                                    if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
-
-                                    } else {
-                                        addItem((PGraphicItem) thing);
-
-                                        added.add(item);
-                                    }
-                                }
-                            }
-                        }
-                        areas[area.x][area.y].removeAll(added);
-                    }
-                    oldAreas = curAreas;
-                }
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.ErrorLog(this, "thread failed");
-            }
-        }
-    }
-
     record Area(int x, int y) {
     }
-
-    class GameResourceRecycle implements Runnable {
-
-        @Override
-        public void run() {
-            synchronized (this) {
-                daemonThread.interrupt();
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            synchronized (GameThread.threadSet) {
-                for (Thread thread : GameThread.threadSet) {
-                    thread.interrupt();
-                }
-                while (GameThread.threadSet.size() != 0 && !Thread.currentThread().isInterrupted()) {
-                    System.out.println("Waiting for threads quit... now has " + GameThread.threadSet.size());
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-            if (screen != null) {
-                screen.gameExit();
-            }
-        }
-    }
-
-
 }

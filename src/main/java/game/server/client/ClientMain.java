@@ -1,7 +1,7 @@
 package game.server.client;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import game.server.Message;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,13 +58,12 @@ public class ClientMain implements Runnable{
             try{
                 new Thread(() -> {
                     JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("messageClass","frameSync");
-                    jsonObject.put("function","submitInput");
-                    jsonObject.put("information",commandListener.getMessage());
+                    jsonObject.put(Message.messageClass,Message.FrameSync);
+                    jsonObject.put(Message.moreArgs,Message.SubmitInput);
+                    jsonObject.put(Message.information,commandListener.getMessage());
                     try {
-                        socket.getOutputStream().write(jsonObject.toString().getBytes());
-                        socket.getOutputStream().write('\n');
-                    } catch (IOException e) {
+                        socket.getOutputStream().write(Message.JSON2MessageBytes(jsonObject));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }).start();

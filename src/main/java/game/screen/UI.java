@@ -51,9 +51,9 @@ public class UI {
         PLayout layout = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
         startGameButton = new PButton(layout, null);
         startGameButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/startButton.png").getFile()));
-        loadSavedDataButton=new PButton(layout,null);
+        loadSavedDataButton = new PButton(layout, null);
         loadSavedDataButton.addBackground(PImage.getPureImage(Color.GRAY));
-        loadSavedDataButton.setText("Continue",1,Color.BLUE);
+        loadSavedDataButton.setText("Continue", 1, Color.BLUE);
         settingButton = new PButton(layout, null);
         settingButton.addBackground(PImage.getPureImage(Color.GRAY));
         settingButton.setText("Setting", 1, Color.BLUE);
@@ -108,7 +108,7 @@ public class UI {
 
         try {
             startGameButton.setClickFunc(this, this.getClass().getMethod("startGameButtonBeClicked"));
-            loadSavedDataButton.setClickFunc(this,this.getClass().getMethod("loadSavedDataButtonBeClicked"));
+            loadSavedDataButton.setClickFunc(this, this.getClass().getMethod("loadSavedDataButtonBeClicked"));
             settingButton.setClickFunc(this, this.getClass().getMethod("settingButtonBeClicked"));
             MapButton.setClickFunc(this, this.getClass().getMethod("MapButtonBeClicked"));
             PauseButton.setClickFunc(this, this.getClass().getMethod("PauseButtonClicked"));
@@ -182,26 +182,25 @@ public class UI {
     }
 
     public void startGameButtonBeClicked() {
-        GameArchiveGenerator gameArchiveGenerator =new GameArchiveGenerator(2000,2000,Config.DataPath+"/saved.json",2);
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/saved.json", 2);
         gameArchiveGenerator.generateWorldData();
         loadSavedDataButtonBeClicked();
     }
 
-    public void loadSavedDataButtonBeClicked(){
-        File file=new File(Config.DataPath+"/saved.json");
-        if(file.exists()){
+    public void loadSavedDataButtonBeClicked() {
+        File file = new File(Config.DataPath + "/saved.json");
+        if (file.exists()) {
             FileInputStream stream;
             try {
                 stream = new FileInputStream(file);
-                String jsonString=new String(stream.readAllBytes());
-                System.out.println(jsonString);
-                JSONObject jsonObject= JSON.parseObject(jsonString);
+                String jsonString = new String(stream.readAllBytes());
+                JSONObject jsonObject = JSON.parseObject(jsonString);
                 this.setPage(UI.GAME_PAGE);
-                gameWorld=new World(jsonObject);
+                gameWorld = new World(jsonObject);
                 this.setWorld(gameWorld);
                 this.sendMessage("game continue");
-                gameWorld.screen=this;
-                gameWorld.getParentView().setFocus(gameWorld.getOperational());
+                gameWorld.screen = this;
+                gameWorld.activeControlRole();
             } catch (IOException e) {
                 e.printStackTrace();
             }

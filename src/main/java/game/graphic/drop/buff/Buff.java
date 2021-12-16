@@ -2,6 +2,7 @@ package game.graphic.drop.buff;
 
 import com.pFrame.Pixel;
 import com.pFrame.Position;
+import game.graphic.creature.operational.Operational;
 import game.graphic.interactive.GameThread;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
@@ -9,7 +10,7 @@ import game.world.World;
 
 import java.util.ArrayList;
 
-public abstract class Buff extends Thing implements Runnable,GameThread {
+public abstract class Buff extends Thing implements Runnable, GameThread {
     public Pixel[][] image;
     protected Thread thread;
 
@@ -43,15 +44,17 @@ public abstract class Buff extends Thing implements Runnable,GameThread {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                if (Position.distance(getCentralPosition(), world.getOperational().getCentralPosition()) < World.tileSize) {
-                    Addition addition;
-                    if (timeOnly)
-                        addition = new Addition(this, creature, health, attack, speed, resistance, time);
-                    else
-                        addition = new Addition(this, creature, health, attack, speed, resistance);
-                    (world.getOperational()).addAddition(addition);
-                    world.removeItem(this);
-                    break;
+                for (Operational operational : world.getOperational()) {
+                    if (Position.distance(getCentralPosition(), operational.getCentralPosition()) < World.tileSize) {
+                        Addition addition;
+                        if (timeOnly)
+                            addition = new Addition(this, creature, health, attack, speed, resistance, time);
+                        else
+                            addition = new Addition(this, creature, health, attack, speed, resistance);
+                        operational.addAddition(addition);
+                        world.removeItem(this);
+                        break;
+                    }
                 }
                 Thread.sleep(50);
             } catch (InterruptedException e) {
