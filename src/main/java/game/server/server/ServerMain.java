@@ -144,7 +144,7 @@ public class ServerMain {
                             @Override
                             public void run() {
                                 try {
-                                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
                                     while (!Thread.currentThread().isInterrupted()) {
                                         handleMessage(bufferedReader.readLine());
                                     }

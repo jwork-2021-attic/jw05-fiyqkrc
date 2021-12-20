@@ -25,7 +25,7 @@ public class ClientMain implements Runnable {
     public void connect(String host, int port) {
         try {
             socket = new Socket(host, port);
-            pw=new PrintWriter(socket.getOutputStream());
+            pw = new PrintWriter(socket.getOutputStream());
             new Thread(instance).start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,13 +61,11 @@ public class ClientMain implements Runnable {
     public void run() {
         Thread inputListener = new Thread(() -> {
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         String jsonStr = bufferedReader.readLine();
-                        System.out.println(jsonStr);
                         JSONObject jsonObject = JSON.parseObject(jsonStr);
-
                         analysis(jsonObject);
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -1,7 +1,6 @@
 package game.server;
 
 import com.alibaba.fastjson.JSONObject;
-import org.bytedeco.opencv.presets.opencv_core;
 
 public class Message {
     public static String messageClass="messageClass";
