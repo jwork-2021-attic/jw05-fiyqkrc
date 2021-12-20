@@ -1,6 +1,7 @@
 package game.server;
 
 import com.alibaba.fastjson.JSONObject;
+import org.bytedeco.opencv.presets.opencv_core;
 
 public class Message {
     public static String messageClass="messageClass";
@@ -28,7 +29,7 @@ public class Message {
         return jsonObject;
     }
 
-    public static byte[] JSON2MessageBytes(JSONObject jsonObject){
-        return (jsonObject.toJSONString()+"\n").getBytes();
+    public static String JSON2MessageStr(JSONObject jsonObject){
+        return jsonObject.toJSONString()+"\n";
     }
 }

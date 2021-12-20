@@ -5,15 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import game.server.Message;
 import game.server.client.ClientMain;
-import game.world.World;
 import log.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
@@ -51,13 +50,20 @@ public class ServerMain {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put(Message.messageClass, Message.FrameSync);
                     jsonObject.put(Message.moreArgs, Message.SubmitInput);
+                    String message;
                     synchronized (messageArray) {
                         jsonObject.put(Message.information, messageArray);
+                        message = Message.JSON2MessageStr(jsonObject);
+                        messageArray.clear();
                     }
                     for (Socket socket : sockets) {
                         new Thread(() -> {
                             try {
-                                socket.getOutputStream().write(Message.JSON2MessageBytes(jsonObject));
+                                //PrintWriter pw = new PrintWriter(socket.getOutputStream());
+                                //pw.write(message);
+                                //pw.flush();
+                                socket.getOutputStream().write(message.getBytes());
+                                socket.getOutputStream().flush();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -71,16 +77,16 @@ public class ServerMain {
                 }
             }
         });
+
         frameSyncThread.start();
 
         server = new Thread(() -> {
             Log.InfoLog(this, "server listener start work...");
-
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     if (currentClient >= maxClientNum) {
-                        clientSocket.getOutputStream().write(Message.JSON2MessageBytes(Message.getErrorMessage(Message.OutOfMaxClientBound)));
+                        new PrintWriter(clientSocket.getOutputStream()).write(Message.JSON2MessageStr(Message.getErrorMessage(Message.OutOfMaxClientBound)));
                         clientSocket.close();
                     } else {
                         currentClient++;
@@ -88,9 +94,13 @@ public class ServerMain {
                         es.submit(new Runnable() {
                             private final Socket socket = clientSocket;
 
+                            PrintWriter pw = new PrintWriter(socket.getOutputStream());
+
+
                             private void closeConnection() {
                                 try {
-                                    socket.getOutputStream().write(Message.JSON2MessageBytes(Message.getGameQuitMessage()));
+                                    pw.write(Message.JSON2MessageStr(Message.getGameQuitMessage()));
+                                    pw.flush();
                                     socket.close();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -102,27 +112,33 @@ public class ServerMain {
 
                             private void sendMessage(JSONObject jsonObject) {
                                 try {
-                                    socket.getOutputStream().write(Message.JSON2MessageBytes(jsonObject));
+                                    pw.write(Message.JSON2MessageStr(jsonObject));
+                                    pw.flush();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
 
                             private void handleMessage(String jsonStr) {
-                                JSONObject jsonObject = JSON.parseObject(jsonStr);
-                                String messageClass = jsonObject.getObject(Message.messageClass, String.class);
-                                if (Objects.equals(messageClass, Message.ErrorMessage)) {
-                                    Log.ErrorLog(this, jsonObject.getObject(Message.information, String.class));
-                                } else if (Objects.equals(messageClass, Message.FrameSync)) {
-                                    synchronized (messageArray) {
-                                        messageArray.addAll(jsonObject.getObject(Message.information, JSONArray.class));
+                                //System.out.println(jsonStr);
+                                try {
+
+                                    JSONObject jsonObject = JSON.parseObject(jsonStr);
+                                    String messageClass = jsonObject.getObject(Message.messageClass, String.class);
+                                    if (Objects.equals(messageClass, Message.ErrorMessage)) {
+                                        Log.ErrorLog(this, jsonObject.getObject(Message.information, String.class));
+                                    } else if (Objects.equals(messageClass, Message.FrameSync)) {
+                                        synchronized (messageArray) {
+                                            messageArray.addAll(jsonObject.getObject(Message.information, JSONArray.class));
+                                        }
+                                    } else if (Objects.equals(messageClass, Message.StateSync)) {
+
+                                    } else if (Objects.equals(messageClass, Message.GameQuit)) {
+
                                     }
-                                } else if (Objects.equals(messageClass, Message.StateSync)) {
-
-                                } else if (Objects.equals(messageClass, Message.GameQuit)) {
-
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                                System.out.println(jsonStr);
                             }
 
                             @Override

@@ -23,6 +23,7 @@ import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.screen.UI;
 import game.server.client.ClientMain;
+import game.server.server.ServerMain;
 import log.Log;
 
 import java.awt.*;
@@ -60,6 +61,10 @@ public class World extends PGraphicScene {
     Operational controlRole;
     Thread daemonThread;
 
+    ClientMain clientMain;
+    Thread clientThread;
+    ServerMain serverMain;
+
 
     public World(JSONObject jsonObject) {
         super(jsonObject.getObject("width", Integer.class), jsonObject.getObject("height", Integer.class));
@@ -90,6 +95,15 @@ public class World extends PGraphicScene {
         if (multiPlayerMode && !mainClient) {
 
         } else {
+            if (multiPlayerMode) {
+                serverMain = new ServerMain();
+                serverMain.start();
+                clientMain = ClientMain.getInstance();
+                clientMain.setWorld(this);
+                clientMain.connect("127.0.0.1", 9000);
+                clientThread = new Thread(clientMain);
+                clientThread.start();
+            }
             daemonThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -150,11 +164,10 @@ public class World extends PGraphicScene {
                                                 if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
 
                                                 } else {
-                                                    if(thing instanceof Monster){
-                                                        if(multiPlayerMode){
+                                                    if (thing instanceof Monster) {
+                                                        if (multiPlayerMode) {
                                                             ((Monster) thing).setController(new NetAlController());
-                                                        }
-                                                        else{
+                                                        } else {
                                                             ((Monster) thing).setController(new AlgorithmController());
                                                         }
                                                     }

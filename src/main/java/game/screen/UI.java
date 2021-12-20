@@ -9,6 +9,7 @@ import com.pFrame.pgraphic.PGraphicScene;
 import com.pFrame.pgraphic.PGraphicView;
 import com.pFrame.pwidget.*;
 import game.Config;
+import game.server.client.ClientMain;
 import game.world.World;
 import game.world.GameArchiveGenerator;
 import log.Log;
@@ -239,13 +240,23 @@ public class UI {
     }
 
     public void newSingleGame(){
+        World.multiPlayerMode=false;
+        World.mainClient=false;
         GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/saved.json", 2);
         gameArchiveGenerator.generateWorldData();
         loadSavedDataButtonBeClicked();
     }
 
     public void newMultiplayerGame(){
-
+        World.multiPlayerMode=true;
+        World.mainClient=true;
+        GameArchiveGenerator gameArchiveGenerator= new GameArchiveGenerator(2000,2000,Config.DataPath+"/saved.json",2);
+        gameArchiveGenerator.generateWorldData();
+        this.setPage(UI.GAME_PAGE);
+        gameWorld= new World(gameArchiveGenerator.getWorldData());
+        setWorld(gameWorld);
+        gameWorld.screen=this;
+        gameWorld.activeControlRole();
     }
 
     public void joinMultiplayerGame(){
