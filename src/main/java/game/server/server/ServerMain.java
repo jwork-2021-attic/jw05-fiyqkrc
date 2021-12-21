@@ -24,7 +24,6 @@ import java.util.concurrent.Executors;
 
 public class ServerMain {
     public static int maxClientNum = 4;
-    final private ClientSync clientSync;
     ServerSocket serverSocket;
     int currentClient;
     Socket firstSocket;
@@ -34,7 +33,6 @@ public class ServerMain {
     private final JSONArray messageArray = new JSONArray();
 
     public ServerMain() {
-        clientSync = new ClientSync();
         sockets = new CopyOnWriteArraySet<>();
         es = Executors.newFixedThreadPool(100);
         currentClient = 0;
