@@ -8,6 +8,7 @@ public class Message {
     public static String StateSync="StateSync";
     public static String ErrorMessage="ErrorMessage";
     public static String GameQuit="GameQuit";
+    public static String GameInit="GameInit";
     public static String OutOfMaxClientBound="OutOfMaxClientBound";
 
     public static String moreArgs="moreArgs";
@@ -26,6 +27,13 @@ public class Message {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put(messageClass,GameQuit);
         return jsonObject;
+    }
+
+    public static String getWorldInitCommand(JSONObject worldData){
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put(information,worldData);
+        jsonObject.put(messageClass,GameInit);
+        return JSON2MessageStr(jsonObject);
     }
 
     public static String JSON2MessageStr(JSONObject jsonObject){

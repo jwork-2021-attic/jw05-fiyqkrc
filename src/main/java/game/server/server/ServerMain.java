@@ -3,8 +3,11 @@ package game.server.server;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import game.Config;
+import game.graphic.creature.operational.Calabash;
 import game.server.Message;
 import game.server.client.ClientMain;
+import game.world.GameArchiveGenerator;
 import log.Log;
 
 import java.io.BufferedReader;
@@ -13,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +27,7 @@ public class ServerMain {
     final private ClientSync clientSync;
     ServerSocket serverSocket;
     int currentClient;
+    Socket firstSocket;
     ExecutorService es;
     Thread server;
     CopyOnWriteArraySet<Socket> sockets;
@@ -42,8 +47,18 @@ public class ServerMain {
 
     Thread frameSyncThread;
 
+    JSONObject worldData;
+
     public void start() {
 
+        //generate world
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/server/game.json", 2);
+        gameArchiveGenerator.generateWorldData();
+
+        worldData = gameArchiveGenerator.getWorldData();
+        worldData.remove("itemsData");
+
+        //create && start frame sync thread
         frameSyncThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -59,9 +74,6 @@ public class ServerMain {
                     for (Socket socket : sockets) {
                         new Thread(() -> {
                             try {
-                                //PrintWriter pw = new PrintWriter(socket.getOutputStream());
-                                //pw.write(message);
-                                //pw.flush();
                                 socket.getOutputStream().write(message.getBytes());
                                 socket.getOutputStream().flush();
                             } catch (Exception e) {
@@ -79,7 +91,9 @@ public class ServerMain {
         });
 
         frameSyncThread.start();
+        HashMap<Socket, Calabash> SocketCalabashMap = new HashMap<>();
 
+        //start server accept main thread
         server = new Thread(() -> {
             Log.InfoLog(this, "server listener start work...");
             while (!Thread.currentThread().isInterrupted()) {
@@ -91,11 +105,15 @@ public class ServerMain {
                     } else {
                         currentClient++;
                         sockets.add(clientSocket);
+                        if (firstSocket == null)
+                            firstSocket = clientSocket;
+
+
+                        //submit a NIO handle thread to executors
                         es.submit(new Runnable() {
                             private final Socket socket = clientSocket;
 
                             PrintWriter pw = new PrintWriter(socket.getOutputStream());
-
 
                             private void closeConnection() {
                                 try {
@@ -110,9 +128,9 @@ public class ServerMain {
                                 }
                             }
 
-                            private void sendMessage(JSONObject jsonObject) {
+                            private void sendMessage(String string) {
                                 try {
-                                    pw.write(Message.JSON2MessageStr(jsonObject));
+                                    pw.write(string);
                                     pw.flush();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -144,6 +162,16 @@ public class ServerMain {
                             @Override
                             public void run() {
                                 try {
+
+                                    //create calabash and send to client for init
+                                    Calabash calabash = new Calabash();
+                                    worldData.clone();
+                                    SocketCalabashMap.put(socket, calabash);
+                                    worldData.getObject("itemsData", JSONArray.class).add(calabash.saveState());
+                                    worldData.put("controlRole", calabash.getId());
+                                    sendMessage(Message.getWorldInitCommand(worldData));
+
+                                    //start input listener && handle thread
                                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
                                     while (!Thread.currentThread().isInterrupted()) {
                                         handleMessage(bufferedReader.readLine());
@@ -170,13 +198,14 @@ public class ServerMain {
         server.interrupt();
         frameSyncThread.interrupt();
         es.shutdownNow();
+        Log.InfoLog(this,"server stop...");
     }
 
     public static void main(String[] args) throws InterruptedException {
         ServerMain serverMain = new ServerMain();
         serverMain.start();
         ClientMain.getInstance().connect("127.0.0.1", 9000);
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         serverMain.stop();
     }
 }

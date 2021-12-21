@@ -61,8 +61,4 @@ public class PDialog {
         result = 2;
         pHeadWidget.dispose();
     }
-
-    public static void main(String[] args) {
-        PDialog.Dialog("hello", "", "");
-    }
 }

@@ -12,8 +12,10 @@ import game.graphic.env.RoomFloor;
 import game.graphic.env.Wall;
 import game.graphic.interactive.Box;
 import game.graphic.interactive.ExitPlace;
+import org.bytedeco.opencv.presets.opencv_core;
 import worldGenerate.WorldGenerate;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +60,24 @@ public class GameArchiveGenerator {
         monster.add(Spider.class);
     }
 
+    public static void createPath(String path){
+        if(!new File(path).exists()){
+            if(!new File(new File(path).getParent()).exists()){
+                createPath(new File(path).getParent());
+            }
+            new File(path).mkdir();
+        }
+    }
+
+    public static void createFile(String path) throws IOException {
+        if(!new File(path).exists()){
+            if(!new File(new File(path).getParent()).exists()){
+                createPath(new File(path).getParent());
+            }
+            new File(path).createNewFile();
+        }
+    }
+
     public void generateWorldData() {
         mapInit();
         worldData.put("width", width);
@@ -67,6 +87,7 @@ public class GameArchiveGenerator {
         worldData.put("worldArray", worldArray);
         worldData.put("idCount", PGraphicItem.getIdCount());
         try {
+            createFile(path);
             FileOutputStream stream = new FileOutputStream(path);
             stream.write(worldData.toJSONString().getBytes());
             stream.close();
@@ -87,11 +108,6 @@ public class GameArchiveGenerator {
         createWorld();
         createBox();
         createMonster();
-
-        Calabash calabash = new Calabash();
-        calabash.setPosition(startPosition);
-        itemsData.add(calabash.saveState());
-        worldData.put("controlRole",calabash.getId());
     }
 
     public int[][] scaleWorld() {

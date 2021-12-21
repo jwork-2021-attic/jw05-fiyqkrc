@@ -18,6 +18,7 @@ import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.Monster;
+import game.graphic.creature.operational.Calabash;
 import game.graphic.creature.operational.Operational;
 import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
@@ -32,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Random;
 
 public class World extends PGraphicScene {
     private final Tile<Thing>[][] tiles;
@@ -60,10 +62,6 @@ public class World extends PGraphicScene {
     int controlRoleId;
     Operational controlRole;
     Thread daemonThread;
-
-    ClientMain clientMain;
-    Thread clientThread;
-    ServerMain serverMain;
 
 
     public World(JSONObject jsonObject) {
@@ -95,15 +93,6 @@ public class World extends PGraphicScene {
         if (multiPlayerMode && !mainClient) {
 
         } else {
-            if (multiPlayerMode) {
-                serverMain = new ServerMain();
-                serverMain.start();
-                clientMain = ClientMain.getInstance();
-                clientMain.setWorld(this);
-                clientMain.connect("127.0.0.1", 9000);
-                clientThread = new Thread(clientMain);
-                clientThread.start();
-            }
             daemonThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -320,6 +309,13 @@ public class World extends PGraphicScene {
     }
 
     public void addOperational(Operational operational) {
+        while(true){
+            int x=new Random().nextInt(width);
+            int y=new Random().nextInt(height);
+            if(isLocationReachable(operational,Position.getPosition(y,x)) && ThingMove(operational,Position.getPosition(y,x))){
+                break;
+            }
+        }
         addItem(operational);
         this.operationals.add(operational);
         if (operational.getId() == controlRoleId) {
@@ -347,13 +343,18 @@ public class World extends PGraphicScene {
         } else {
             synchronized (this.tiles) {
                 synchronized (thing) {
-                    if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
+                    if(isLocationReachable(thing,centralPosition)&& thing.getTile()==null && !locationOutOfBound(getTileByLocation(centralPosition))){
+                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
+                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
+                        return true;
+                    }else if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
                         thing.getTile().setThing(null);
                         tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
                         thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
                         return true;
-                    } else
+                    } else {
                         return false;
+                    }
                 }
             }
         }
@@ -466,7 +467,7 @@ public class World extends PGraphicScene {
                 thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                 thing.resumeState((JSONObject) item);
                 if (thing instanceof Thing) {
-                    if (thing instanceof Creature || thing instanceof GameThread)
+                    if ((thing instanceof Creature || thing instanceof GameThread) && (!multiPlayerMode || mainClient))
                         if (thing instanceof Operational) {
                             addOperational((Operational) thing);
                         } else

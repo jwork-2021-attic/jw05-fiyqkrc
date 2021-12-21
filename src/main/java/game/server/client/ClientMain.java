@@ -3,8 +3,10 @@ package game.server.client;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import game.screen.UI;
 import game.server.Message;
 import game.world.World;
+import log.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +20,7 @@ public class ClientMain implements Runnable {
     static ClientMain instance;
     Socket socket;
     PrintWriter pw;
+    public UI ui;
 
     private ClientMain() {
     }
@@ -26,7 +29,7 @@ public class ClientMain implements Runnable {
         try {
             socket = new Socket(host, port);
             pw = new PrintWriter(socket.getOutputStream());
-            new Thread(instance).start();
+            Log.InfoLog(this,"client connect to "+host+":"+port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,7 +54,14 @@ public class ClientMain implements Runnable {
 
     private void analysis(JSONObject jsonObject) {
         if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.FrameSync)) {
-            world.frameSync(jsonObject.getObject(Message.information, JSONArray.class));
+            if (world != null)
+                world.frameSync(jsonObject.getObject(Message.information, JSONArray.class));
+        } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.GameInit)) {
+            World world = new World(jsonObject.getObject(Message.information, JSONObject.class));
+            setWorld(world);
+            ui.setWorld(world);
+            world.screen = ui;
+            world.activeControlRole();
         } else {
             System.out.println(jsonObject.toJSONString());
         }
@@ -59,6 +69,7 @@ public class ClientMain implements Runnable {
 
     @Override
     public void run() {
+        Log.InfoLog(this,"client start working...");
         Thread inputListener = new Thread(() -> {
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
@@ -69,6 +80,7 @@ public class ClientMain implements Runnable {
                         analysis(jsonObject);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        //break;
                     }
                 }
             } catch (IOException e) {
@@ -97,7 +109,10 @@ public class ClientMain implements Runnable {
                 inputListener.interrupt();
             } catch (Exception e) {
                 e.printStackTrace();
+                break;
             }
         }
+
+        Log.InfoLog(this,"client stop working");
     }
 }
