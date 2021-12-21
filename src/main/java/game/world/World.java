@@ -23,6 +23,7 @@ import game.graphic.creature.operational.Operational;
 import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.screen.UI;
+import game.server.Message;
 import game.server.client.ClientMain;
 import game.server.server.ServerMain;
 import log.Log;
@@ -30,10 +31,7 @@ import log.Log;
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class World extends PGraphicScene {
     private final Tile<Thing>[][] tiles;
@@ -309,18 +307,58 @@ public class World extends PGraphicScene {
     }
 
     public void addMultiPlayer(JSONObject jsonObject) {
-
+        synchronized (operationals) {
+            try {
+                StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(jsonObject.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                if (thing instanceof Operational) {
+                    operationals.add((Operational) thing);
+                } else {
+                    Log.ErrorLog(this, "add multi player must give an Operational object");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void removeMultiPlayer(int id) {
 
     }
 
+    public JSONArray getCurrentState() {
+        JSONArray jsonArray = new JSONArray();
+        synchronized (activeCreature) {
+            for (Creature creature : activeCreature.values()) {
+                jsonArray.add(creature.saveState());
+            }
+        }
+        return jsonArray;
+    }
+
     public void stateSync(JSONArray jsonArray) {
+        HashSet<Integer> ids = new HashSet<>();
+        for (Object jsonObject : jsonArray) {
+            try {
+                JSONObject command = (JSONObject) jsonObject;
+                ids.add(command.getObject("id", Integer.class));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        synchronized (activeCreature) {
+            for (Creature creature : activeCreature.values()) {
+                if (!ids.contains(creature.getId())) {
+                    creature.dead();
+                }
+            }
+        }
+
         for (Object jsonObject : jsonArray) {
             try {
                 JSONObject command = (JSONObject) jsonObject;
                 int id = command.getObject("id", Integer.class);
+
 
                 if (activeCreature.containsKey(id)) {
                     activeCreature.get(id).resumeState(command);

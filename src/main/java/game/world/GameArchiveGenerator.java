@@ -154,7 +154,7 @@ public class GameArchiveGenerator {
         for (WorldGenerate.Room room : rooms) {
             for (int i = 0; i < room.width; i++)
                 for (int j = 0; j < room.height; j++) {
-                    if (random.nextDouble(1) > 0.75) {
+                    if (random.nextDouble(1) > 0.9) {
                         int index = random.nextInt(monster.size());
                         worldArray[room.pos.getX() + j][room.pos.getY() + i] = 100 + index;
                         try {
@@ -172,7 +172,7 @@ public class GameArchiveGenerator {
         for (int i = 0; i < worldArray.length; i++) {
             for (int j = 0; j < worldArray[0].length; j++) {
                 if (worldArray[i][j] == 1) {
-                    if (random.nextDouble(1) > 0.90) {
+                    if (random.nextDouble(1) > 0.95) {
                         int index = random.nextInt(monster.size());
                         worldArray[i][j] = 100 + index;
                         try {

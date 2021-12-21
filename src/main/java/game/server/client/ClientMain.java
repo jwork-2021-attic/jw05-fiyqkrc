@@ -35,6 +35,17 @@ public class ClientMain implements Runnable {
         }
     }
 
+    private void sendMessage(String string) {
+        try {
+            synchronized (socket.getOutputStream()) {
+                pw.write(string);
+                pw.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     World world;
 
     public void setWorld(World world) {
@@ -62,6 +73,11 @@ public class ClientMain implements Runnable {
             ui.setWorld(world);
             world.screen = ui;
             world.activeControlRole();
+        } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.StateSync)) {
+            String message = Message.getLaunchStateSyncMessage(world.getCurrentState());
+            sendMessage(message);
+        } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.StartStateSync)) {
+            world.stateSync(jsonObject.getObject(Message.information, JSONArray.class));
         } else {
             System.out.println(jsonObject.toJSONString());
         }

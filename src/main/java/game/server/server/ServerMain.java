@@ -43,7 +43,20 @@ public class ServerMain {
         }
     }
 
+    private void stateSync(JSONArray jsonArray) throws IOException {
+        String message = Message.getStartStateSyncCommand(jsonArray);
+        for (Socket socket : sockets) {
+            if (socket != firstSocket) {
+                synchronized (socket.getOutputStream()) {
+                    socket.getOutputStream().write(message.getBytes());
+                    socket.getOutputStream().flush();
+                }
+            }
+        }
+    }
+
     Thread frameSyncThread;
+    Thread stateSyncThread;
 
     JSONObject worldData;
 
@@ -89,6 +102,27 @@ public class ServerMain {
             }
         });
 
+        //create && start state sync thread
+        stateSyncThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (firstSocket != null) {
+                    try {
+                        synchronized (firstSocket.getOutputStream()) {
+                            firstSocket.getOutputStream().write(Message.getStateSyncBroadcast().getBytes());
+                            firstSocket.getOutputStream().flush();
+                        }
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
+        stateSyncThread.start();
         frameSyncThread.start();
         HashMap<Socket, Integer> SocketCalabashMap = new HashMap<>();
 
@@ -148,10 +182,19 @@ public class ServerMain {
                                         synchronized (messageArray) {
                                             messageArray.addAll(jsonObject.getObject(Message.information, JSONArray.class));
                                         }
-                                    } else if (Objects.equals(messageClass, Message.StateSync)) {
-
+                                    } else if (Objects.equals(messageClass, Message.LaunchStateSync)) {
+                                        if (socket != firstSocket) {
+                                            Log.ErrorLog(this, "a launchStateSync request from nonMainClient blocked");
+                                        } else {
+                                            stateSync(jsonObject.getObject(Message.information, JSONArray.class));
+                                        }
                                     } else if (Objects.equals(messageClass, Message.GameQuit)) {
 
+                                    } else if (Objects.equals(messageClass, Message.NeedStateSync)) {
+                                        synchronized (firstSocket.getOutputStream()) {
+                                            firstSocket.getOutputStream().write(Message.getStateSyncBroadcast().getBytes());
+                                            firstSocket.getOutputStream().flush();
+                                        }
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -171,6 +214,13 @@ public class ServerMain {
                                     System.out.println(worldData.toJSONString().length());
                                     sendMessage(Message.getWorldInitCommand(worldData));
 
+                                    if (socket != firstSocket) {
+                                        //send add player command to mainClient
+                                        synchronized (firstSocket.getOutputStream()) {
+                                            firstSocket.getOutputStream().write(Message.getAddPlayerCommand(calabash.saveState()).getBytes());
+                                            firstSocket.getOutputStream().flush();
+                                        }
+                                    }
 
                                     //start input listener && handle thread
                                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
@@ -201,6 +251,7 @@ public class ServerMain {
             serverSocket.close();
             server.interrupt();
             frameSyncThread.interrupt();
+            stateSyncThread.interrupt();
             es.shutdownNow();
         } catch (IOException e) {
             e.printStackTrace();
