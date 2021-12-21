@@ -43,7 +43,7 @@ abstract public class Operational extends Creature {
     @Override
     public void deHealth(double i) {
         super.deHealth(i);
-        if (world.screen != null) {
+        if (world.screen != null && world.getControlRole() == this) {
             world.screen.displayHealth(health, healthLimit);
         }
         if (isDead())
@@ -53,7 +53,7 @@ abstract public class Operational extends Creature {
     @Override
     public void addCoin(int n) {
         super.addCoin(n);
-        if (world.screen != null) {
+        if (world.screen != null && world.getControlRole() == this) {
             world.screen.setCoinValue(coin);
         }
 
@@ -62,7 +62,8 @@ abstract public class Operational extends Creature {
     @Override
     public void dead() {
         super.dead();
-        world.gameFinish();
+        if (world.getControlRole() == this)
+            world.gameFinish();
     }
 
     @Override

@@ -78,6 +78,8 @@ public class ClientMain implements Runnable {
             sendMessage(message);
         } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.StartStateSync)) {
             world.stateSync(jsonObject.getObject(Message.information, JSONArray.class));
+        } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.PlayerJoin)) {
+            world.addMultiPlayer(jsonObject.getObject(Message.information, JSONObject.class));
         } else {
             System.out.println(jsonObject.toJSONString());
         }

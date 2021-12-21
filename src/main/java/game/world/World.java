@@ -96,13 +96,13 @@ public class World extends PGraphicScene {
                 public void run() {
                     Log.InfoLog(this, "thread for world's monster recycle start...");
 
-                    ArrayList<Area> oldAreas = new ArrayList<>();
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
                             for (Operational operational : operationals) {
                                 Position position = operational.getPosition();
                                 int x = position.getX() / areaSize;
                                 int y = position.getY() / areaSize;
+                                ArrayList<Area> oldAreas = new ArrayList<>();
                                 ArrayList<Area> curAreas = new ArrayList<>();
                                 for (int i = x - 1; i <= x + 1; i++)
                                     for (int j = y - 1; j <= y + 1; j++) {
@@ -310,8 +310,9 @@ public class World extends PGraphicScene {
         synchronized (operationals) {
             try {
                 StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(jsonObject.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                thing.resumeState(jsonObject);
                 if (thing instanceof Operational) {
-                    operationals.add((Operational) thing);
+                    addOperational((Operational) thing);
                 } else {
                     Log.ErrorLog(this, "add multi player must give an Operational object");
                 }
@@ -346,13 +347,18 @@ public class World extends PGraphicScene {
             }
         }
 
+        HashSet<Creature> creaturesToRemove = new HashSet<>();
+
         synchronized (activeCreature) {
-            for (Creature creature : activeCreature.values()) {
-                if (!ids.contains(creature.getId())) {
-                    creature.dead();
+            for (int id : activeCreature.keySet()) {
+                if (!ids.contains(id)) {
+                    creaturesToRemove.add(activeCreature.get(id));
                 }
             }
         }
+
+        for (Creature creature : creaturesToRemove)
+            creature.dead();
 
         for (Object jsonObject : jsonArray) {
             try {
@@ -365,14 +371,12 @@ public class World extends PGraphicScene {
                 } else {
                     StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                     thing.resumeState(command);
-                    if (thing instanceof Thing) {
-                        if ((thing instanceof Creature || thing instanceof GameThread) && (!multiPlayerMode || mainClient))
-                            if (thing instanceof Operational) {
-                                addOperational((Operational) thing);
-                            } else
-                                areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add(command);
-                        else
-                            addItem((PGraphicItem) thing);
+                    if (thing instanceof Creature) {
+                        if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId && controlRole == null) {
+                            addOperational((Operational) thing);
+                            activeControlRole();
+                        }
+                        addItem((PGraphicItem) thing);
                     }
                 }
             } catch (Exception e) {
@@ -473,7 +477,8 @@ public class World extends PGraphicScene {
         gamePause();
         new Thread(() -> {
             synchronized (this) {
-                daemonThread.interrupt();
+                if (daemonThread != null)
+                    daemonThread.interrupt();
             }
             try {
                 Thread.sleep(1000);
@@ -540,12 +545,14 @@ public class World extends PGraphicScene {
                 thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                 thing.resumeState((JSONObject) item);
                 if (thing instanceof Thing) {
-                    if ((thing instanceof Creature || thing instanceof GameThread) && (!multiPlayerMode || mainClient))
-                        if (thing instanceof Operational) {
-                            addOperational((Operational) thing);
-                        } else
-                            areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add((JSONObject) item);
-                    else
+                    if ((thing instanceof Creature || thing instanceof GameThread)) {
+                        if (!multiPlayerMode || mainClient) {
+                            if (thing instanceof Operational) {
+                                addOperational((Operational) thing);
+                            } else
+                                areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add((JSONObject) item);
+                        }
+                    } else
                         addItem((PGraphicItem) thing);
                 }
             } catch

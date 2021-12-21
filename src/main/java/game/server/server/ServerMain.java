@@ -210,6 +210,7 @@ public class ServerMain {
                                     Calabash calabash = new Calabash();
                                     SocketCalabashMap.put(socket, calabash.getId());
                                     worldData.getObject("itemsData", JSONArray.class).add(calabash.saveState());
+                                    worldData.remove("controlRole");
                                     worldData.put("controlRole", calabash.getId());
                                     System.out.println(worldData.toJSONString().length());
                                     sendMessage(Message.getWorldInitCommand(worldData));
