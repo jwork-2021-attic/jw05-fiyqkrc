@@ -56,7 +56,7 @@ public class World extends PGraphicScene {
 
     int areaWidth;
     int areaHeight;
-    int areaSize = 400;
+    int areaSize = 100;
 
     ArrayList<Operational> operationals;
     int controlRoleId;
@@ -308,11 +308,46 @@ public class World extends PGraphicScene {
         }
     }
 
+    public void addMultiPlayer(JSONObject jsonObject) {
+
+    }
+
+    public void removeMultiPlayer(int id) {
+
+    }
+
+    public void stateSync(JSONArray jsonArray) {
+        for (Object jsonObject : jsonArray) {
+            try {
+                JSONObject command = (JSONObject) jsonObject;
+                int id = command.getObject("id", Integer.class);
+
+                if (activeCreature.containsKey(id)) {
+                    activeCreature.get(id).resumeState(command);
+                } else {
+                    StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                    thing.resumeState(command);
+                    if (thing instanceof Thing) {
+                        if ((thing instanceof Creature || thing instanceof GameThread) && (!multiPlayerMode || mainClient))
+                            if (thing instanceof Operational) {
+                                addOperational((Operational) thing);
+                            } else
+                                areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add(command);
+                        else
+                            addItem((PGraphicItem) thing);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void addOperational(Operational operational) {
-        while(true){
-            int x=new Random().nextInt(width);
-            int y=new Random().nextInt(height);
-            if(isLocationReachable(operational,Position.getPosition(y,x)) && ThingMove(operational,Position.getPosition(y,x))){
+        while (true) {
+            int x = new Random().nextInt(width);
+            int y = new Random().nextInt(height);
+            if (isLocationReachable(operational, Position.getPosition(y, x)) && ThingMove(operational, Position.getPosition(y, x))) {
                 break;
             }
         }
@@ -343,11 +378,11 @@ public class World extends PGraphicScene {
         } else {
             synchronized (this.tiles) {
                 synchronized (thing) {
-                    if(isLocationReachable(thing,centralPosition)&& thing.getTile()==null && !locationOutOfBound(getTileByLocation(centralPosition))){
+                    if (isLocationReachable(thing, centralPosition) && thing.getTile() == null && !locationOutOfBound(getTileByLocation(centralPosition))) {
                         tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
                         thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
                         return true;
-                    }else if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
+                    } else if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
                         thing.getTile().setThing(null);
                         tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
                         thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));

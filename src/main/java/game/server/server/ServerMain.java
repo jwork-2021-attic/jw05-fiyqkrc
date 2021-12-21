@@ -90,7 +90,7 @@ public class ServerMain {
         });
 
         frameSyncThread.start();
-        HashMap<Socket, Calabash> SocketCalabashMap = new HashMap<>();
+        HashMap<Socket, Integer> SocketCalabashMap = new HashMap<>();
 
         //start server accept main thread
         server = new Thread(() -> {
@@ -165,11 +165,12 @@ public class ServerMain {
 
                                     //create calabash and send to client for init
                                     Calabash calabash = new Calabash();
-                                    SocketCalabashMap.put(socket, calabash);
+                                    SocketCalabashMap.put(socket, calabash.getId());
                                     worldData.getObject("itemsData", JSONArray.class).add(calabash.saveState());
                                     worldData.put("controlRole", calabash.getId());
                                     System.out.println(worldData.toJSONString().length());
                                     sendMessage(Message.getWorldInitCommand(worldData));
+
 
                                     //start input listener && handle thread
                                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
