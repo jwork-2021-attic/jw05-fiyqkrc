@@ -14,6 +14,7 @@ public class NetAlController extends CreatureController implements Runnable {
     protected Random random = new Random();
     protected Thread thread;
     protected boolean lastMoveSuccess;
+    protected long lastAttack;
 
     public NetAlController() {
         thread = new Thread(this);
@@ -50,11 +51,14 @@ public class NetAlController extends CreatureController implements Runnable {
                     ClientMain.getInstance().getCommandListener().submit(Accepter.deadMessage(controllable));
                     break;
                 }
-                trySearchAim();
-                if (aim == null) {
-                    tryMove();
-                } else {
-                    ClientMain.getInstance().getCommandListener().submit(Accepter.attackMessage(controllable));
+                if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+                    trySearchAim();
+                    if (aim == null) {
+                        tryMove();
+                    } else {
+                        ClientMain.getInstance().getCommandListener().submit(Accepter.attackMessage(controllable));
+                        lastAttack=System.currentTimeMillis();
+                    }
                 }
                 Thread.sleep(50);
             } catch (InterruptedException e) {

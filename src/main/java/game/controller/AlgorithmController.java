@@ -18,6 +18,7 @@ public class AlgorithmController extends CreatureController implements Runnable 
     protected Random random = new Random();
     protected Thread thread;
     protected boolean lastMoveSuccess;
+    protected long lastAttack;
 
 
     public AlgorithmController() {
@@ -57,11 +58,14 @@ public class AlgorithmController extends CreatureController implements Runnable 
                     controllable.dead();
                     break;
                 }
-                trySearchAim();
-                if (aim == null) {
-                    tryMove();
-                } else {
-                    controllable.responseToEnemy();
+                if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+                    trySearchAim();
+                    if (aim == null) {
+                        tryMove();
+                    } else {
+                        controllable.responseToEnemy();
+                        lastAttack = System.currentTimeMillis();
+                    }
                 }
                 Thread.sleep(50);
             } catch (InterruptedException e) {

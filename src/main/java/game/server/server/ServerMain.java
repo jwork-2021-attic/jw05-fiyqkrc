@@ -73,8 +73,10 @@ public class ServerMain {
                     for (Socket socket : sockets) {
                         new Thread(() -> {
                             try {
-                                socket.getOutputStream().write(message.getBytes());
-                                socket.getOutputStream().flush();
+                                synchronized (socket.getOutputStream()) {
+                                    socket.getOutputStream().write(message.getBytes());
+                                    socket.getOutputStream().flush();
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -115,8 +117,7 @@ public class ServerMain {
 
                             private void closeConnection() {
                                 try {
-                                    pw.write(Message.JSON2MessageStr(Message.getGameQuitMessage()));
-                                    pw.flush();
+                                    sendMessage(Message.JSON2MessageStr(Message.getGameQuitMessage()));
                                     socket.close();
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -128,8 +129,10 @@ public class ServerMain {
 
                             private void sendMessage(String string) {
                                 try {
-                                    pw.write(string);
-                                    pw.flush();
+                                    synchronized (socket.getOutputStream()) {
+                                        pw.write(string);
+                                        pw.flush();
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

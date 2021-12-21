@@ -16,6 +16,7 @@ import game.server.server.ServerMain;
 import game.world.World;
 import game.world.GameArchiveGenerator;
 import log.Log;
+import org.bytedeco.opencv.presets.opencv_core;
 
 import java.awt.*;
 import java.io.*;
@@ -163,6 +164,7 @@ public class UI {
     }
 
     public void setWorld(World world) {
+        gameWorld=world;
         PGraphicView view = new PGraphicView(null, null, world);
         view.setViewPosition(Position.getPosition(0, 0));
         this.gamePage.addBackground(view);
@@ -247,10 +249,7 @@ public class UI {
     }
 
     public void addressInputFinished(String str) {
-        System.out.println(str);
-        System.out.println("this method need finish");
-        startPage.removeWidget(addressInput);
-        startPage.addChildWidget(mainMenu, Position.getPosition(2, 2));
+        joinMultiplayerGame(str);
     }
 
     public void newSingleGame() {
@@ -287,8 +286,16 @@ public class UI {
         this.setPage(UI.GAME_PAGE);
     }
 
-    public void joinMultiplayerGame() {
+    public void joinMultiplayerGame(String str) {
+        clientMain=ClientMain.getInstance();
+        clientMain.connect(str,9000);
+        clientThread=new Thread(clientMain);
+        clientThread.start();
+        clientMain.ui=this;
 
+        World.multiPlayerMode=true;
+        World.mainClient=false;
+        this.setPage(UI.GAME_PAGE);
     }
 
 

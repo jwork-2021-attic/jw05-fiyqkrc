@@ -6,25 +6,25 @@ import game.world.World;
 
 import java.util.Date;
 
-public class SnowMonster extends Monster{
-    public long coldTime=10000;
-    public long lastAttack;
+public class SnowMonster extends Monster {
 
-    public SnowMonster(){
-        super(Pangolin.class.getClassLoader().getResource("image/monster/SnowMonster/").getPath(), World.tileSize,World.tileSize);
-        health=400;
-        attack=20;
-        speed=2;
-        resistance=0.1;
-        speedLimit=speed;
-        healthLimit=health;
-        resistanceLimit=resistance;
-        attackLimit=attack;
+    public SnowMonster() {
+        super(Pangolin.class.getClassLoader().getResource("image/monster/SnowMonster/").getPath(), World.tileSize, World.tileSize);
+        health = 400;
+        attack = 20;
+        speed = 2;
+        resistance = 0.1;
+        speedLimit = speed;
+        healthLimit = health;
+        resistanceLimit = resistance;
+        attackLimit = attack;
+        coldTime = 10000;
     }
 
     @Override
     public void responseToEnemy() {
-        if(new Date().getTime()-lastAttack>coldTime){
+        aim = searchAim();
+        if (aim != null) {
             if ((Math.abs(p.getX() - aim.getPosition().getX()) > World.tileSize || Math.abs(p.getY() - aim.getPosition().getY()) > World.tileSize))
                 tryMoveToEnemy();
             else {
@@ -38,7 +38,6 @@ public class SnowMonster extends Monster{
                         }
                     }
                 }
-                lastAttack = new Date().getTime();
             }
         }
     }

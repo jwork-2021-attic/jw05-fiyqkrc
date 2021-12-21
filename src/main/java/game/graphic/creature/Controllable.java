@@ -20,4 +20,6 @@ public interface Controllable {
     boolean isDead();
 
     Creature searchAim();
+
+    int getColdTime();
 }

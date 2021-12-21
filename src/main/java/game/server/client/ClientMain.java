@@ -29,7 +29,7 @@ public class ClientMain implements Runnable {
         try {
             socket = new Socket(host, port);
             pw = new PrintWriter(socket.getOutputStream());
-            Log.InfoLog(this,"client connect to "+host+":"+port);
+            Log.InfoLog(this, "client connect to " + host + ":" + port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,10 +69,10 @@ public class ClientMain implements Runnable {
 
     @Override
     public void run() {
-        Log.InfoLog(this,"client start working...");
+        Log.InfoLog(this, "client start working...");
         Thread inputListener = new Thread(() -> {
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 102400000);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         String jsonStr = bufferedReader.readLine();
@@ -97,8 +97,10 @@ public class ClientMain implements Runnable {
                     jsonObject.put(Message.moreArgs, Message.SubmitInput);
                     jsonObject.put(Message.information, commandListener.getMessage());
                     try {
-                        pw.write(Message.JSON2MessageStr(jsonObject));
-                        pw.flush();
+                        synchronized (pw) {
+                            pw.write(Message.JSON2MessageStr(jsonObject));
+                            pw.flush();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -113,6 +115,6 @@ public class ClientMain implements Runnable {
             }
         }
 
-        Log.InfoLog(this,"client stop working");
+        Log.InfoLog(this, "client stop working");
     }
 }

@@ -20,7 +20,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class Creature extends Thing implements Controllable , StatedSavable {
+public abstract class Creature extends Thing implements Controllable, StatedSavable {
     protected static HashMap<String, Body[]> SourceMap = new HashMap<>();
 
     protected Body[] Bodys;
@@ -37,11 +37,12 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
     protected double resistance;
     protected boolean beControlled;
 
-    protected double healthLimit=health;
-    protected double attackLimit=attack;
-    protected double resistanceLimit=resistance;
-    protected int speedLimit=speed;
+    protected double healthLimit = health;
+    protected double attackLimit = attack;
+    protected double resistanceLimit = resistance;
+    protected int speedLimit = speed;
     protected int coin;
+    protected int coldTime;
 
     protected long lastMove;
 
@@ -51,7 +52,7 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
     public Creature(String path, int width, int height) {
         super(null);
 
-        additions=new CopyOnWriteArrayList<>();
+        additions = new CopyOnWriteArrayList<>();
 
         beCoverAble = false;
 
@@ -59,7 +60,7 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
         attack = 10;
         resistance = 0.2;
         beControlled = false;
-        coin=1;
+        coin = 1;
 
         Bodys = new Body[8];
         if (!SourceMap.containsKey(path)) {
@@ -74,79 +75,80 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
         switchImage(1);
     }
 
-    public CopyOnWriteArrayList<Addition> getAdditions()
-    {
+    public CopyOnWriteArrayList<Addition> getAdditions() {
         return additions;
     }
 
-    public void addAddition(Addition addition){
+    public void addAddition(Addition addition) {
         additions.add(addition);
         addition.useAddition();
     }
 
-    public int getGroup(){
+    public int getColdTime() {
+        return coldTime;
+    }
+
+    public int getGroup() {
         return group;
     }
 
-    public double getHealth(){
+    public double getHealth() {
         return health;
     }
 
-    public double getAttack(){
+    public double getAttack() {
         return attack;
     }
 
-    public double getAttackLimit(){
+    public double getAttackLimit() {
         return attackLimit;
     }
 
-    public void addAttack(double attack){
-        this.attack+=attack;
+    public void addAttack(double attack) {
+        this.attack += attack;
     }
 
-    public double getHealthLimit(){
+    public double getHealthLimit() {
         return healthLimit;
     }
 
-    public void addSpeed(int speed){
-        this.speed+=speed;
+    public void addSpeed(int speed) {
+        this.speed += speed;
     }
 
-    public void addResistance(double resistance){
-        this.resistance+=resistance;
+    public void addResistance(double resistance) {
+        this.resistance += resistance;
     }
 
-    public void addCoin(int n){
-        this.coin+=n;
+    public void addCoin(int n) {
+        this.coin += n;
     }
 
-    public int getCoin(){
+    public int getCoin() {
         return coin;
     }
 
-    public int getSpeed()
-    {
+    public int getSpeed() {
         return speed;
     }
 
-    public int getSpeedLimit(){
+    public int getSpeedLimit() {
         return speedLimit;
     }
 
     @Override
     public boolean isDead() {
-        return health<=0;
+        return health <= 0;
     }
 
-    public void deHealth(double i){
-        if(i>0) {
+    public void deHealth(double i) {
+        if (i > 0) {
             i = (1 - resistance) * i;
             health -= i;
+        } else if (i < 0) {
+            health = Math.min(health - i, healthLimit);
         }
-        else if(i<0){
-            health=Math.min(health-i,healthLimit);
-        }
-        BloodChange bloodChange=new BloodChange((int)-i,this.getPosition());
+        BloodChange bloodChange = new BloodChange((int) -i, this.getPosition());
         world.addItem(bloodChange);
     }
 
@@ -181,18 +183,17 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
         int nextImage = 1;
         int nextDirection = (int) Math.floor((direction + Math.PI / 4) * 2 / Math.PI);
         nextImage = ((lastImageIndex % 2) + 1) % 2 + nextDirection * 2;
-        if(nextImage<0)
-            nextImage=0;
-        else if(nextImage>=8)
-            nextImage=7;
+        if (nextImage < 0)
+            nextImage = 0;
+        else if (nextImage >= 8)
+            nextImage = 7;
         switchImage(nextImage);
         lastImageIndex = nextImage;
 
         if (world == null) {
             this.setPosition(Position.getPosition(this.p.getX() - (int) y, this.p.getY() + (int) x));
             return true;
-        }
-        else {
+        } else {
             return this.world.ThingMove(this, Position.getPosition(this.getCentralPosition().getX() - (int) y, this.getCentralPosition().getY() + (int) x));
         }
     }
@@ -214,49 +215,50 @@ public abstract class Creature extends Thing implements Controllable , StatedSav
 
     @Override
     public void dead() {
-        if(controller instanceof AlgorithmController)
+        if (controller instanceof AlgorithmController)
             ((AlgorithmController) controller).stop();
-        else if(controller instanceof KeyBoardController){
+        else if (controller instanceof KeyBoardController) {
             pause();
         }
         world.removeItem(this);
-        Tombstone tombstone=new Tombstone();
+        Tombstone tombstone = new Tombstone();
         tombstone.setPosition(this.getPosition());
         world.addItem(tombstone);
-        Coin coin=new Coin(this);
+        Coin coin = new Coin(this);
         world.addItem(coin);
     }
 
     @Override
     public Creature searchAim() {
-        Location location=world.searchNearestEnemy(this,7);
-        Thing thing=world.findThing(location);
-        if(thing instanceof Creature)
-            return (Creature)thing;
-        else 
+        Location location = world.searchNearestEnemy(this, 7);
+        Thing thing = world.findThing(location);
+        if (thing instanceof Creature)
+            return (Creature) thing;
+        else
             return null;
     }
+
     @Override
     public JSONObject saveState() {
-        JSONObject jsonObject=save();
-        jsonObject.put("health",health);
-        jsonObject.put("attack",attack);
-        jsonObject.put("resistance",resistance);
-        jsonObject.put("group",group);
-        jsonObject.put("speed",speed);
-        jsonObject.put("coin",coin);
+        JSONObject jsonObject = save();
+        jsonObject.put("health", health);
+        jsonObject.put("attack", attack);
+        jsonObject.put("resistance", resistance);
+        jsonObject.put("group", group);
+        jsonObject.put("speed", speed);
+        jsonObject.put("coin", coin);
         return jsonObject;
     }
 
     @Override
     public void resumeState(JSONObject jsonObject) {
         resume(jsonObject);
-        health=jsonObject.getObject("health",Double.class);
-        speed=jsonObject.getObject("speed",Integer.class);
-        group=jsonObject.getObject("group",Integer.class);
-        resistance=jsonObject.getObject("resistance",Double.class);
-        attack=jsonObject.getObject("attack",Double.class);
-        coin=jsonObject.getObject("coin",Integer.class);
+        health = jsonObject.getObject("health", Double.class);
+        speed = jsonObject.getObject("speed", Integer.class);
+        group = jsonObject.getObject("group", Integer.class);
+        resistance = jsonObject.getObject("resistance", Double.class);
+        attack = jsonObject.getObject("attack", Double.class);
+        coin = jsonObject.getObject("coin", Integer.class);
     }
 }
 
