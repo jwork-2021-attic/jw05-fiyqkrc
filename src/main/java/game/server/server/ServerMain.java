@@ -56,7 +56,6 @@ public class ServerMain {
         gameArchiveGenerator.generateWorldData();
 
         worldData = gameArchiveGenerator.getWorldData();
-        worldData.remove("itemsData");
 
         //create && start frame sync thread
         frameSyncThread = new Thread(() -> {
@@ -108,7 +107,6 @@ public class ServerMain {
                         if (firstSocket == null)
                             firstSocket = clientSocket;
 
-
                         //submit a NIO handle thread to executors
                         es.submit(new Runnable() {
                             private final Socket socket = clientSocket;
@@ -156,6 +154,7 @@ public class ServerMain {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
+                                    Thread.currentThread().interrupt();
                                 }
                             }
 
@@ -165,10 +164,10 @@ public class ServerMain {
 
                                     //create calabash and send to client for init
                                     Calabash calabash = new Calabash();
-                                    worldData.clone();
                                     SocketCalabashMap.put(socket, calabash);
                                     worldData.getObject("itemsData", JSONArray.class).add(calabash.saveState());
                                     worldData.put("controlRole", calabash.getId());
+                                    System.out.println(worldData.toJSONString().length());
                                     sendMessage(Message.getWorldInitCommand(worldData));
 
                                     //start input listener && handle thread
@@ -177,7 +176,7 @@ public class ServerMain {
                                         handleMessage(bufferedReader.readLine());
                                     }
                                     System.out.println("client socket quit");
-                                } catch (IOException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
                                     closeConnection();
@@ -189,16 +188,22 @@ public class ServerMain {
                     e.printStackTrace();
                 }
             }
+
             Log.InfoLog(this, "server listener quit...");
         });
         server.start();
     }
 
     public void stop() {
-        server.interrupt();
-        frameSyncThread.interrupt();
-        es.shutdownNow();
-        Log.InfoLog(this,"server stop...");
+        try {
+            serverSocket.close();
+            server.interrupt();
+            frameSyncThread.interrupt();
+            es.shutdownNow();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.InfoLog(this, "server stop...");
     }
 
     public static void main(String[] args) throws InterruptedException {

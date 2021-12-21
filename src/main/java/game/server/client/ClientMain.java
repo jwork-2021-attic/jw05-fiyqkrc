@@ -72,7 +72,7 @@ public class ClientMain implements Runnable {
         Log.InfoLog(this,"client start working...");
         Thread inputListener = new Thread(() -> {
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 102400000);
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         String jsonStr = bufferedReader.readLine();
