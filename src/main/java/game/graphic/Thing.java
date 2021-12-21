@@ -85,23 +85,9 @@ public class Thing extends PGraphicItem {
 
     public void resume(JSONObject jsonObject) {
         String str = jsonObject.getObject("position", String.class);
-        str=str.substring(1,str.length()-1);
-        p=Position.getPosition(Integer.parseInt(str.split(",")[0]),Integer.parseInt(str.split(",")[1]));
+        str = str.substring(1, str.length() - 1);
+        p = Position.getPosition(Integer.parseInt(str.split(",")[0]), Integer.parseInt(str.split(",")[1]));
         beCoverAble = jsonObject.getObject("beCoverAble", Boolean.class);
         id = jsonObject.getObject("id", Integer.class);
-    }
-
-    public static void main(String[] string) {
-        Thing test = new Thing(null);
-        JSONObject jsonObject = test.save();
-        Thing thing;
-        try {
-            Class[] types = {Pixel[][].class};
-            Object[] parameters = {null};
-            thing = (Thing) Thing.class.getClassLoader().loadClass(jsonObject.getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
-            thing.resume(jsonObject);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 }

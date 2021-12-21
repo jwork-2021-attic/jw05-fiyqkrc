@@ -19,6 +19,7 @@ public class SnowMonster extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 10000;
+        attackRange=2;
     }
 
     @Override

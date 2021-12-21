@@ -30,6 +30,7 @@ public class Pangolin extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 5000;
+        attackRange=1;
     }
 
     @Override
@@ -39,8 +40,8 @@ public class Pangolin extends Monster {
             aim = searchAim();
             if (aim != null) {
                 direction = Direction.calDirection(getCentralPosition(), aim.getCentralPosition());
-                double y = Math.sin(direction) * this.speed * 2;
-                double x = Math.cos(direction) * this.speed * 2;
+                double y = Math.sin(direction) * World.tileSize;
+                double x = Math.cos(direction) * World.tileSize;
 
                 last_x = x - (int) x;
                 last_y = y - (int) y;

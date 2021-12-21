@@ -19,6 +19,7 @@ public class Dragon extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 3000;
+        attackRange=5;
     }
 
     @Override

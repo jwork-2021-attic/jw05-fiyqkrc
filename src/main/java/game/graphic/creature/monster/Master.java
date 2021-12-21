@@ -19,6 +19,7 @@ public class Master extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 12000;
+        attackRange=2;
     }
 
     @Override

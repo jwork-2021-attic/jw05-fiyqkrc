@@ -19,6 +19,7 @@ public class Spider extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 300;
+        attackRange=7;
     }
 
     @Override

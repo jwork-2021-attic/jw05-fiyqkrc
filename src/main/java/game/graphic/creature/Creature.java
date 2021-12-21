@@ -43,6 +43,7 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
     protected int speedLimit = speed;
     protected int coin;
     protected int coldTime;
+    protected double attackRange;
 
     protected long lastMove;
 
@@ -60,6 +61,7 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
         attack = 10;
         resistance = 0.2;
         beControlled = false;
+        attackRange=10;
         coin = 1;
 
         Bodys = new Body[8];
@@ -82,6 +84,10 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
     public void addAddition(Addition addition) {
         additions.add(addition);
         addition.useAddition();
+    }
+
+    public double getAttackRange(){
+        return attackRange;
     }
 
     public int getColdTime() {

@@ -1,9 +1,12 @@
 package game.controller;
 
+import com.pFrame.Position;
+import game.graphic.Direction;
 import game.graphic.creature.Creature;
 import game.graphic.interactive.GameThread;
 import game.server.client.Accepter;
 import game.server.client.ClientMain;
+import game.world.World;
 
 import java.util.Random;
 
@@ -51,15 +54,24 @@ public class NetAlController extends CreatureController implements Runnable {
                     ClientMain.getInstance().getCommandListener().submit(Accepter.deadMessage(controllable));
                     break;
                 }
-                if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+
+                if (aim == null) {
                     trySearchAim();
-                    if (aim == null) {
-                        tryMove();
+                    tryMove();
+                } else if (Position.distance(aim.getCentralPosition(), controllable.getCentralPosition()) > controllable.getAttackRange() * World.tileSize) {
+                    if (Position.distance(aim.getCentralPosition(), controllable.getCentralPosition()) > World.tileSize * 10) {
+                        aim = null;
                     } else {
-                        ClientMain.getInstance().getCommandListener().submit(Accepter.attackMessage(controllable));
-                        lastAttack=System.currentTimeMillis();
+                        double direction = Direction.calDirection(controllable.getCentralPosition(), aim.getCentralPosition());
+                        ClientMain.getInstance().getCommandListener().submit(Accepter.MoveMessage(controllable, direction));
                     }
+                } else if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+                    ClientMain.getInstance().getCommandListener().submit(Accepter.attackMessage(controllable));
+                    lastAttack = System.currentTimeMillis();
+                } else {
+                    tryMove();
                 }
+
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

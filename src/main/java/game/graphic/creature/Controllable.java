@@ -1,5 +1,6 @@
 package game.graphic.creature;
 
+import com.pFrame.Position;
 import game.controller.CreatureController;
 
 public interface Controllable {
@@ -15,6 +16,8 @@ public interface Controllable {
 
     void speak(String text);
 
+    Position getCentralPosition();
+
     void dead();
 
     boolean isDead();
@@ -22,4 +25,6 @@ public interface Controllable {
     Creature searchAim();
 
     int getColdTime();
+
+    double getAttackRange();
 }

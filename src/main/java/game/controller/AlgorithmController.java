@@ -2,8 +2,12 @@ package game.controller;
 
 import com.pFrame.Position;
 import game.Config;
+import game.graphic.Direction;
 import game.graphic.creature.Creature;
 import game.graphic.interactive.GameThread;
+import game.server.client.Accepter;
+import game.server.client.ClientMain;
+import game.world.World;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,15 +62,24 @@ public class AlgorithmController extends CreatureController implements Runnable 
                     controllable.dead();
                     break;
                 }
-                if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+
+                if (aim == null) {
                     trySearchAim();
-                    if (aim == null) {
-                        tryMove();
+                    tryMove();
+                } else if (Position.distance(aim.getCentralPosition(), controllable.getCentralPosition()) > controllable.getAttackRange() * World.tileSize) {
+                    if (Position.distance(aim.getCentralPosition(), controllable.getCentralPosition()) > World.tileSize * 10) {
+                        aim = null;
                     } else {
-                        controllable.responseToEnemy();
-                        lastAttack = System.currentTimeMillis();
+                        double direction = Direction.calDirection(controllable.getCentralPosition(), aim.getCentralPosition());
+                        controllable.move(direction);
                     }
+                } else if (System.currentTimeMillis() - lastAttack > controllable.getColdTime()) {
+                    controllable.responseToEnemy();
+                    lastAttack = System.currentTimeMillis();
+                } else {
+                    tryMove();
                 }
+
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
