@@ -14,6 +14,7 @@ public class Message {
     public static String GameQuit="GameQuit";
     public static String GameInit="GameInit";
     public static String PlayerJoin="PlayerJoin";
+    public static String PlayerQuit="PlayerQuit";
     public static String OutOfMaxClientBound="OutOfMaxClientBound";
 
     public static String moreArgs="moreArgs";
@@ -45,6 +46,13 @@ public class Message {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put(information,object);
         jsonObject.put(messageClass,PlayerJoin);
+        return JSON2MessageStr(jsonObject);
+    }
+
+    public static String getPlayerQuitCommand(int id){
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put(information,id);
+        jsonObject.put(messageClass,PlayerQuit);
         return JSON2MessageStr(jsonObject);
     }
 

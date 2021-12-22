@@ -154,7 +154,9 @@ public class ServerMain {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
+                                    currentClient--;
                                     sockets.remove(socket);
+                                    SocketCalabashMap.remove(socket);
                                     Thread.currentThread().interrupt();
                                 }
                             }
@@ -189,7 +191,7 @@ public class ServerMain {
                                             stateSync(jsonObject.getObject(Message.information, JSONArray.class));
                                         }
                                     } else if (Objects.equals(messageClass, Message.GameQuit)) {
-
+                                        Thread.currentThread().interrupt();
                                     } else if (Objects.equals(messageClass, Message.NeedStateSync)) {
                                         synchronized (firstSocket.getOutputStream()) {
                                             firstSocket.getOutputStream().write(Message.getStateSyncBroadcast().getBytes());
@@ -232,6 +234,20 @@ public class ServerMain {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
+                                    if (firstSocket == socket) {
+                                        stop();
+                                    } else {
+                                        try {
+                                            synchronized (firstSocket.getOutputStream()) {
+                                                firstSocket.getOutputStream().write(Message.getPlayerQuitCommand(SocketCalabashMap.get(socket)).getBytes());
+                                                firstSocket.getOutputStream().flush();
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            Log.ErrorLog(this, "deadly error ,quit now...");
+                                            stop();
+                                        }
+                                    }
                                     closeConnection();
                                 }
                             }

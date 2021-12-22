@@ -6,6 +6,8 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import game.Location;
+import game.graphic.creature.Creature;
+import game.graphic.creature.operational.Operational;
 import game.world.Tile;
 import game.world.World;
 
@@ -41,6 +43,10 @@ public class Thing extends PGraphicItem {
 
     public boolean isBeCoverAble() {
         return beCoverAble;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setBeCoverAble(boolean coverAble) {
@@ -84,5 +90,29 @@ public class Thing extends PGraphicItem {
         p = Position.getPosition(Integer.parseInt(str.split(",")[0]), Integer.parseInt(str.split(",")[1]));
         beCoverAble = jsonObject.getObject("beCoverAble", Boolean.class);
         id = jsonObject.getObject("id", Integer.class);
+    }
+
+    @Override
+    public int compareTo(PGraphicItem pGraphicItem) {
+        int me = calPriority(this);
+        int aim = calPriority(pGraphicItem);
+        if (me == aim) {
+            return super.compareTo(pGraphicItem);
+        } else {
+            return Integer.compare(me, aim);
+        }
+    }
+
+    private int calPriority(PGraphicItem item) {
+        if (item instanceof Thing) {
+            if (item instanceof Creature) {
+                if (item instanceof Operational) {
+                    return 3;
+                }
+                return 2;
+            }
+            return 1;
+        }
+        return 0;
     }
 }

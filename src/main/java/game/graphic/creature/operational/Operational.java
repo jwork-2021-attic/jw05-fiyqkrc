@@ -1,8 +1,12 @@
 package game.graphic.creature.operational;
 
+import com.pFrame.Position;
 import com.pFrame.pwidget.PFrameKeyListener;
 import game.controller.CreatureController;
 import game.graphic.creature.Creature;
+import game.world.World;
+
+import java.util.Random;
 
 abstract public class Operational extends Creature {
 
@@ -61,9 +65,23 @@ abstract public class Operational extends Creature {
 
     @Override
     public void dead() {
-        super.dead();
-        if (world.getControlRole() == this)
-            world.gameFinish();
+        if (!World.multiPlayerMode) {
+            super.dead();
+            if (world.getControlRole() == this)
+                world.gameFinish();
+        } else {
+            super.dead();
+            if (World.mainClient) {
+                this.deHealth(-healthLimit / 2);
+                while (true) {
+                    int x = new Random().nextInt(width);
+                    int y = new Random().nextInt(height);
+                    if (world.isLocationReachable(this, Position.getPosition(y, x)) && world.ThingMove(this, Position.getPosition(y, x))) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override

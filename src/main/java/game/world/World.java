@@ -323,7 +323,17 @@ public class World extends PGraphicScene {
     }
 
     public void removeMultiPlayer(int id) {
-
+        Operational operationalToRemove = null;
+        synchronized (operationals) {
+            for (Operational operational : operationals) {
+                if (operational.getId() == id) {
+                    operationalToRemove = operational;
+                    break;
+                }
+            }
+            if (operationalToRemove != null)
+                operationals.remove(operationalToRemove);
+        }
     }
 
     public JSONArray getCurrentState() {
@@ -372,7 +382,7 @@ public class World extends PGraphicScene {
                     StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                     thing.resumeState(command);
                     if (thing instanceof Creature) {
-                        if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId && controlRole == null) {
+                        if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId) {
                             synchronized (operationals) {
                                 addItem((PGraphicItem) thing);
                                 operationals.add((Operational) thing);
@@ -401,6 +411,7 @@ public class World extends PGraphicScene {
         this.operationals.add(operational);
         if (operational.getId() == controlRoleId) {
             controlRole = operational;
+            activeControlRole();
         }
     }
 
@@ -478,6 +489,9 @@ public class World extends PGraphicScene {
     }
 
     public void gameFinish() {
+        if (multiPlayerMode) {
+            ClientMain.getInstance().sendMessage(Message.JSON2MessageStr(Message.getGameQuitMessage()));
+        }
         gamePause();
         new Thread(() -> {
             synchronized (this) {
@@ -506,6 +520,7 @@ public class World extends PGraphicScene {
                 screen.gameExit();
             }
         }).start();
+
     }
 
     public void gameSaveData() {
@@ -568,7 +583,7 @@ public class World extends PGraphicScene {
     }
 
     public void gamePause() {
-        if (!isPause) {
+        if (!isPause && !multiPlayerMode) {
             isPause = true;
             for (Creature creature : activeCreature.values()) {
                 creature.pause();
@@ -581,7 +596,7 @@ public class World extends PGraphicScene {
     }
 
     public void gameContinue() {
-        if (isPause) {
+        if (isPause && !multiPlayerMode) {
             isPause = false;
             for (Creature creature : activeCreature.values()) {
                 creature.Continue();

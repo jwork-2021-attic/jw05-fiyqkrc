@@ -33,15 +33,18 @@ public class NetKeyBoardController extends CreatureController implements PFrameK
 
     public ArrayList<Character> allKeyCode = new ArrayList<>();
 
-    CopyOnWriteArrayList<Character> keyArray = new CopyOnWriteArrayList<>();
+    final CopyOnWriteArrayList<Character> keyArray = new CopyOnWriteArrayList<>();
 
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (allKeyCode.contains(e.getKeyChar())) {
-            if (keyArray.contains(e.getKeyChar())) {
-            } else
-                keyArray.add(e.getKeyChar());
+
+        synchronized (keyArray) {
+            if (allKeyCode.contains(e.getKeyChar())) {
+                if (keyArray.contains(e.getKeyChar())) {
+                } else
+                    keyArray.add(e.getKeyChar());
+            }
         }
     }
 
@@ -53,9 +56,11 @@ public class NetKeyBoardController extends CreatureController implements PFrameK
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (allKeyCode.contains(e.getKeyChar())) {
-            if (keyArray.contains(e.getKeyChar()))
-                keyArray.remove((Character) e.getKeyChar());
+        synchronized (keyArray) {
+            if (allKeyCode.contains(e.getKeyChar())) {
+                if (keyArray.contains(e.getKeyChar()))
+                    keyArray.remove((Character) e.getKeyChar());
+            }
         }
     }
 
