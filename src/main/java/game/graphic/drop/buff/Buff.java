@@ -53,6 +53,7 @@ public abstract class Buff extends Thing implements Runnable, GameThread {
                             addition = new Addition(this, creature, health, attack, speed, resistance);
                         operational.addAddition(addition);
                         world.removeItem(this);
+                        Thread.currentThread().interrupt();
                         break;
                     }
                 }

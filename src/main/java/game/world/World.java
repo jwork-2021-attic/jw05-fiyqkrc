@@ -54,7 +54,7 @@ public class World extends PGraphicScene {
 
     int areaWidth;
     int areaHeight;
-    int areaSize = 100;
+    int areaSize = 300;
 
     final ArrayList<Operational> operationals;
     int controlRoleId;
@@ -373,14 +373,14 @@ public class World extends PGraphicScene {
                     thing.resumeState(command);
                     if (thing instanceof Creature) {
                         if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId && controlRole == null) {
-                            //addOperational((Operational) thing);
                             synchronized (operationals) {
+                                addItem((PGraphicItem) thing);
                                 operationals.add((Operational) thing);
                                 controlRole = (Operational) thing;
                             }
                             activeControlRole();
-                        }
-                        addItem((PGraphicItem) thing);
+                        } else
+                            addItem((PGraphicItem) thing);
                     }
                 }
             } catch (Exception e) {

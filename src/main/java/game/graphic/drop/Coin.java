@@ -51,6 +51,7 @@ public class Coin extends Thing implements Runnable {
                         if (thing instanceof Operational) {
                             ((Operational) thing).addCoin(coin);
                             world.removeItem(this);
+                            Thread.currentThread().interrupt();
                             break;
                         }
                     }
