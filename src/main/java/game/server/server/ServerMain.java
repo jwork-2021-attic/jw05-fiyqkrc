@@ -111,7 +111,7 @@ public class ServerMain {
                             firstSocket.getOutputStream().write(Message.getStateSyncBroadcast().getBytes());
                             firstSocket.getOutputStream().flush();
                         }
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     } catch (Exception e) {

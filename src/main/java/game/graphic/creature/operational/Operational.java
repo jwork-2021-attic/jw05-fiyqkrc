@@ -47,11 +47,13 @@ abstract public class Operational extends Creature {
     @Override
     public void deHealth(double i) {
         super.deHealth(i);
-        if (world.screen != null && world.getControlRole() == this) {
-            world.screen.displayHealth(health, healthLimit);
+        if (world != null) {
+            if (world.screen != null && world.getControlRole() == this) {
+                world.screen.displayHealth(health, healthLimit);
+            }
+            if (isDead())
+                dead();
         }
-        if (isDead())
-            dead();
     }
 
     @Override

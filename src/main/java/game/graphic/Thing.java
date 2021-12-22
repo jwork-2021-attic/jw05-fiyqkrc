@@ -1,6 +1,5 @@
 package game.graphic;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
@@ -10,9 +9,6 @@ import game.graphic.creature.Creature;
 import game.graphic.creature.operational.Operational;
 import game.world.Tile;
 import game.world.World;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 public class Thing extends PGraphicItem {
     protected Tile<? extends Thing> tile;
@@ -92,27 +88,4 @@ public class Thing extends PGraphicItem {
         id = jsonObject.getObject("id", Integer.class);
     }
 
-    @Override
-    public int compareTo(PGraphicItem pGraphicItem) {
-        int me = calPriority(this);
-        int aim = calPriority(pGraphicItem);
-        if (me == aim) {
-            return super.compareTo(pGraphicItem);
-        } else {
-            return Integer.compare(me, aim);
-        }
-    }
-
-    private int calPriority(PGraphicItem item) {
-        if (item instanceof Thing) {
-            if (item instanceof Creature) {
-                if (item instanceof Operational) {
-                    return 3;
-                }
-                return 2;
-            }
-            return 1;
-        }
-        return 0;
-    }
 }

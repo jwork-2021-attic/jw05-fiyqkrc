@@ -200,10 +200,11 @@ public class World extends PGraphicScene {
         return pixels;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
-    public int getHeight(){
+
+    public int getHeight() {
         return height;
     }
 
@@ -385,6 +386,7 @@ public class World extends PGraphicScene {
 
                 if (activeCreature.containsKey(id)) {
                     activeCreature.get(id).resumeState(command);
+                    repaintItem(activeCreature.get(id));
                 } else {
                     StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                     thing.resumeState(command);
@@ -571,15 +573,19 @@ public class World extends PGraphicScene {
                 thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
                 thing.resumeState((JSONObject) item);
                 if (thing instanceof Thing) {
-                    if ((thing instanceof Creature || thing instanceof GameThread)) {
-                        if (!multiPlayerMode || mainClient) {
+                    if (!multiPlayerMode || mainClient) {
+                        if ((thing instanceof Creature || thing instanceof GameThread)) {
                             if (thing instanceof Operational) {
                                 addOperational((Operational) thing);
                             } else
                                 areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add((JSONObject) item);
-                        }
-                    } else
-                        addItem((PGraphicItem) thing);
+                        } else
+                            addItem((PGraphicItem) thing);
+                    } else {
+                        if (thing instanceof Creature) {
+                        } else
+                            addItem((PGraphicItem) thing);
+                    }
                 }
             } catch
             (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException

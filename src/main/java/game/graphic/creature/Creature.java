@@ -155,8 +155,10 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
         } else if (i < 0) {
             health = Math.min(health - i, healthLimit);
         }
-        BloodChange bloodChange = new BloodChange((int) -i, this.getPosition());
-        world.addItem(bloodChange);
+        if ((i <= -1 || i >= 1) && world != null) {
+            BloodChange bloodChange = new BloodChange((int) -i, this.getPosition());
+            world.addItem(bloodChange);
+        }
     }
 
     @Override
@@ -260,7 +262,7 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
     @Override
     public void resumeState(JSONObject jsonObject) {
         resume(jsonObject);
-        health = jsonObject.getObject("health", Double.class);
+        deHealth(health - jsonObject.getObject("health", Double.class));
         speed = jsonObject.getObject("speed", Integer.class);
         group = jsonObject.getObject("group", Integer.class);
         resistance = jsonObject.getObject("resistance", Double.class);
