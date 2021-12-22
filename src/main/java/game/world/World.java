@@ -373,7 +373,8 @@ public class World extends PGraphicScene {
                     thing.resumeState(command);
                     if (thing instanceof Creature) {
                         if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId && controlRole == null) {
-                            addOperational((Operational) thing);
+                            this.operationals.add((Operational) thing);
+                            controlRole = (Operational) thing;
                             activeControlRole();
                         }
                         addItem((PGraphicItem) thing);
