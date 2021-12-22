@@ -10,15 +10,15 @@ import java.util.Objects;
 public class Calabash extends Operational {
 
     public Calabash() {
-        super(Objects.requireNonNull(Operational.class.getClassLoader().getResource("image/role/calabash0/")).getFile(), World.tileSize, World.tileSize);
-        health=500;
-        healthLimit=500;
-        attack=12;
-        attackLimit=12;
-        resistance=0.2;
-        resistanceLimit=0.2;
-        speed=4;
-        speedLimit=4;
+        super("image/role/calabash0", World.tileSize, World.tileSize);
+        health = 500;
+        healthLimit = 500;
+        attack = 12;
+        attackLimit = 12;
+        resistance = 0.2;
+        resistanceLimit = 0.2;
+        speed = 4;
+        speedLimit = 4;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class Calabash extends Operational {
         if (l == null) {
             angle = this.direction;
         } else {
-            angle=Direction.calDirection(getCentralPosition(),l.getCentralPosition());
+            angle = Direction.calDirection(getCentralPosition(), l.getCentralPosition());
         }
         NormalBullet normalBullet = new NormalBullet(this, angle);
         world.addItem(normalBullet);

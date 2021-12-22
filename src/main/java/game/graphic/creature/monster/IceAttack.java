@@ -16,49 +16,49 @@ import java.util.Random;
 
 public class IceAttack extends Effect {
     public static Pixel[][][] images;
+
     static {
-        images=new Pixel[3][][];
-        images[0]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/1.png").getFile(),World.tileSize,World.tileSize).getPixels();
-        images[1]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/2.png").getFile(),World.tileSize,World.tileSize).getPixels();
-        images[2]=GraphicItemGenerator.generateItem(IceAttack.class.getClassLoader().getResource("image/shoot/ice/3.png").getFile(),World.tileSize,World.tileSize).getPixels();
+        images = new Pixel[3][][];
+        images[0] = GraphicItemGenerator.generateItem("image/shoot/ice/1.png", World.tileSize, World.tileSize).getPixels();
+        images[1] = GraphicItemGenerator.generateItem("image/shoot/ice/2.png", World.tileSize, World.tileSize).getPixels();
+        images[2] = GraphicItemGenerator.generateItem("image/shoot/ice/3.png", World.tileSize, World.tileSize).getPixels();
     }
 
-    public IceAttack(Creature creature,Position position){
+    public IceAttack(Creature creature, Position position) {
         super();
-        this.width= World.tileSize;
-        this.height=World.tileSize;
-        this.graphic=images[new Random().nextInt(3)];
-        time=1500;
-        repeat=true;
-        this.p=position;
-        task=new IceAttack.Task(creature,timer,position,this);
+        this.width = World.tileSize;
+        this.height = World.tileSize;
+        this.graphic = images[new Random().nextInt(3)];
+        time = 1500;
+        repeat = true;
+        this.p = position;
+        task = new IceAttack.Task(creature, timer, position, this);
     }
 
-    class Task implements PTimerTask{
-        int timers=0;
+    class Task implements PTimerTask {
+        int timers = 0;
         Creature creature;
         PTimer timer;
         Position position;
         IceAttack iceAttack;
 
 
-        public Task(Creature creature,PTimer timer,Position position,IceAttack iceAttack){
-            this.creature=creature;
-            this.timer=timer;
-            this.position=position;
-            this.iceAttack=iceAttack;
+        public Task(Creature creature, PTimer timer, Position position, IceAttack iceAttack) {
+            this.creature = creature;
+            this.timer = timer;
+            this.position = position;
+            this.iceAttack = iceAttack;
         }
 
         @Override
         public void doTask() {
             timers++;
-            if(timers<=4){
-                ArrayList<Location> affectList=new ArrayList<Location>();
+            if (timers <= 4) {
+                ArrayList<Location> affectList = new ArrayList<Location>();
                 affectList.add(creature.getWorld().getTileByLocation(this.position));
-                Attack attack=new Attack(Attack.ICE,affectList,creature.getAttack(),creature.getGroup());
+                Attack attack = new Attack(Attack.ICE, affectList, creature.getAttack(), creature.getGroup());
                 creature.getWorld().handleAttack(attack);
-            }
-            else{
+            } else {
                 world.removeItem(iceAttack);
                 this.timer.stop();
             }

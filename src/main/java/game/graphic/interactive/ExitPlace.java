@@ -13,7 +13,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.awt.event.KeyEvent;
 
 public class ExitPlace extends Thing implements Runnable, PFrameKeyListener, GameThread , StatedSavable {
-    public static Pixel[][] exitImage = GraphicItemGenerator.generateItem(ExitPlace.class.getClassLoader().getResource("image/exit.png").getFile(), World.tileSize, World.tileSize).getPixels();
+    public static Pixel[][] exitImage = GraphicItemGenerator.generateItem("image/exit.png", World.tileSize, World.tileSize).getPixels();
 
     Thread thread;
 

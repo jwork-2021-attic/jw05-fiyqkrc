@@ -2,6 +2,7 @@ package com.pFrame.pgraphic;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 
 import com.pFrame.Pixel;
@@ -12,7 +13,7 @@ import imageTransFormer.ObjectTransFormer;
 
 public class PGraphicItem implements Comparable<PGraphicItem> {
 
-    protected static int idCount=0;
+    protected static int idCount = 0;
     protected int width;
     protected int height;
     protected Pixel[][] graphic;
@@ -22,47 +23,47 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
     protected PGraphicScene world;
     protected int id;
 
-    public static int getIdCount(){
+    public static int getIdCount() {
         return idCount;
     }
 
-    public static void setIdCount(int idCount){
-        PGraphicItem.idCount=idCount;
+    public static void setIdCount(int idCount) {
+        PGraphicItem.idCount = idCount;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setParentScene(PGraphicScene scene){
-        this.world =scene;
+    public void setParentScene(PGraphicScene scene) {
+        this.world = scene;
     }
 
-    public void removeParentScene(){
-        this.world =null;
+    public void removeParentScene() {
+        this.world = null;
     }
 
     public Position getPosition() {
         return this.p;
     }
 
-    public Position getOldPos(){
+    public Position getOldPos() {
         return this.oldPos;
     }
 
     public void setPosition(Position pos) {
-        this.oldPos=this.p;
+        this.oldPos = this.p;
         this.p = pos;
-        if(this.world !=null)
+        if (this.world != null)
             this.world.repaintItem(this);
     }
 
-    public PGraphicItem(String path, int width, int height) {
-        id=idCount;
+
+    public PGraphicItem(String absPath, int width, int height) {
+        id = idCount;
         PGraphicItem.idCount++;
-        File file = new File(path);
-        if (PGraphicItem.items.containsKey(file.getName())) {
-            PGraphicItem modal = PGraphicItem.items.get(file.getName());
+        if (PGraphicItem.items.containsKey(absPath)) {
+            PGraphicItem modal = PGraphicItem.items.get(absPath);
             if (width == modal.width && height == modal.height) {
                 this.graphic = Pixel.pixelsCopy(modal.getPixels());
                 this.height = modal.height;
@@ -76,7 +77,7 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
             this.p = Position.getPosition(0, 0);
         } else {
 
-            PGraphicItem item = GraphicItemGenerator.generateItem(file, width, height);
+            PGraphicItem item = GraphicItemGenerator.generateItem(absPath, width, height);
             this.graphic = item.getPixels();
             if (this.graphic != null) {
                 this.height = this.graphic.length;
@@ -86,44 +87,12 @@ public class PGraphicItem implements Comparable<PGraphicItem> {
                 this.height = 0;
             }
             p = Position.getPosition(0, 0);
-            PGraphicItem.items.put(file.getName(), this);
-        }
-    }
-
-    public PGraphicItem(File file, int width, int height) {
-        id=idCount;
-        PGraphicItem.idCount++;
-        if (PGraphicItem.items.containsKey(file.getName())) {
-            PGraphicItem modal = PGraphicItem.items.get(file.getName());
-            if (width == modal.width && height == modal.height) {
-                this.graphic = Pixel.pixelsCopy(modal.getPixels());
-                this.height = modal.height;
-                this.width = modal.width;
-            } else {
-                this.graphic = Pixel.valueOf(ObjectTransFormer.toBufferedImage(Pixel.toBufferedImage(modal.getPixels())
-                        .getScaledInstance(width, height, BufferedImage.SCALE_SMOOTH)));
-                this.height = height;
-                this.width = width;
-            }
-            this.p = Position.getPosition(0, 0);
-        } else {
-
-            PGraphicItem item = GraphicItemGenerator.generateItem(file, width, height);
-            this.graphic = item.getPixels();
-            if (this.graphic != null) {
-                this.height = this.graphic.length;
-                this.width = this.graphic[0].length;
-            } else {
-                this.width = 0;
-                this.height = 0;
-            }
-            p = Position.getPosition(0, 0);
-            PGraphicItem.items.put(file.getName(), this);
+            PGraphicItem.items.put(absPath, this);
         }
     }
 
     public PGraphicItem(Pixel[][] pixels) {
-        id=idCount;
+        id = idCount;
         PGraphicItem.idCount++;
         this.graphic = pixels;
         if (pixels != null) {

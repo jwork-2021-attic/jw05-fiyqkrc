@@ -11,7 +11,7 @@ public class SpiderShoot extends Bullet {
     public static Pixel[][] image;
 
     static {
-        image = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/spider.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
+        image = GraphicItemGenerator.generateItem("image/shoot/spider.png", World.tileSize / 4, World.tileSize / 4).getPixels();
     }
 
     public SpiderShoot(Spider spider, double angle) {

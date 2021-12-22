@@ -10,7 +10,7 @@ public class Wind extends Bullet {
     public static Pixel[][] image;
 
     static {
-        image = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/wind.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        image = GraphicItemGenerator.generateItem("image/shoot/wind.png", World.tileSize, World.tileSize).getPixels();
     }
 
     public Wind(Dragon dragon, double angle) {

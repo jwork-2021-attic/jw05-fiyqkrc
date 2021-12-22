@@ -9,7 +9,7 @@ import java.util.Date;
 public class Spider extends Monster {
 
     public Spider() {
-        super(Pangolin.class.getClassLoader().getResource("image/monster/Spider/").getPath(), World.tileSize, World.tileSize);
+        super("image/monster/Spider", World.tileSize, World.tileSize);
         attack = 20;
         speed = 3;
         health = 45;

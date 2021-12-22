@@ -9,7 +9,7 @@ import java.util.Date;
 public class Dragon extends Monster {
 
     public Dragon() {
-        super(Pangolin.class.getClassLoader().getResource("image/monster/Dragon/").getPath(), World.tileSize, World.tileSize);
+        super("image/monster/Dragon", World.tileSize, World.tileSize);
         speed = 2;
         health = 400;
         resistance = 0.4;
@@ -19,7 +19,7 @@ public class Dragon extends Monster {
         resistanceLimit = resistance;
         attackLimit = attack;
         coldTime = 3000;
-        attackRange=5;
+        attackRange = 5;
     }
 
     @Override

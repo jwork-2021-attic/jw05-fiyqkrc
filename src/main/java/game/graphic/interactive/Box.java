@@ -14,7 +14,7 @@ import imageTransFormer.GraphicItemGenerator;
 import java.util.Random;
 
 public class Box extends Thing implements Runnable, GameThread, StatedSavable {
-    public static Pixel[][] boxImage = GraphicItemGenerator.generateItem(Box.class.getClassLoader().getResource("image/effect/box/1.png").getFile(), World.tileSize, World.tileSize).getPixels();
+    public static Pixel[][] boxImage = GraphicItemGenerator.generateItem("image/effect/box/1.png", World.tileSize, World.tileSize).getPixels();
 
     protected Thread thread;
 
@@ -36,7 +36,7 @@ public class Box extends Thing implements Runnable, GameThread, StatedSavable {
                 if (world != null) {
                     Thing thing = world.findThing(getLocation());
                     if (thing instanceof Operational) {
-                        graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/box/2.png").getFile(), World.tileSize, World.tileSize).getPixels();
+                        graphic = GraphicItemGenerator.generateItem("image/effect/box/2.png", World.tileSize, World.tileSize).getPixels();
                         Random random = new Random();
                         Class<? extends Buff> buffClass = Buff.buffs.get(random.nextInt(Buff.buffs.size()));
                         Buff buff = buffClass.getDeclaredConstructor().newInstance();
@@ -88,7 +88,7 @@ public class Box extends Thing implements Runnable, GameThread, StatedSavable {
         resume(jsonObject);
         opened = jsonObject.getObject("opened", Boolean.class);
         if (opened)
-            graphic = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/box/2.png").getFile(), World.tileSize, World.tileSize).getPixels();
+            graphic = GraphicItemGenerator.generateItem("image/effect/box/2.png", World.tileSize, World.tileSize).getPixels();
         else
             graphic = boxImage;
     }

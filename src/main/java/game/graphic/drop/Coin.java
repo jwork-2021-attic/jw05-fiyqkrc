@@ -18,7 +18,7 @@ public class Coin extends Thing implements Runnable {
     int coin;
     Thread thread;
 
-    public static Pixel[][] coinImage = GraphicItemGenerator.generateItem(Coin.class.getClassLoader().getResource("image/effect/coin.png").getFile(), World.tileSize, World.tileSize).getPixels();
+    public static Pixel[][] coinImage = GraphicItemGenerator.generateItem("image/effect/coin.png", World.tileSize, World.tileSize).getPixels();
 
 
     public Coin(Creature creature) {

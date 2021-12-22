@@ -47,13 +47,8 @@ public class Thing extends PGraphicItem {
         beCoverAble = coverAble;
     }
 
-    public Thing(File file, int width, int height) {
-        super(file, width, height);
-        beCoverAble = true;
-    }
-
-    public Thing(String path, int width, int height) {
-        super(path, width, height);
+    public Thing(String absPath, int width, int height) {
+        super(absPath, width, height);
         beCoverAble = true;
     }
 

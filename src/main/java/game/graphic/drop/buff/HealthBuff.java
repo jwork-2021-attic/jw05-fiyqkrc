@@ -5,7 +5,7 @@ import imageTransFormer.GraphicItemGenerator;
 
 public class HealthBuff extends Buff {
     public HealthBuff() {
-        image = GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/buff/2-1.png").getFile(), World.tileSize, World.tileSize).getPixels();
+        image = GraphicItemGenerator.generateItem("image/effect/buff/2-1.png", World.tileSize, World.tileSize).getPixels();
         graphic = image;
         width = World.tileSize;
         height = World.tileSize;

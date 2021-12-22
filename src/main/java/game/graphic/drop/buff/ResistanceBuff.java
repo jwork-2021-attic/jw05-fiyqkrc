@@ -5,7 +5,7 @@ import imageTransFormer.GraphicItemGenerator;
 
 public class ResistanceBuff extends Buff {
     public ResistanceBuff(){
-        image= GraphicItemGenerator.generateItem(this.getClass().getClassLoader().getResource("image/effect/buff/2-2.png").getFile(), World.tileSize,World.tileSize).getPixels();
+        image= GraphicItemGenerator.generateItem("image/effect/buff/2-2.png", World.tileSize,World.tileSize).getPixels();
         graphic=image;
         width= World.tileSize;
         height=World.tileSize;

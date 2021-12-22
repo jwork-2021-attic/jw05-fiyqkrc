@@ -6,13 +6,14 @@ import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
+import org.bytedeco.opencv.presets.opencv_core;
 
 import java.io.File;
 import java.util.Random;
 
 public class Door extends Thing implements StatedSavable {
-    static public File[] DoorPaths = {
-            new File(Door.class.getClassLoader().getResource("image/source/0-39.png").getFile())
+    static public String[] DoorPaths = {
+            "image/source/0-39.png"
     };
     static public Pixel[][][] AllPixels;
 

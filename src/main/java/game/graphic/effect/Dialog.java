@@ -6,6 +6,8 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import imageTransFormer.GraphicItemGenerator;
 
+import java.util.Objects;
+
 public class Dialog extends Effect {
     String string ;
 
@@ -16,7 +18,7 @@ public class Dialog extends Effect {
     public Dialog(String text, Position position,int time) {
         super();
         this.string=text;
-        Pixel[][] pixels=Pixel.valueOf(GraphicItemGenerator.generateItem(Dialog.class.getClassLoader().getResource("image/dialog.png").getFile(),PFont.fontBaseSize*string.length()+10,12));
+        Pixel[][] pixels=Pixel.valueOf(Objects.requireNonNull(GraphicItemGenerator.generateItem("image/dialog.png", PFont.fontBaseSize * string.length() + 10, 12)));
         for(int i=0;i<string.length();i++)
             Pixel.pixelsAdd(pixels, PFont.getCharByPixels(string.charAt(i)),Position.getPosition(2,2+PFont.fontBaseSize*i));
         this.graphic=pixels;

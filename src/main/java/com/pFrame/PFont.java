@@ -11,7 +11,7 @@ public class PFont {
     public static int fontBaseSize = 8;
 
     static {
-        fontImagePixels = GraphicItemGenerator.generateItem(new File(PFont.class.getClassLoader().getResource("cp437_8x8.png").getFile()), 16*PFont.fontBaseSize, 16*PFont.fontBaseSize).getPixels();
+        fontImagePixels = GraphicItemGenerator.generateItem("cp437_8x8.png", 16*PFont.fontBaseSize, 16*PFont.fontBaseSize).getPixels();
     }
 
     public static Pixel[][] getCharByPixels(char ch) {

@@ -9,7 +9,7 @@ import java.util.Date;
 public class SnowMonster extends Monster {
 
     public SnowMonster() {
-        super(Pangolin.class.getClassLoader().getResource("image/monster/SnowMonster/").getPath(), World.tileSize, World.tileSize);
+        super("image/monster/SnowMonster", World.tileSize, World.tileSize);
         health = 400;
         attack = 20;
         speed = 2;

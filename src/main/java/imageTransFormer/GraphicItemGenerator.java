@@ -3,37 +3,32 @@ package imageTransFormer;
 import com.pFrame.Pixel;
 import com.pFrame.pgraphic.PGraphicItem;
 
+import java.awt.*;
 import java.awt.image.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
 public class GraphicItemGenerator {
-    public static PGraphicItem generateItem(String path, int width, int height) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(new FileInputStream(new File(path)));
-        } catch (FileNotFoundException e) {
-            System.out.println("file not exist");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (image != null) {
-            Pixel[][] pixels = ObjectTransFormer.transform(image, width, height);
-            return new PGraphicItem(pixels);
-        } else {
-            return null;
-        }
-    }
 
-    public static PGraphicItem generateItem(File file, int width, int height) {
+    private static final HashMap<String, BufferedImage> source = new HashMap<>();
+
+    public static PGraphicItem generateItem(String absPath, int width, int height) {
+
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new FileInputStream(file));
+            synchronized (source) {
+                if (source.containsKey(absPath)) {
+                    image = source.get(absPath);
+                } else {
+                    InputStream inputStream=Objects.requireNonNull(GraphicItemGenerator.class.getClassLoader().getResourceAsStream(absPath));
+                    image = ImageIO.read(inputStream);
+                    inputStream.close();
+                    source.put(absPath,image);
+                }
+            }
         } catch (FileNotFoundException e) {
             System.out.println("file not exist");
             e.printStackTrace();
@@ -42,7 +37,8 @@ public class GraphicItemGenerator {
         }
         if (image != null) {
             Pixel[][] pixels = ObjectTransFormer.transform(image, width, height);
-            return new PGraphicItem(pixels);
+            PGraphicItem item = new PGraphicItem(pixels);
+            return item;
         } else {
             return null;
         }

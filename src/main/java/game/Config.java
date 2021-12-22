@@ -2,11 +2,9 @@ package game;
 
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Config {
     public static int WindowWidth;
@@ -32,17 +30,17 @@ public class Config {
 
     public static String pathConvert(String path) {
         if (path.startsWith("~")) {
-            return System.getProperty("user.home")+path.substring(1);
+            return System.getProperty("user.home") + path.substring(1);
         } else if (path.startsWith("$")) {
-            return Config.DataPath+path.substring(1);
+            return Config.DataPath + path.substring(1);
         }
         return path;
     }
 
-    static public void loadConfig(String path) {
+    static public void loadConfig(String absPath) {
         try {
-            FileInputStream stream = new FileInputStream(new File(path));
-            byte[] bytes = stream.readAllBytes();
+            InputStream inputStream = Config.class.getClassLoader().getResourceAsStream(absPath);
+            byte[] bytes = inputStream.readAllBytes();
             JSONObject object = (JSONObject) JSONObject.parse(bytes);
 
             //load main data path
@@ -53,24 +51,22 @@ public class Config {
                 DataPath = (String) pathSet.get("linux");
             } else
                 DataPath = (String) pathSet.get("default");
-            DataPath=Config.pathConvert(DataPath);
-            if(!new File(DataPath).exists())
+            DataPath = Config.pathConvert(DataPath);
+            if (!new File(DataPath).exists())
                 new File(DataPath).mkdir();
 
             //load learningDataPath
-            LearningDataPath=Config.pathConvert((String)object.get("learningDataPath"));
-            if(!new File(LearningDataPath).exists())
+            LearningDataPath = Config.pathConvert((String) object.get("learningDataPath"));
+            if (!new File(LearningDataPath).exists())
                 new File(LearningDataPath).mkdir();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     static public void main(String[] args) {
-        loadConfig(Config.class.getClassLoader().getResource("config.json").getFile());
+        loadConfig("config.json");
     }
 
 }

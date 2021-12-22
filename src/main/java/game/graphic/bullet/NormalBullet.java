@@ -11,7 +11,7 @@ public class NormalBullet extends Bullet {
     public static Pixel[][] image;
 
     static {
-        image = GraphicItemGenerator.generateItem(NormalBullet.class.getClassLoader().getResource("image/shoot/shoot.png").getFile(), World.tileSize / 4, World.tileSize / 4).getPixels();
+        image = GraphicItemGenerator.generateItem("image/shoot/shoot.png", World.tileSize / 4, World.tileSize / 4).getPixels();
     }
 
     public NormalBullet(Calabash calabash, double angle) {

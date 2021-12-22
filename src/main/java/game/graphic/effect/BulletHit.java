@@ -6,7 +6,7 @@ import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
 public class BulletHit extends Effect {
-    public static Pixel[][] HitImage= GraphicItemGenerator.generateItem(Hit.class.getClassLoader().getResource("image/effect/hit.png").getFile(), World.tileSize/2,World.tileSize/2).getPixels();
+    public static Pixel[][] HitImage= GraphicItemGenerator.generateItem("image/effect/hit.png", World.tileSize/2,World.tileSize/2).getPixels();
 
     public BulletHit(){
         super();

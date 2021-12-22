@@ -49,7 +49,7 @@ public class WorldGenerate {
     }
 
     public WorldGenerate(int width, int height, int max_rooms_generate_trys, int room_max_width, int room_min_width,
-            int room_max_height, int room_min_height) {
+                         int room_max_height, int room_min_height) {
         this.width = width;
         this.height = height;
         this.max_rooms_generate_trys = max_rooms_generate_trys;
@@ -96,8 +96,8 @@ public class WorldGenerate {
         world[this.start.getX()][start.getY()] = 5;
         world[aim.pos.getX()][aim.pos.getY()] = 6;
 
-        for(Position position:oddNodes){
-            world[position.getX()][position.getY()]=5;
+        for (Position position : oddNodes) {
+            world[position.getX()][position.getY()] = 5;
         }
     }
 

@@ -18,6 +18,7 @@ import game.graphic.drop.buff.Addition;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Creature extends Thing implements Controllable, StatedSavable {
@@ -50,7 +51,7 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
     protected CopyOnWriteArrayList<Addition> additions;
 
 
-    public Creature(String path, int width, int height) {
+    public Creature(String absPath, int width, int height) {
         super(null);
 
         additions = new CopyOnWriteArrayList<>();
@@ -61,18 +62,18 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
         attack = 10;
         resistance = 0.2;
         beControlled = false;
-        attackRange=10;
+        attackRange = 10;
         coin = 1;
 
         Bodys = new Body[8];
-        if (!SourceMap.containsKey(path)) {
+        if (!SourceMap.containsKey(absPath)) {
             for (int i = 0; i < 8; i++) {
-                Pixel[][] pixels = Pixel.valueOf(GraphicItemGenerator.generateItem(path + String.format("/%d.png", i + 1), width, height));
+                Pixel[][] pixels = Pixel.valueOf(Objects.requireNonNull(GraphicItemGenerator.generateItem(absPath + String.format("/%d.png", i + 1), width, height)));
                 Bodys[i] = new Body(pixels, width, height);
             }
-            SourceMap.put(path, Bodys);
+            SourceMap.put(absPath, Bodys);
         } else {
-            Bodys = SourceMap.get(path);
+            Bodys = SourceMap.get(absPath);
         }
         switchImage(1);
     }
@@ -86,7 +87,7 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
         addition.useAddition();
     }
 
-    public double getAttackRange(){
+    public double getAttackRange() {
         return attackRange;
     }
 

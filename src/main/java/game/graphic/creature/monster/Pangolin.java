@@ -20,7 +20,7 @@ public class Pangolin extends Monster {
 
 
     public Pangolin() {
-        super(Pangolin.class.getClassLoader().getResource("image/monster/Pangolin/").getPath(), World.tileSize, World.tileSize);
+        super("image/monster/Pangolin", World.tileSize, World.tileSize);
         speed = 3;
         resistance = 0.5;
         attack = 40;

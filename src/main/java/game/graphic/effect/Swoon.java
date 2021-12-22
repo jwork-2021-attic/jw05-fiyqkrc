@@ -16,8 +16,8 @@ public class Swoon extends Effect{
         super();
         this.width = World.tileSize;
         this.height = World.tileSize;
-        image1= GraphicItemGenerator.generateItem(Task.class.getClassLoader().getResource("image/effect/swoon/1.png").getFile(),width,height).getPixels();
-        image2= GraphicItemGenerator.generateItem(Task.class.getClassLoader().getResource("image/effect/swoon/2.png").getFile(),width,height).getPixels();
+        image1= GraphicItemGenerator.generateItem("image/effect/swoon/1.png",width,height).getPixels();
+        image2= GraphicItemGenerator.generateItem("image/effect/swoon/2.png",width,height).getPixels();
         this.graphic = image1;
         repeat = true;
         time = 500;

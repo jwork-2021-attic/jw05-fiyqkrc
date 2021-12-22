@@ -15,6 +15,7 @@ import game.server.client.ClientMain;
 import game.server.server.ServerMain;
 import game.world.World;
 import game.world.GameArchiveGenerator;
+import imageTransFormer.GraphicItemGenerator;
 import log.Log;
 import org.bytedeco.opencv.presets.opencv_core;
 
@@ -66,7 +67,7 @@ public class UI {
         this.startPage.setRCNumStyle(3, 3, "1x,2x,1x", "1x,2x,1x");
         mainMenu = new PLayout(startPage, Position.getPosition(2, 2), 3, 1, true);
         startGameButton = new PButton(mainMenu, null);
-        startGameButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/startButton.png").getFile()));
+        startGameButton.addBackground(new PImage(null, null, "image/startButton.png"));
         loadSavedDataButton = new PButton(mainMenu, null);
         loadSavedDataButton.addBackground(PImage.getPureImage(Color.GRAY));
         loadSavedDataButton.setText("Continue", 1, Color.BLUE);
@@ -101,26 +102,26 @@ public class UI {
         PLayout leftUpPanelLayout = new PLayout(gamePage, Position.getPosition(1, 1), 2, 3, true);
 
         QuitButton = new PButton(leftUpPanelLayout, null);
-        QuitButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/quit.png").getFile()));
+        QuitButton.addBackground(new PImage(null, null, "image/quit.png"));
 
         PauseButton = new PButton(leftUpPanelLayout, null);
-        PauseButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/pause.png").getFile()));
+        PauseButton.addBackground(new PImage(null, null, "image/pause.png"));
 
         ScreenShotButton = new PButton(leftUpPanelLayout, null);
-        ScreenShotButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/screenshot.png").getFile()));
+        ScreenShotButton.addBackground(new PImage(null, null, "image/screenshot.png"));
 
         RecordButton = new PButton(leftUpPanelLayout, null);
-        RecordButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/record.png").getFile()));
+        RecordButton.addBackground(new PImage(null, null, "image/record.png"));
 
         MapButton = new PButton(leftUpPanelLayout, null);
-        MapButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/map.png").getFile()));
+        MapButton.addBackground(new PImage(null, null, "image/map.png"));
 
         messageLabel = new MessageLabel(gamePage, Position.getPosition(1, 2));
 
         healthBar = new HealthBar(gamePage, Position.getPosition(3, 2));
 
 
-        PWidget coinImage = new PImage(rightUpPanel, Position.getPosition(1, 1), UI.class.getClassLoader().getResource("image/coin.png").getFile());
+        PWidget coinImage = new PImage(rightUpPanel, Position.getPosition(1, 1), "image/coin.png");
         coinValueLabel = new PLabel(rightUpPanel, Position.getPosition(1, 2));
         coinValueLabel.setText("x0", 2, Color.WHITE);
 
@@ -164,7 +165,7 @@ public class UI {
     }
 
     public void setWorld(World world) {
-        gameWorld=world;
+        gameWorld = world;
         PGraphicView view = new PGraphicView(null, null, world);
         view.setViewPosition(Position.getPosition(0, 0));
         this.gamePage.addBackground(view);
@@ -287,14 +288,14 @@ public class UI {
     }
 
     public void joinMultiplayerGame(String str) {
-        clientMain=ClientMain.getInstance();
-        clientMain.connect(str,9000);
-        clientThread=new Thread(clientMain);
+        clientMain = ClientMain.getInstance();
+        clientMain.connect(str, 9000);
+        clientThread = new Thread(clientMain);
         clientThread.start();
-        clientMain.ui=this;
+        clientMain.ui = this;
 
-        World.multiPlayerMode=true;
-        World.mainClient=false;
+        World.multiPlayerMode = true;
+        World.mainClient = false;
         this.setPage(UI.GAME_PAGE);
     }
 
@@ -321,10 +322,10 @@ public class UI {
 
     public void PauseButtonClicked() {
         if (gameWorld.isPause()) {
-            PauseButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/pause.png").getFile()));
+            PauseButton.addBackground(new PImage(null, null, "image/pause.png"));
             gameWorld.gameContinue();
         } else {
-            PauseButton.addBackground(new PImage(null, null, UI.class.getClassLoader().getResource("image/continue.png").getFile()));
+            PauseButton.addBackground(new PImage(null, null, "image/continue.png"));
             gameWorld.gamePause();
         }
     }

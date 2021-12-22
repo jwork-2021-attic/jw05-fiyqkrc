@@ -11,8 +11,8 @@ import java.io.File;
 import java.util.Random;
 
 public class CorridorFloor extends Thing implements StatedSavable {
-    static public File[] FloorPaths = {
-            new File(CorridorFloor.class.getClassLoader().getResource("image/source/1-45.png").getFile())
+    static public String[] FloorPaths = {
+            "image/source/1-45.png"
     };
     static public Pixel[][][] AllPixels;
 
