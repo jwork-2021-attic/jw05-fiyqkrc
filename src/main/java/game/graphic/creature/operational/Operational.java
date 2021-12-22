@@ -70,12 +70,11 @@ abstract public class Operational extends Creature {
             if (world.getControlRole() == this)
                 world.gameFinish();
         } else {
-            super.dead();
             if (World.mainClient) {
                 this.deHealth(-healthLimit / 2);
                 while (true) {
-                    int x = new Random().nextInt(width);
-                    int y = new Random().nextInt(height);
+                    int x = new Random().nextInt(world.getWidth());
+                    int y = new Random().nextInt(world.getHeight());
                     if (world.isLocationReachable(this, Position.getPosition(y, x)) && world.ThingMove(this, Position.getPosition(y, x))) {
                         break;
                     }

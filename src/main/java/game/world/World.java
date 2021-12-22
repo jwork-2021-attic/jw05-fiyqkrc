@@ -200,6 +200,13 @@ public class World extends PGraphicScene {
         return pixels;
     }
 
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
+    }
+
     public static int getTileSize() {
         return World.tileSize;
     }
