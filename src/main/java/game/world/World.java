@@ -290,7 +290,7 @@ public class World extends PGraphicScene {
     }
 
     public void frameSync(JSONArray jsonArray) {
-        long start=System.currentTimeMillis();
+        //long start=System.currentTimeMillis();
 
         for (Object jsonObject : jsonArray) {
             try {
@@ -314,7 +314,7 @@ public class World extends PGraphicScene {
                 e.printStackTrace();
             }
         }
-        System.out.println("frame sync cost:"+(System.currentTimeMillis()-start));
+        //System.out.println("frame sync cost:"+(System.currentTimeMillis()-start));
 
     }
 
@@ -361,7 +361,7 @@ public class World extends PGraphicScene {
     }
 
     public void stateSync(JSONArray jsonArray) {
-        long start=System.currentTimeMillis();
+        //long start=System.currentTimeMillis();
         HashSet<Integer> ids = new HashSet<>();
         for (Object jsonObject : jsonArray) {
             try {
@@ -413,7 +413,7 @@ public class World extends PGraphicScene {
                 e.printStackTrace();
             }
         }
-        System.out.println("state sync cost:"+(System.currentTimeMillis()-start));
+        //System.out.println("state sync cost:"+(System.currentTimeMillis()-start));
     }
 
     public void addOperational(Operational operational) {

@@ -15,12 +15,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientMain implements Runnable {
     Accepter commandListener = new Accepter();
     static ClientMain instance;
     Socket socket;
-    PrintWriter pw;
     public UI ui;
 
     private ClientMain() {
@@ -29,25 +30,28 @@ public class ClientMain implements Runnable {
     public void connect(String host, int port) {
         try {
             socket = new Socket(host, port);
-            pw = new PrintWriter(socket.getOutputStream());
             Log.InfoLog(this, "client connect to " + host + ":" + port);
         } catch (IOException e) {
             socket = null;
-            pw = null;
             e.printStackTrace();
             Log.ErrorLog(this, "connect to server failed");
         }
     }
 
+    private final ExecutorService messageSendingEs = Executors.newSingleThreadExecutor();
+
     public void sendMessage(String string) {
-        try {
-            synchronized (socket.getOutputStream()) {
-                pw.write(string);
-                pw.flush();
+        messageSendingEs.submit(() -> {
+            try {
+                synchronized (socket.getOutputStream()) {
+                    socket.getOutputStream().write(string.getBytes());
+                    socket.getOutputStream().flush();
+                }
+            } catch (
+                    Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     World world;
@@ -67,10 +71,24 @@ public class ClientMain implements Runnable {
         return commandListener;
     }
 
+    private int frameCount = 0;
+
     private void analysis(JSONObject jsonObject) {
         if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.FrameSync)) {
-            if (world != null)
-                world.frameSync(jsonObject.getObject(Message.information, JSONArray.class));
+            if (frameCount == 0) {
+                frameCount = jsonObject.getObject(Message.moreArgs, Integer.class);
+            } else {
+                int frame = jsonObject.getObject(Message.moreArgs, Integer.class);
+                if (frame - frameCount == 1) {
+                    frameCount++;
+                    if (world != null)
+                        world.frameSync(jsonObject.getObject(Message.information, JSONArray.class));
+                } else {
+                    Log.WarningLog(this, "frame lost you try state sync...");
+                    frameCount = 0;
+                    sendMessage(Message.getNeedStateSyncMessage());
+                }
+            }
         } else if (Objects.equals(jsonObject.getObject(Message.messageClass, String.class), Message.GameInit)) {
             World world = new World(jsonObject.getObject(Message.information, JSONObject.class));
             setWorld(world);
@@ -93,7 +111,7 @@ public class ClientMain implements Runnable {
 
     @Override
     public void run() {
-        if (socket != null && pw != null) {
+        if (socket != null) {
             Log.InfoLog(this, "client start working...");
             Thread inputListener = new Thread(() -> {
                 try {
@@ -130,16 +148,8 @@ public class ClientMain implements Runnable {
                     new Thread(() -> {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put(Message.messageClass, Message.FrameSync);
-                        jsonObject.put(Message.moreArgs, Message.SubmitInput);
                         jsonObject.put(Message.information, commandListener.getMessage());
-                        try {
-                            synchronized (pw) {
-                                pw.write(Message.JSON2MessageStr(jsonObject));
-                                pw.flush();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        sendMessage(Message.JSON2MessageStr(jsonObject));
                     }).start();
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
