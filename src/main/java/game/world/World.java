@@ -29,6 +29,7 @@ import game.server.server.ServerMain;
 import log.Log;
 
 import java.awt.*;
+import java.awt.List;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -192,11 +193,25 @@ public class World extends PGraphicScene {
         Pixel[][] pixels = Pixel.emptyPixels(worldArray.length, worldArray[0].length);
         for (int i = 0; i < worldArray.length; i++)
             for (int j = 0; j < worldArray[0].length; j++) {
-                Color color = (worldArray[i][j] == 0) ? Color.GRAY : Color.BLUE;
+                Color color = (worldArray[i][j] == 0) ? Color.BLACK : Color.GRAY;
                 pixels[i][j] = Pixel.getPixel(color, (char) 0xf0);
             }
         assert pixels != null;
-        pixels[controlRole.getLocation().x()][controlRole.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
+        Collection<Creature> creatures;
+        synchronized (activeCreature) {
+            creatures = activeCreature.values();
+        }
+        for (Creature creature : creatures) {
+            if (creature instanceof Operational) {
+                if (creature == controlRole) {
+                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
+                } else {
+                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.GREEN, (char) 0xf0);
+                }
+            } else {
+                pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
+            }
+        }
         return pixels;
     }
 
@@ -349,14 +364,14 @@ public class World extends PGraphicScene {
     }
 
     public JSONArray getCurrentState() {
-        long start=System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         JSONArray jsonArray = new JSONArray();
         synchronized (activeCreature) {
             for (Creature creature : activeCreature.values()) {
                 jsonArray.add(creature.saveState());
             }
         }
-        System.out.println("get state cost"+(System.currentTimeMillis()-start));
+        System.out.println("get state cost" + (System.currentTimeMillis() - start));
         return jsonArray;
     }
 
