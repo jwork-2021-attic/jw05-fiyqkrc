@@ -18,18 +18,15 @@ import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.creature.Creature;
 import game.graphic.creature.monster.Monster;
-import game.graphic.creature.operational.Calabash;
 import game.graphic.creature.operational.Operational;
 import game.graphic.env.Wall;
 import game.graphic.interactive.GameThread;
 import game.screen.UI;
 import game.server.Message;
 import game.server.client.ClientMain;
-import game.server.server.ServerMain;
 import log.Log;
 
 import java.awt.*;
-import java.awt.List;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -61,7 +58,6 @@ public class World extends PGraphicScene {
     int controlRoleId;
     Operational controlRole;
     Thread daemonThread;
-
 
     public World(JSONObject jsonObject) {
         super(jsonObject.getObject("width", Integer.class), jsonObject.getObject("height", Integer.class));
@@ -127,7 +123,8 @@ public class World extends PGraphicScene {
                                                 areas[area.x][area.y].add(((Creature) thing).saveState());
                                                 if (((Creature) thing).getController() instanceof AlgorithmController)
                                                     ((AlgorithmController) ((Creature) thing).getController()).stop();
-                                                else if (((Creature) thing).getController() instanceof NetAlController) {
+                                                else if (((Creature) thing)
+                                                        .getController() instanceof NetAlController) {
                                                     ((NetAlController) ((Creature) thing).getController()).stop();
                                                 }
                                                 removeItem(thing);
@@ -146,10 +143,14 @@ public class World extends PGraphicScene {
                                         synchronized (this) {
                                             Class[] types = null;
                                             Object[] parameters = null;
-                                            StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(item.getObject("class", String.class)).getDeclaredConstructor(types).newInstance(parameters);
+                                            StatedSavable thing = (StatedSavable) Thing.class.getClassLoader()
+                                                    .loadClass(item.getObject("class", String.class))
+                                                    .getDeclaredConstructor(types).newInstance(parameters);
                                             thing.resumeState(item);
                                             if (thing instanceof Thing) {
-                                                if (!((Thing) thing).isBeCoverAble() && !isLocationReachable((Thing) thing, ((Thing) thing).getPosition())) {
+                                                if (!((Thing) thing).isBeCoverAble()
+                                                        && !isLocationReachable((Thing) thing,
+                                                                ((Thing) thing).getPosition())) {
 
                                                 } else {
                                                     if (thing instanceof Monster) {
@@ -184,7 +185,6 @@ public class World extends PGraphicScene {
         loadSavedData(jsonObject);
     }
 
-
     public boolean isPause() {
         return isPause;
     }
@@ -204,9 +204,11 @@ public class World extends PGraphicScene {
         for (Creature creature : creatures) {
             if (creature instanceof Operational) {
                 if (creature == controlRole) {
-                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.BLUE, (char) 0xf0);
+                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.BLUE,
+                            (char) 0xf0);
                 } else {
-                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.GREEN, (char) 0xf0);
+                    pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.GREEN,
+                            (char) 0xf0);
                 }
             } else {
                 pixels[creature.getLocation().x()][creature.getLocation().y()] = Pixel.getPixel(Color.RED, (char) 0xf0);
@@ -272,6 +274,12 @@ public class World extends PGraphicScene {
                 activeCreature.remove(item.getId());
             }
         }
+        if (item instanceof Operational) {
+            synchronized (operationals) {
+                operationals.remove(item);
+            }
+        }
+
         return super.removeItem(item);
     }
 
@@ -287,10 +295,18 @@ public class World extends PGraphicScene {
                 }
             }
 
+            if (item instanceof Operational) {
+                synchronized (operationals) {
+                    operationals.add((Operational) item);
+                }
+            }
+
             synchronized (this.tiles) {
-                if (((Thing) item).isBeCoverAble() || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
+                if (((Thing) item).isBeCoverAble()
+                        || isLocationReachable((Thing) item, ((Thing) item).getCentralPosition())) {
                     if (!((Thing) item).isBeCoverAble())
-                        tiles[((Thing) item).getCentralPosition().getX() / tileSize][((Thing) item).getCentralPosition().getY() / tileSize].setThing((Thing) item);
+                        tiles[((Thing) item).getCentralPosition().getX() / tileSize][((Thing) item).getCentralPosition()
+                                .getY() / tileSize].setThing((Thing) item);
                 } else
                     return false;
             }
@@ -305,7 +321,7 @@ public class World extends PGraphicScene {
     }
 
     public void frameSync(JSONArray jsonArray) {
-        //long start=System.currentTimeMillis();
+        // long start = System.currentTimeMillis();
 
         for (Object jsonObject : jsonArray) {
             try {
@@ -329,14 +345,15 @@ public class World extends PGraphicScene {
                 e.printStackTrace();
             }
         }
-        //System.out.println("frame sync cost:"+(System.currentTimeMillis()-start));
-
+        // System.out.println("frame sync cost:"+(System.currentTimeMillis()-start));
     }
 
     public void addMultiPlayer(JSONObject jsonObject) {
         synchronized (operationals) {
             try {
-                StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(jsonObject.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                StatedSavable thing = (StatedSavable) Thing.class.getClassLoader()
+                        .loadClass(jsonObject.getObject("class", String.class)).getDeclaredConstructor(null)
+                        .newInstance(null);
                 thing.resumeState(jsonObject);
                 if (thing instanceof Operational) {
                     addOperational((Operational) thing);
@@ -350,17 +367,7 @@ public class World extends PGraphicScene {
     }
 
     public void removeMultiPlayer(int id) {
-        Operational operationalToRemove = null;
-        synchronized (operationals) {
-            for (Operational operational : operationals) {
-                if (operational.getId() == id) {
-                    operationalToRemove = operational;
-                    break;
-                }
-            }
-            if (operationalToRemove != null)
-                operationals.remove(operationalToRemove);
-        }
+        removeItem(activeCreature.get(id));
     }
 
     public JSONArray getCurrentState() {
@@ -376,7 +383,6 @@ public class World extends PGraphicScene {
     }
 
     public void stateSync(JSONArray jsonArray) {
-        //long start=System.currentTimeMillis();
         HashSet<Integer> ids = new HashSet<>();
         for (Object jsonObject : jsonArray) {
             try {
@@ -388,12 +394,13 @@ public class World extends PGraphicScene {
         }
 
         HashSet<Creature> creaturesToRemove = new HashSet<>();
-
+        Collection<Integer> keys;
         synchronized (activeCreature) {
-            for (int id : activeCreature.keySet()) {
-                if (!ids.contains(id)) {
-                    creaturesToRemove.add(activeCreature.get(id));
-                }
+            keys = activeCreature.keySet();
+        }
+        for (int id : keys) {
+            if (!ids.contains(id)) {
+                creaturesToRemove.add(activeCreature.get(id));
             }
         }
 
@@ -405,21 +412,24 @@ public class World extends PGraphicScene {
                 JSONObject command = (JSONObject) jsonObject;
                 int id = command.getObject("id", Integer.class);
 
-
                 if (activeCreature.containsKey(id)) {
                     activeCreature.get(id).resumeState(command);
                     repaintItem(activeCreature.get(id));
                 } else {
-                    StatedSavable thing = (StatedSavable) Thing.class.getClassLoader().loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                    StatedSavable thing = (StatedSavable) Thing.class.getClassLoader()
+                            .loadClass(command.getObject("class", String.class)).getDeclaredConstructor(null)
+                            .newInstance(null);
                     thing.resumeState(command);
                     if (thing instanceof Creature) {
-                        if (thing instanceof Operational && ((Operational) thing).getId() == controlRoleId) {
+                        if (thing instanceof Operational) {
                             synchronized (operationals) {
                                 addItem((PGraphicItem) thing);
                                 operationals.add((Operational) thing);
-                                controlRole = (Operational) thing;
                             }
-                            activeControlRole();
+                            if (((Operational) thing).getId() == controlRoleId) {
+                                controlRole = (Operational) thing;
+                                activeControlRole();
+                            }
                         } else
                             addItem((PGraphicItem) thing);
                     }
@@ -428,19 +438,20 @@ public class World extends PGraphicScene {
                 e.printStackTrace();
             }
         }
-        //System.out.println("state sync cost:"+(System.currentTimeMillis()-start));
     }
 
     public void addOperational(Operational operational) {
         while (true) {
             int x = new Random().nextInt(width);
             int y = new Random().nextInt(height);
-            if (isLocationReachable(operational, Position.getPosition(y, x)) && ThingMove(operational, Position.getPosition(y, x))) {
+            if (isLocationReachable(operational, Position.getPosition(y, x))
+                    && ThingMove(operational, Position.getPosition(y, x))) {
                 break;
             }
         }
+
         addItem(operational);
-        this.operationals.add(operational);
+
         if (operational.getId() == controlRoleId) {
             controlRole = operational;
             activeControlRole();
@@ -452,29 +463,37 @@ public class World extends PGraphicScene {
     }
 
     public boolean isLocationReachable(Thing thing, Position position) {
-        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
-                || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
+        return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width
+                && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
+                        || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
     }
-
 
     public boolean ThingMove(Thing thing, Position centralPosition) {
         if (thing.isBeCoverAble()) {
             if (!positionOutOfBound(centralPosition)) {
-                thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
+                thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2,
+                        centralPosition.getY() - thing.getWidth() / 2));
                 return true;
             } else
                 return false;
         } else {
             synchronized (this.tiles) {
                 synchronized (thing) {
-                    if (isLocationReachable(thing, centralPosition) && thing.getTile() == null && !locationOutOfBound(getTileByLocation(centralPosition))) {
-                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
-                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
+                    if (isLocationReachable(thing, centralPosition) && thing.getTile() == null
+                            && !locationOutOfBound(getTileByLocation(centralPosition))) {
+                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()]
+                                .setThing(thing);
+                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2,
+                                centralPosition.getY() - thing.getWidth() / 2));
                         return true;
-                    } else if (isLocationReachable(thing, centralPosition) && thing.getTile().getLocation() != getTileByLocation(centralPosition) && !locationOutOfBound(getTileByLocation(centralPosition))) {
+                    } else if (isLocationReachable(thing, centralPosition)
+                            && thing.getTile().getLocation() != getTileByLocation(centralPosition)
+                            && !locationOutOfBound(getTileByLocation(centralPosition))) {
                         thing.getTile().setThing(null);
-                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()].setThing(thing);
-                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2, centralPosition.getY() - thing.getWidth() / 2));
+                        tiles[getTileByLocation(centralPosition).x()][getTileByLocation(centralPosition).y()]
+                                .setThing(thing);
+                        thing.setPosition(Position.getPosition(centralPosition.getX() - thing.getHeight() / 2,
+                                centralPosition.getY() - thing.getWidth() / 2));
                         return true;
                     } else {
                         return false;
@@ -593,7 +612,9 @@ public class World extends PGraphicScene {
         for (Object item : itemsData) {
             StatedSavable thing;
             try {
-                thing = (StatedSavable) Thing.class.getClassLoader().loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null).newInstance(null);
+                thing = (StatedSavable) Thing.class.getClassLoader()
+                        .loadClass(((JSONObject) item).getObject("class", String.class)).getDeclaredConstructor(null)
+                        .newInstance(null);
                 thing.resumeState((JSONObject) item);
                 if (thing instanceof Thing) {
                     if (!multiPlayerMode || mainClient) {
@@ -601,7 +622,8 @@ public class World extends PGraphicScene {
                             if (thing instanceof Operational) {
                                 addOperational((Operational) thing);
                             } else
-                                areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition().getY() / areaSize].add((JSONObject) item);
+                                areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition()
+                                        .getY() / areaSize].add((JSONObject) item);
                         } else
                             addItem((PGraphicItem) thing);
                     } else {
@@ -610,9 +632,8 @@ public class World extends PGraphicScene {
                             addItem((PGraphicItem) thing);
                     }
                 }
-            } catch
-            (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException
-                            e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                    | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -655,11 +676,15 @@ public class World extends PGraphicScene {
         for (int i = 1; i < bound; i++) {
             for (int a = x - i; a <= x + i; a++) {
                 for (int b = y - i; b <= y + i; b++) {
-                    if (!locationOutOfBound(new Location(a, b)) && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i)) && tiles[a][b].getThing() != null) {
+                    if (!locationOutOfBound(new Location(a, b))
+                            && ((a == x - i) || (a == x + i) || (b == y - i) || (b == y + i))
+                            && tiles[a][b].getThing() != null) {
                         synchronized (this.tiles) {
-                            if (tiles[a][b].getThing() instanceof Creature && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup()) {
+                            if (tiles[a][b].getThing() instanceof Creature
+                                    && ((Creature) tiles[a][b].getThing()).getGroup() != creature.getGroup()) {
                                 try {
-                                    if (!hasWallBetweenPositions(creature.getCentralPosition(), tiles[a][b].getThing().getCentralPosition())) {
+                                    if (!hasWallBetweenPositions(creature.getCentralPosition(),
+                                            tiles[a][b].getThing().getCentralPosition())) {
                                         return new Location(a, b);
                                     }
                                 } catch (Exception ignored) {
@@ -679,7 +704,8 @@ public class World extends PGraphicScene {
         double direction = Direction.calDirection(src, dest);
         boolean has = false;
         for (int k = 0; k < distance; k++) {
-            Location location = getTileByLocation(Position.getPosition(src.getX() - (int) (k * Math.sin(direction)), src.getY() + (int) (k * Math.cos(direction))));
+            Location location = getTileByLocation(Position.getPosition(src.getX() - (int) (k * Math.sin(direction)),
+                    src.getY() + (int) (k * Math.cos(direction))));
             if (findThing(location) instanceof Wall) {
                 has = true;
                 break;

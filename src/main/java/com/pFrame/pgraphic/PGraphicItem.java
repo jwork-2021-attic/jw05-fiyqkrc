@@ -1,8 +1,6 @@
 package com.pFrame.pgraphic;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 
 import com.pFrame.Pixel;

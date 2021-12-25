@@ -5,8 +5,6 @@ import com.pFrame.Pixel;
 import com.pFrame.Position;
 import com.pFrame.pgraphic.PGraphicItem;
 import game.Location;
-import game.graphic.creature.Creature;
-import game.graphic.creature.operational.Operational;
 import game.world.Tile;
 import game.world.World;
 
@@ -83,7 +81,7 @@ public class Thing extends PGraphicItem {
     public void resume(JSONObject jsonObject) {
         String str = jsonObject.getObject("position", String.class);
         str = str.substring(1, str.length() - 1);
-        p = Position.getPosition(Integer.parseInt(str.split(",")[0]), Integer.parseInt(str.split(",")[1]));
+        setPosition( Position.getPosition(Integer.parseInt(str.split(",")[0]), Integer.parseInt(str.split(",")[1])));
         beCoverAble = jsonObject.getObject("beCoverAble", Boolean.class);
         id = jsonObject.getObject("id", Integer.class);
     }
