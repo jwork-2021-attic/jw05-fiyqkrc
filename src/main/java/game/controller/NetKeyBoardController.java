@@ -7,6 +7,8 @@ import game.graphic.creature.Controllable;
 import game.graphic.interactive.GameThread;
 import game.server.client.Accepter;
 import game.server.client.ClientMain;
+import game.world.World;
+import log.Log;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -22,9 +24,7 @@ public class NetKeyBoardController extends CreatureController implements PFrameK
         allKeyCode.add('s');
         allKeyCode.add('w');
         allKeyCode.add('d');
-        thread = new Thread(this);
-        thread.start();
-        GameThread.threadSet.add(thread);
+
     }
 
     public void setThing(Controllable controllable) {
@@ -85,7 +85,7 @@ public class NetKeyBoardController extends CreatureController implements PFrameK
                 e.printStackTrace();
             }
         }
-        GameThread.threadSet.remove(thread);
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 
     public double calDirection(char ch) {
@@ -99,5 +99,51 @@ public class NetKeyBoardController extends CreatureController implements PFrameK
             }
         }
         return direction;
+    }
+
+    @Override
+    public void stop() {
+        if (controllable != null) {
+            World world = controllable.getWorld();
+            if (world != null) {
+                world.freeKeyListener('w', this);
+                world.freeKeyListener('a', this);
+                world.freeKeyListener('s', this);
+                world.freeKeyListener('d', this);
+                world.freeKeyListener('j', this);
+            } else {
+                Log.WarningLog(this, "world is null");
+            }
+        } else {
+            Log.WarningLog(this, "controllable is null");
+        }
+        if (thread != null) {
+            thread.interrupt();
+            thread = null;
+        }
+    }
+
+    @Override
+    public void start() {
+        if (controllable != null) {
+            World world = controllable.getWorld();
+            if (world != null) {
+                world.addKeyListener('w', this);
+                world.addKeyListener('a', this);
+                world.addKeyListener('s', this);
+                world.addKeyListener('d', this);
+                world.addKeyListener('j', this);
+            } else {
+                Log.WarningLog(this, "world is null");
+            }
+        } else {
+            Log.WarningLog(this, "controllable is null");
+        }
+        if (thread != null) {
+            stop();
+        }
+        thread = new Thread(this);
+        thread.start();
+        GameThread.threadSet.add(thread);
     }
 }

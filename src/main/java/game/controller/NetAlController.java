@@ -20,10 +20,7 @@ public class NetAlController extends CreatureController implements Runnable {
     protected long lastAttack;
 
     public NetAlController() {
-        thread = new Thread(this);
         lastMoveSuccess = true;
-        GameThread.threadSet.add(thread);
-        thread.start();
     }
 
     public void tryMove() {
@@ -44,6 +41,17 @@ public class NetAlController extends CreatureController implements Runnable {
 
     public void stop() {
         thread.interrupt();
+        thread=null;
+    }
+
+    @Override
+    public void start() {
+        if(thread!=null){
+            stop();
+        }
+        thread = new Thread(this);
+        GameThread.threadSet.add(thread);
+        thread.start();
     }
 
     @Override

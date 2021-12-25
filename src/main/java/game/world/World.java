@@ -150,7 +150,7 @@ public class World extends PGraphicScene {
                                             if (thing instanceof Thing) {
                                                 if (!((Thing) thing).isBeCoverAble()
                                                         && !isLocationReachable((Thing) thing,
-                                                                ((Thing) thing).getPosition())) {
+                                                        ((Thing) thing).getPosition())) {
 
                                                 } else {
                                                     if (thing instanceof Monster) {
@@ -249,6 +249,7 @@ public class World extends PGraphicScene {
             } else {
                 controlRole.setController(new KeyBoardController());
             }
+            controlRole.Continue();
         }
         if (this.parentView != null) {
             parentView.setFocus(controlRole);
@@ -270,6 +271,7 @@ public class World extends PGraphicScene {
             }
         }
         if (item instanceof Creature) {
+            ((Creature) item).pause();
             synchronized (activeCreature) {
                 activeCreature.remove(item.getId());
             }
@@ -290,6 +292,7 @@ public class World extends PGraphicScene {
             ((Thing) item).whenBeAddedToScene();
 
             if (item instanceof Creature) {
+                ((Creature) item).Continue();
                 synchronized (activeCreature) {
                     activeCreature.put(item.getId(), (Creature) item);
                 }
@@ -422,10 +425,7 @@ public class World extends PGraphicScene {
                     thing.resumeState(command);
                     if (thing instanceof Creature) {
                         if (thing instanceof Operational) {
-                            synchronized (operationals) {
-                                addItem((PGraphicItem) thing);
-                                operationals.add((Operational) thing);
-                            }
+                            addItem((PGraphicItem) thing);
                             if (((Operational) thing).getId() == controlRoleId) {
                                 controlRole = (Operational) thing;
                                 activeControlRole();
@@ -465,7 +465,7 @@ public class World extends PGraphicScene {
     public boolean isLocationReachable(Thing thing, Position position) {
         return position.getX() >= 0 && position.getX() < height && position.getY() >= 0 && position.getY() < width
                 && (tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == null
-                        || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
+                || tiles[position.getX() / tileSize][position.getY() / tileSize].getThing() == thing);
     }
 
     public boolean ThingMove(Thing thing, Position centralPosition) {
@@ -645,9 +645,6 @@ public class World extends PGraphicScene {
             for (Creature creature : activeCreature.values()) {
                 creature.pause();
             }
-            if (controlRole != null) {
-                controlRole.pause();
-            }
             Log.InfoLog(this, "Game pause...");
         }
     }
@@ -657,9 +654,6 @@ public class World extends PGraphicScene {
             isPause = false;
             for (Creature creature : activeCreature.values()) {
                 creature.Continue();
-            }
-            if (controlRole != null) {
-                controlRole.Continue();
             }
             Log.InfoLog(this, "Game continue...");
         }
