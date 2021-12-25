@@ -60,9 +60,9 @@ public class GameArchiveGenerator {
         monster.add(Spider.class);
     }
 
-    public static void createPath(String path){
-        if(!new File(path).exists()){
-            if(!new File(new File(path).getParent()).exists()){
+    public static void createPath(String path) {
+        if (!new File(path).exists()) {
+            if (!new File(new File(path).getParent()).exists()) {
                 createPath(new File(path).getParent());
             }
             new File(path).mkdir();
@@ -70,8 +70,8 @@ public class GameArchiveGenerator {
     }
 
     public static void createFile(String path) throws IOException {
-        if(!new File(path).exists()){
-            if(!new File(new File(path).getParent()).exists()){
+        if (!new File(path).exists()) {
+            if (!new File(new File(path).getParent()).exists()) {
                 createPath(new File(path).getParent());
             }
             new File(path).createNewFile();
@@ -86,13 +86,15 @@ public class GameArchiveGenerator {
         worldData.put("itemsData", itemsData);
         worldData.put("worldArray", worldArray);
         worldData.put("idCount", PGraphicItem.getIdCount());
-        try {
-            createFile(path);
-            FileOutputStream stream = new FileOutputStream(path);
-            stream.write(worldData.toJSONString().getBytes());
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (path != null) {
+            try {
+                createFile(path);
+                FileOutputStream stream = new FileOutputStream(path);
+                stream.write(worldData.toJSONString().getBytes());
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

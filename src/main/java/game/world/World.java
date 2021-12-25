@@ -359,6 +359,14 @@ public class World extends PGraphicScene {
                         .newInstance(null);
                 thing.resumeState(jsonObject);
                 if (thing instanceof Operational) {
+                    while (true) {
+                        int x = new Random().nextInt(width);
+                        int y = new Random().nextInt(height);
+                        if (isLocationReachable((Thing) thing, Position.getPosition(y, x))
+                                && ThingMove((Thing) thing, Position.getPosition(y, x))) {
+                            break;
+                        }
+                    }
                     addOperational((Operational) thing);
                 } else {
                     Log.ErrorLog(this, "add multi player must give an Operational object");
@@ -441,14 +449,7 @@ public class World extends PGraphicScene {
     }
 
     public void addOperational(Operational operational) {
-        while (true) {
-            int x = new Random().nextInt(width);
-            int y = new Random().nextInt(height);
-            if (isLocationReachable(operational, Position.getPosition(y, x))
-                    && ThingMove(operational, Position.getPosition(y, x))) {
-                break;
-            }
-        }
+
 
         addItem(operational);
 
@@ -620,6 +621,16 @@ public class World extends PGraphicScene {
                     if (!multiPlayerMode || mainClient) {
                         if ((thing instanceof Creature || thing instanceof GameThread)) {
                             if (thing instanceof Operational) {
+                                if (!isLocationReachable((Thing) thing, ((Operational) thing).getPosition())) {
+                                    while (true) {
+                                        int x = new Random().nextInt(width);
+                                        int y = new Random().nextInt(height);
+                                        if (isLocationReachable((Thing) thing, Position.getPosition(y, x))
+                                                && ThingMove((Thing) thing, Position.getPosition(y, x))) {
+                                            break;
+                                        }
+                                    }
+                                }
                                 addOperational((Operational) thing);
                             } else
                                 areas[((Thing) thing).getPosition().getX() / areaSize][((Thing) thing).getPosition()

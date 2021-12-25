@@ -110,10 +110,10 @@ public class PLayout extends PWidget {
 
     @Override
     public synchronized void removeWidget(PWidget widget) {
-        for(int i=0;i<containedWidgets.length;i++)
-            for(int j=0;j<containedWidgets[0].length;j++){
-                if(containedWidgets[i][j]==widget){
-                    containedWidgets[i][j]=null;
+        for (int i = 0; i < containedWidgets.length; i++)
+            for (int j = 0; j < containedWidgets[0].length; j++) {
+                if (containedWidgets[i][j] == widget) {
+                    containedWidgets[i][j] = null;
                 }
             }
     }
@@ -140,7 +140,7 @@ public class PLayout extends PWidget {
     public void updateWidgetsLayout() {
         int[] r;
         int[] c;
-        if (this.getRowStyle() == "" || this.getRowStyle()==null) {
+        if (this.getRowStyle() == "" || this.getRowStyle() == null) {
             int[] row = new int[this.getRowNum()];
             for (int i = 0; i < this.getRowNum(); i++) {
                 row[i] = this.getWidgetHeight() / this.getRowNum();
@@ -151,10 +151,10 @@ public class PLayout extends PWidget {
             int[] rowRes = new int[this.getRowNum()];
             if (row.length < this.getRowNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                String Style=getColumnStyle();
-                rowStyle="";
+                String Style = getColumnStyle();
+                rowStyle = "";
                 this.updateWidgetsLayout();
-                rowStyle=Style;
+                rowStyle = Style;
                 return;
             } else {
                 try {
@@ -172,10 +172,10 @@ public class PLayout extends PWidget {
                     }
                     if (numSum >= this.getWidgetHeight()) {
                         Log.ErrorLog(this, "fixed rows too big!");
-                        String Style=getColumnStyle();
-                        rowStyle="";
+                        String Style = getColumnStyle();
+                        rowStyle = "";
                         this.updateWidgetsLayout();
-                        rowStyle=Style;
+                        rowStyle = Style;
                         return;
                     }
                     for (int i = 0; i < this.getRowNum(); i++) {
@@ -185,17 +185,17 @@ public class PLayout extends PWidget {
                     }
                 } catch (Exception e) {
                     Log.ErrorLog(this, "read rowstyle failed");
-                    String Style=getColumnStyle();
-                    rowStyle="";
+                    String Style = getColumnStyle();
+                    rowStyle = "";
                     this.updateWidgetsLayout();
-                    rowStyle=Style;
+                    rowStyle = Style;
                     return;
                 }
             }
             r = rowRes;
         }
 
-        if (this.getColumnStyle() == "" || this.getColumnStyle()==null) {
+        if (this.getColumnStyle() == "" || this.getColumnStyle() == null) {
             int[] row = new int[this.getColumnNum()];
             for (int i = 0; i < this.getColumnNum(); i++) {
                 row[i] = this.getWidgetWidth() / this.getColumnNum();
@@ -206,10 +206,10 @@ public class PLayout extends PWidget {
             int[] rowRes = new int[this.getColumnNum()];
             if (row.length < this.getColumnNum()) {
                 Log.WarningLog(this, "rowstyle length is not equal with rownum,will use default style");
-                String Style=getColumnStyle();
-                columnStyle="";
+                String Style = getColumnStyle();
+                columnStyle = "";
                 this.updateWidgetsLayout();
-                columnStyle=Style;
+                columnStyle = Style;
                 return;
             } else {
                 try {
@@ -227,10 +227,10 @@ public class PLayout extends PWidget {
                     }
                     if (numSum >= this.getWidgetWidth()) {
                         Log.ErrorLog(this, "fixed rows too big!");
-                        String Style=getColumnStyle();
-                        columnStyle="";
+                        String Style = getColumnStyle();
+                        columnStyle = "";
                         this.updateWidgetsLayout();
-                        columnStyle=Style;
+                        columnStyle = Style;
                         return;
                     }
                     for (int i = 0; i < this.getColumnNum(); i++) {
@@ -240,10 +240,10 @@ public class PLayout extends PWidget {
                     }
                 } catch (Exception e) {
                     Log.ErrorLog(this, "read rowstyle failed");
-                    String Style=columnStyle;
-                    columnStyle="";
+                    String Style = columnStyle;
+                    columnStyle = "";
                     this.updateWidgetsLayout();
-                    columnStyle=Style;
+                    columnStyle = Style;
                     return;
                 }
             }
@@ -295,7 +295,7 @@ public class PLayout extends PWidget {
                         break;
                     }
                 }
-                if (operation == true)
+                if (operation)
                     break;
             }
         } else {
@@ -304,7 +304,9 @@ public class PLayout extends PWidget {
                 this.containedWidgets[p.getX() - 1][p.getY() - 1] = widget;
                 operation = true;
             } else {
-                Log.ErrorLog(this, "something else has been put on position ,add widget to layout failed");
+                this.containedWidgets[p.getX() - 1][p.getY() - 1] = widget;
+                operation = true;
+                Log.WarningLog(this, "something else has been put on position ");
             }
         }
         if (!operation) {
