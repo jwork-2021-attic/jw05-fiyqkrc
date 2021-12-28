@@ -1,8 +1,6 @@
 package game.graphic.creature.operational;
 
 import com.pFrame.Position;
-import com.pFrame.pwidget.PFrameKeyListener;
-import game.controller.CreatureController;
 import game.graphic.creature.Creature;
 import game.world.World;
 
@@ -14,34 +12,6 @@ abstract public class Operational extends Creature {
         super(path, width, height);
         group = 2;
         speed = speed * 2;
-    }
-
-    @Override
-    public void pause() {
-        if (controller != null && controller instanceof PFrameKeyListener) {
-            this.world.freeKeyListener('w', (PFrameKeyListener) this.controller);
-            this.world.freeKeyListener('a', (PFrameKeyListener) this.controller);
-            this.world.freeKeyListener('s', (PFrameKeyListener) this.controller);
-            this.world.freeKeyListener('d', (PFrameKeyListener) this.controller);
-            this.world.freeKeyListener('j', (PFrameKeyListener) this.controller);
-        }
-    }
-
-    @Override
-    public void Continue() {
-        if (this.controller != null && controller instanceof PFrameKeyListener) {
-            this.world.addKeyListener('w', (PFrameKeyListener) this.controller);
-            this.world.addKeyListener('a', (PFrameKeyListener) this.controller);
-            this.world.addKeyListener('s', (PFrameKeyListener) this.controller);
-            this.world.addKeyListener('d', (PFrameKeyListener) this.controller);
-            this.world.addKeyListener('j', (PFrameKeyListener) this.controller);
-        }
-    }
-
-    @Override
-    public void whenBeAddedToScene() {
-        super.whenBeAddedToScene();
-        Continue();
     }
 
     @Override
@@ -67,27 +37,24 @@ abstract public class Operational extends Creature {
 
     @Override
     public void dead() {
+        super.dead();
         if (!World.multiPlayerMode) {
-            super.dead();
             if (world.getControlRole() == this)
                 world.gameFinish();
         } else {
             if (World.mainClient) {
                 this.deHealth(-healthLimit / 2);
+                this.coin = 0;
                 while (true) {
                     int x = new Random().nextInt(world.getWidth());
                     int y = new Random().nextInt(world.getHeight());
-                    if (world.isLocationReachable(this, Position.getPosition(y, x)) && world.ThingMove(this, Position.getPosition(y, x))) {
-                        break;
+                    if (world.isLocationReachable(this, Position.getPosition(y, x))) {
+                        setPosition(Position.getPosition(y - height / 2, x - width / 2));
+                        if (world.addItem(this))
+                            break;
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public void setController(CreatureController controller) {
-        super.setController(controller);
-        Continue();
     }
 }

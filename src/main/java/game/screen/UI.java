@@ -188,6 +188,7 @@ public class UI {
         gameWorld = null;
         this.gamePage.addBackground(null);
         setPage(UI.START_PAGE);
+        startPage.addChildWidget(mainMenu, Position.getPosition(2, 2));
 
         //try stop server and client socket
         if (clientMain != null) {
@@ -209,30 +210,39 @@ public class UI {
     public World gameWorld;
 
     public void RecordButtonClicked() {
-        if (gamePage.isRecording())
+        if (gamePage.isRecording()) {
             gamePage.finishRecord();
-        else
+            sendMessage("record finish");
+        }
+        else {
             gamePage.startRecord();
+            sendMessage("record start");
+        }
     }
 
     public void ScreenShotButtonClicked() {
         gamePage.getScreenShot();
+        sendMessage("get screenshot finish");
     }
 
     public void QuitButtonClicked() {
-
-        new Thread(() -> {
+        if (World.multiPlayerMode) {
+            new Thread(() -> {
+                gameWorld.gamePause();
+                int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
+                if (option == 1) {
+                    gameWorld.gameSaveData();
+                    sendMessage("This module waits implementation...");
+                    gameWorld.gameContinue();
+                    gameWorld.gameFinish();
+                } else {
+                    gameWorld.gameFinish();
+                }
+            }).start();
+        } else {
             gameWorld.gamePause();
-            int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
-            if (option == 1) {
-                gameWorld.gameSaveData();
-                sendMessage("This module waits implementation...");
-                gameWorld.gameContinue();
-                gameWorld.gameFinish();
-            } else {
-                gameWorld.gameFinish();
-            }
-        }).start();
+            gameWorld.gameFinish();
+        }
     }
 
     public void startGameButtonBeClicked() {
@@ -257,7 +267,7 @@ public class UI {
     public void newSingleGame() {
         World.multiPlayerMode = false;
         World.mainClient = false;
-        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/saved.json", 2);
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, null, 2);
         gameArchiveGenerator.generateWorldData();
         JSONObject jsonObject = gameArchiveGenerator.getWorldData();
         Calabash calabash = new Calabash();
@@ -349,7 +359,6 @@ public class UI {
             PGraphicItem item = new PGraphicItem(pixels);
             world.addItem(item);
             mapView.setViewPosition(Position.getPosition(0, 0));
-            sendMessage("Map may can not display whole,\nthis is the map around your role");
         } else {
             gamePage.removeWidget(mapView);
             mapView = null;

@@ -29,19 +29,18 @@ public class PDialog {
 
     protected PDialog(String message, String option1, String option2) {
         pHeadWidget = new PHeadWidget(null, null);
-        pHeadWidget.startRepaintThread();
         pHeadWidget.getLayout().setRCNumStyle(2, 1, "3x,1x", "1x");
         pLayout = new PLayout(pHeadWidget, Position.getPosition(2, 1), 1, 2);
         pButton1 = new PButton(pLayout, null);
         pButton2 = new PButton(pLayout, null);
         pLabel = new PLabel(pHeadWidget, Position.getPosition(1, 1));
-        pLabel.setText(message, 4, Color.WHITE);
+        pLabel.setText(message, 1, Color.WHITE);
 
         pLabel.addBackground(PImage.getPureImage(Color.GRAY));
         pButton1.addBackground(PImage.getPureImage(Color.BLUE));
         pButton2.addBackground(PImage.getPureImage(Color.GREEN));
-        pButton1.setText(option1, 4, Color.WHITE);
-        pButton2.setText(option2, 4, Color.WHITE);
+        pButton1.setText(option1, 1, Color.WHITE);
+        pButton2.setText(option2, 1, Color.WHITE);
 
         try {
             pButton2.setClickFunc(this, this.getClass().getMethod("Button2Selected"));
@@ -50,6 +49,7 @@ public class PDialog {
             e.printStackTrace();
         }
         pHeadWidget.getPFrame().setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        pHeadWidget.startRepaintThread();
     }
 
     public void Button1Selected() {

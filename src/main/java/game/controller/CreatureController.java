@@ -12,4 +12,8 @@ abstract public class CreatureController{
     public void setThing(Controllable controllable){
         this.controllable = controllable;
     }
+
+    public abstract void stop();
+
+    public abstract void start();
 }

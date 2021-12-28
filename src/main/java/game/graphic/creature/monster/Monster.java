@@ -2,14 +2,12 @@ package game.graphic.creature.monster;
 
 import com.pFrame.Pixel;
 import game.Location;
-import game.controller.AlgorithmController;
 import game.controller.CreatureController;
 import game.graphic.Direction;
 import game.graphic.creature.Creature;
 import game.graphic.effect.Dialog;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 
 abstract public class Monster extends Creature {
     private CreatureController oldController;
@@ -21,28 +19,7 @@ abstract public class Monster extends Creature {
         speed = 2;
     }
 
-    @Override
-    public void pause() {
-        oldController = controller;
-        if (controller instanceof AlgorithmController)
-            ((AlgorithmController) controller).stop();
-    }
 
-    @Override
-    public void Continue() {
-        try {
-            controller = oldController.getClass().getDeclaredConstructor().newInstance();
-            controller.setThing(this);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public Creature searchAim() {

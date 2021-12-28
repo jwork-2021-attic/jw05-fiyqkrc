@@ -2,6 +2,7 @@ package game.graphic.creature;
 
 import com.pFrame.Position;
 import game.controller.CreatureController;
+import game.world.World;
 
 public interface Controllable {
     void setController(CreatureController controller);
@@ -27,4 +28,6 @@ public interface Controllable {
     int getColdTime();
 
     double getAttackRange();
+
+    World getWorld();
 }

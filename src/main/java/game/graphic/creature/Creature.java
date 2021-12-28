@@ -5,16 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Pixel;
 import com.pFrame.Position;
 import game.Location;
-import game.controller.AlgorithmController;
 import game.controller.CreatureController;
-import game.controller.KeyBoardController;
 import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.graphic.Tombstone;
-import game.graphic.effect.BloodChange;
-import game.graphic.effect.Dialog;
 import game.graphic.drop.Coin;
 import game.graphic.drop.buff.Addition;
+import game.graphic.effect.BloodChange;
+import game.graphic.effect.Dialog;
+import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
 import java.util.HashMap;
@@ -183,6 +182,11 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
     }
 
     @Override
+    public World getWorld() {
+        return super.getWorld();
+    }
+
+    @Override
     public boolean move(double direction) {
         this.direction = direction;
 
@@ -215,20 +219,23 @@ public abstract class Creature extends Thing implements Controllable, StatedSava
         }
     }
 
-    abstract public void pause();
+    public void pause(){
+        if(controller!=null) {
+            controller.stop();
+        }
+    }
 
-    abstract public void Continue();
+    public void Continue(){
+        if(controller!=null){
+            controller.start();
+        }
+    }
 
     record Body(Pixel[][] pixels, int width, int height) {
     }
 
     @Override
     public void dead() {
-        if (controller instanceof AlgorithmController)
-            ((AlgorithmController) controller).stop();
-        else if (controller instanceof KeyBoardController) {
-            pause();
-        }
         world.removeItem(this);
         Tombstone tombstone = new Tombstone();
         tombstone.setPosition(this.getPosition());

@@ -4,6 +4,8 @@ import com.pFrame.pwidget.PFrameKeyListener;
 import game.graphic.Direction;
 import game.graphic.creature.Controllable;
 import game.graphic.interactive.GameThread;
+import game.world.World;
+import log.Log;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -19,13 +21,55 @@ public class KeyBoardController extends CreatureController implements PFrameKeyL
         allKeyCode.add('s');
         allKeyCode.add('w');
         allKeyCode.add('d');
-        thread = new Thread(this);
-        thread.start();
-        GameThread.threadSet.add(thread);
     }
 
     public void setThing(Controllable controllable) {
         this.controllable = controllable;
+    }
+
+
+    @Override
+    public void stop() {
+        if (controllable != null) {
+            World world = controllable.getWorld();
+            if (world != null) {
+                world.freeKeyListener('w', this);
+                world.freeKeyListener('a', this);
+                world.freeKeyListener('s', this);
+                world.freeKeyListener('d', this);
+                world.freeKeyListener('j', this);
+            } else {
+                Log.WarningLog(this, "world is null");
+            }
+        } else {
+            Log.WarningLog(this, "controllable is null");
+        }
+        thread.interrupt();
+        thread=null;
+    }
+
+    @Override
+    public void start() {
+        if (controllable != null) {
+            World world = controllable.getWorld();
+            if (world != null) {
+                world.addKeyListener('w', this);
+                world.addKeyListener('a', this);
+                world.addKeyListener('s', this);
+                world.addKeyListener('d', this);
+                world.addKeyListener('j', this);
+            } else {
+                Log.WarningLog(this, "world is null");
+            }
+        } else {
+            Log.WarningLog(this, "controllable is null");
+        }
+        if (thread != null) {
+            stop();
+        }
+        thread = new Thread(this);
+        thread.start();
+        GameThread.threadSet.add(thread);
     }
 
     public ArrayList<Character> allKeyCode = new ArrayList<>();
@@ -44,18 +88,17 @@ public class KeyBoardController extends CreatureController implements PFrameKeyL
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyChar()=='j')
+        if (e.getKeyChar() == 'j')
             controllable.responseToEnemy();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(allKeyCode.contains(e.getKeyChar())) {
+        if (allKeyCode.contains(e.getKeyChar())) {
             if (keyArray.contains(e.getKeyChar()))
                 keyArray.remove((Character) e.getKeyChar());
         }
     }
-
 
 
     @Override
@@ -78,7 +121,7 @@ public class KeyBoardController extends CreatureController implements PFrameKeyL
                 e.printStackTrace();
             }
         }
-        GameThread.threadSet.remove(thread);
+        GameThread.threadSet.remove(Thread.currentThread());
     }
 
     public double calDirection(char ch) {
