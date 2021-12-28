@@ -11,7 +11,6 @@ import game.graphic.effect.Swoon;
 import game.world.World;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Pangolin extends Monster {
 

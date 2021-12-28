@@ -12,20 +12,30 @@ import log.Log;
 public class PButton extends PWidget {
 
     PLabel textLabel;
+    Pixel[][] focusFrame;
 
     public PButton(PWidget parent, Position p) {
 
         super(parent, p);
-        this.textLabel = new PLabel(this, Position.getPosition(0,0));
-        this.textLabel.changeWidgetSize(this.widgetWidth,this.widgetHeight);
-
+        this.textLabel = new PLabel(this, Position.getPosition(0, 0));
+        this.textLabel.changeWidgetSize(this.widgetWidth, this.widgetHeight);
+        focusFrame = null;
     }
 
     @Override
     protected void sizeChanged() {
         super.sizeChanged();
-        if(textLabel!=null)
-            this.textLabel.changeWidgetSize(this.widgetWidth,this.widgetHeight);
+        if (textLabel != null)
+            this.textLabel.changeWidgetSize(this.widgetWidth, this.widgetHeight);
+        if (focusFrame != null) {
+            focusFrame = Pixel.emptyPixels(widgetWidth, widgetHeight);
+            for (int i = 0; i < widgetHeight; i++) {
+                for (int j = 0; j < widgetWidth; j++) {
+                    if (i == 0 || i == widgetHeight - 1 || j == 0 || j == widgetWidth - 1)
+                        focusFrame[i][j] = Pixel.getPixel(Color.white, (char) 0xf0);
+                }
+            }
+        }
     }
 
     @Override
@@ -37,7 +47,7 @@ public class PButton extends PWidget {
     @Override
     public Pixel[][] displayOutput() {
         Pixel[][] pixels = super.displayOutput();
-        return Pixel.pixelsAdd(pixels, this.textLabel.displayOutput(), this.textLabel.getPosition());
+        return Pixel.pixelsAdd(Pixel.pixelsAdd(pixels, this.textLabel.displayOutput(), this.textLabel.getPosition()),focusFrame,Position.getPosition(0, 0));
     }
 
     public void setText(String text, int size, Color color) {
@@ -46,7 +56,7 @@ public class PButton extends PWidget {
 
     @Override
     public ArrayList<PWidget> getWidgetsAt(Position p) {
-        ArrayList<PWidget> res=new  ArrayList<PWidget>();
+        ArrayList<PWidget> res = new ArrayList<PWidget>();
         res.add(this);
         return res;
     }
@@ -54,5 +64,23 @@ public class PButton extends PWidget {
     @Override
     public ArrayList<PWidget> getChildWidget() {
         return getWidgetsAt(null);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+        super.mouseEntered(arg0);
+        focusFrame = Pixel.emptyPixels(widgetWidth, widgetHeight);
+        for (int i = 0; i < widgetHeight; i++) {
+            for (int j = 0; j < widgetWidth; j++) {
+                if (i == 0 || i == widgetHeight - 1 || j == 0 || j == widgetWidth - 1)
+                    focusFrame[i][j] = Pixel.getPixel(Color.white, (char) 0xf0);
+            }
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+        super.mouseExited(arg0);
+        focusFrame=null;
     }
 }

@@ -5,8 +5,6 @@ import game.Config;
 import game.graphic.Direction;
 import game.graphic.creature.Creature;
 import game.graphic.interactive.GameThread;
-import game.server.client.Accepter;
-import game.server.client.ClientMain;
 import game.world.World;
 
 import java.io.File;

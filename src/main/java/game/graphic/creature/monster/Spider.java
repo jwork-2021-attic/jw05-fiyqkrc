@@ -4,8 +4,6 @@ import game.graphic.Direction;
 import game.graphic.bullet.SpiderShoot;
 import game.world.World;
 
-import java.util.Date;
-
 public class Spider extends Monster {
 
     public Spider() {

@@ -1,7 +1,5 @@
 package com.pFrame;
 
-import java.io.File;
-
 import imageTransFormer.GraphicItemGenerator;
 
 public class PFont {

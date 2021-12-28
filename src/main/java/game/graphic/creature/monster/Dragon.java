@@ -4,8 +4,6 @@ import game.graphic.Direction;
 import game.graphic.bullet.Wind;
 import game.world.World;
 
-import java.util.Date;
-
 public class Dragon extends Monster {
 
     public Dragon() {

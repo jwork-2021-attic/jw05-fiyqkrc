@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener {
+public class PFrame extends JFrame implements Runnable, KeyListener, MouseListener, MouseWheelListener,MouseMotionListener {
 
     protected PWidget headWidget;
 
@@ -53,6 +53,7 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         addKeyListener(this);
         addMouseListener(this);
         addMouseWheelListener(this);
+        addMouseMotionListener(this);
         graphicImage = new BufferedImage(frameWidth * charWidth, frameHeight * charWidth, BufferedImage.TYPE_INT_RGB);
     }
 
@@ -153,6 +154,13 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
                 (x - this.getInsets().left) / charWidth);
     }
 
+    protected Position mouseToPosition(MouseWheelEvent e){
+        int x = e.getX();
+        int y = e.getY();
+        return Position.getPosition((y - this.getInsets().top) / charWidth,
+                (x - this.getInsets().left) / charWidth);
+    }
+
     @Override
     public void mouseEntered(MouseEvent arg0) {
         this.headWidget.mouseEntered(arg0);
@@ -181,10 +189,12 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
         }
     }
 
+    protected ObjectUserInteractive widgetAtMousePos;
+
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (this.focusWidget != null) {
-            this.focusWidget.mouseWheelMoved(e);
+        if(this.focusWidget!=null){
+            focusWidget.mouseWheelMoved(e);
         }
     }
 
@@ -201,5 +211,30 @@ public class PFrame extends JFrame implements Runnable, KeyListener, MouseListen
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent arg0) {
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent arg0) {
+        Position p=mouseToPosition(arg0);
+        ArrayList<PWidget> list = this.headWidget.getWidgetsAt(p);
+        ObjectUserInteractive widget = list.get(list.size() - 1);
+
+        if(widgetAtMousePos==null){
+            widgetAtMousePos=widget;
+            widgetAtMousePos.mouseEntered(arg0);
+        }
+        else {
+            if(widget!=widgetAtMousePos){
+                widgetAtMousePos.mouseExited(arg0);
+                widget.mouseEntered(arg0);
+                widgetAtMousePos=widget;
+            }
+        }
+        
     }
 }

@@ -3,14 +3,14 @@ package game.screen;
 import com.pFrame.PTimer;
 import com.pFrame.PTimerTask;
 import com.pFrame.Position;
-import com.pFrame.pwidget.PButton;
+import com.pFrame.pwidget.PLabel;
 import com.pFrame.pwidget.PWidget;
 
 import java.awt.*;
 
 
 
-public class MessageLabel extends PButton {
+public class MessageLabel extends PLabel {
 
     public MessageLabel(PWidget parent, Position p) {
         super(parent, p);

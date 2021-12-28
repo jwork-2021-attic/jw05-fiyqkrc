@@ -3,7 +3,6 @@ package imageTransFormer;
 import com.pFrame.Pixel;
 import com.pFrame.pgraphic.PGraphicItem;
 
-import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.HashMap;

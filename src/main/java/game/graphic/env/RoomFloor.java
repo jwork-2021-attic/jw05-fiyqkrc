@@ -7,7 +7,6 @@ import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
 
-import java.io.File;
 import java.util.Random;
 
 public class RoomFloor extends Thing implements StatedSavable {

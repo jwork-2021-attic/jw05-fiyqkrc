@@ -4,8 +4,6 @@ import com.pFrame.Position;
 import game.Location;
 import game.world.World;
 
-import java.util.Date;
-
 public class SnowMonster extends Monster {
 
     public SnowMonster() {

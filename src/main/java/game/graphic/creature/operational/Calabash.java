@@ -5,8 +5,6 @@ import game.graphic.Direction;
 import game.graphic.bullet.NormalBullet;
 import game.world.World;
 
-import java.util.Objects;
-
 public class Calabash extends Operational {
 
     public Calabash() {

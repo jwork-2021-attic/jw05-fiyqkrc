@@ -1,8 +1,6 @@
 package com.pFrame.pwidget;
 
 import java.awt.*;
-import java.io.File;
-import java.io.InputStream;
 import java.util.Objects;
 
 import com.pFrame.Pixel;

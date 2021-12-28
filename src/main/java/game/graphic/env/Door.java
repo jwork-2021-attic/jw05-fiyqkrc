@@ -6,9 +6,6 @@ import game.graphic.StatedSavable;
 import game.graphic.Thing;
 import game.world.World;
 import imageTransFormer.GraphicItemGenerator;
-import org.bytedeco.opencv.presets.opencv_core;
-
-import java.io.File;
 import java.util.Random;
 
 public class Door extends Thing implements StatedSavable {
