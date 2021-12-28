@@ -30,15 +30,11 @@ public class ServerMain {
     CopyOnWriteArraySet<Socket> sockets;
     private final JSONArray messageArray = new JSONArray();
 
-    public ServerMain() {
+    public ServerMain() throws IOException {
         sockets = new CopyOnWriteArraySet<>();
         es = Executors.newFixedThreadPool(100);
         currentClient = 0;
-        try {
-            serverSocket = new ServerSocket(9000);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        serverSocket = new ServerSocket(9000);
     }
 
     private void stateSync(JSONArray jsonArray) throws IOException {
@@ -63,8 +59,7 @@ public class ServerMain {
                     socket.getOutputStream().write(string.getBytes());
                     socket.getOutputStream().flush();
                 }
-            } catch (
-                    Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -77,13 +72,14 @@ public class ServerMain {
 
     public void start() {
 
-        //generate world
-        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath + "/server/game.json", 2);
+        // generate world
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000,
+                Config.DataPath + "/server/game.json", 2);
         gameArchiveGenerator.generateWorldData();
 
         worldData = gameArchiveGenerator.getWorldData();
 
-        //create && start frame sync thread
+        // create && start frame sync thread
         frameSyncThread = new Thread(() -> {
 
             int frameCount = 0;
@@ -111,7 +107,7 @@ public class ServerMain {
             }
         });
 
-        //create && start state sync thread
+        // create && start state sync thread
         stateSyncThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 if (firstSocket != null) {
@@ -127,19 +123,19 @@ public class ServerMain {
             }
         });
 
-
         stateSyncThread.start();
         frameSyncThread.start();
         HashMap<Socket, Integer> SocketCalabashMap = new HashMap<>();
 
-        //start server accept main thread
+        // start server accept main thread
         server = new Thread(() -> {
             Log.InfoLog(this, "server listener start work...");
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     if (currentClient >= maxClientNum) {
-                        sendMessage(clientSocket, Message.JSON2MessageStr(Message.getErrorMessage(Message.OutOfMaxClientBound)));
+                        sendMessage(clientSocket,
+                                Message.JSON2MessageStr(Message.getErrorMessage(Message.OutOfMaxClientBound)));
                         clientSocket.close();
                     } else {
                         currentClient++;
@@ -147,7 +143,7 @@ public class ServerMain {
                         if (firstSocket == null)
                             firstSocket = clientSocket;
 
-                        //submit a NIO handle thread to executors
+                        // submit a NIO handle thread to executors
                         es.submit(new Runnable() {
                             private final Socket socket = clientSocket;
 
@@ -165,7 +161,7 @@ public class ServerMain {
                             }
 
                             private void handleMessage(String jsonStr) {
-                                //System.out.println(jsonStr);
+                                // System.out.println(jsonStr);
                                 try {
                                     JSONObject jsonObject = JSON.parseObject(jsonStr);
                                     String messageClass = jsonObject.getObject(Message.messageClass, String.class);
@@ -173,7 +169,8 @@ public class ServerMain {
                                         Log.ErrorLog(this, jsonObject.getObject(Message.information, String.class));
                                     } else if (Objects.equals(messageClass, Message.FrameSync)) {
                                         synchronized (messageArray) {
-                                            messageArray.addAll(jsonObject.getObject(Message.information, JSONArray.class));
+                                            messageArray
+                                                    .addAll(jsonObject.getObject(Message.information, JSONArray.class));
                                         }
                                     } else if (Objects.equals(messageClass, Message.LaunchStateSync)) {
                                         if (socket != firstSocket) {
@@ -195,7 +192,7 @@ public class ServerMain {
                             @Override
                             public void run() {
                                 try {
-                                    //create calabash and send to client for init
+                                    // create calabash and send to client for init
                                     Calabash calabash = new Calabash();
                                     SocketCalabashMap.put(socket, calabash.getId());
                                     worldData.getObject("itemsData", JSONArray.class).add(calabash.saveState());
@@ -204,12 +201,13 @@ public class ServerMain {
                                     sendMessage(socket, Message.getWorldInitCommand(worldData));
 
                                     if (socket != firstSocket) {
-                                        //send add player command to mainClient
+                                        // send add player command to mainClient
                                         sendMessage(firstSocket, Message.getAddPlayerCommand(calabash.saveState()));
                                     }
 
-                                    //start input listener && handle thread
-                                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
+                                    // start input listener && handle thread
+                                    BufferedReader bufferedReader = new BufferedReader(
+                                            new InputStreamReader(socket.getInputStream()), 10240000);
                                     while (!Thread.currentThread().isInterrupted()) {
                                         handleMessage(bufferedReader.readLine());
                                     }
@@ -221,7 +219,8 @@ public class ServerMain {
                                         stop();
                                     } else {
                                         try {
-                                            sendMessage(firstSocket, Message.getPlayerQuitCommand(SocketCalabashMap.get(socket)));
+                                            sendMessage(firstSocket,
+                                                    Message.getPlayerQuitCommand(SocketCalabashMap.get(socket)));
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                             Log.ErrorLog(this, "deadly error ,quit now...");

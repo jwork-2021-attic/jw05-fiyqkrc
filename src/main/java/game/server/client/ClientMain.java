@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,15 +25,9 @@ public class ClientMain implements Runnable {
     private ClientMain() {
     }
 
-    public void connect(String host, int port) {
-        try {
-            socket = new Socket(host, port);
-            Log.InfoLog(this, "client connect to " + host + ":" + port);
-        } catch (IOException e) {
-            socket = null;
-            e.printStackTrace();
-            Log.ErrorLog(this, "connect to server failed");
-        }
+    public void connect(String host, int port) throws UnknownHostException, IOException {
+        socket = new Socket(host, port);
+        Log.InfoLog(this, "client connect to " + host + ":" + port);
     }
 
     private final ExecutorService messageSendingEs = Executors.newSingleThreadExecutor();
@@ -44,8 +39,7 @@ public class ClientMain implements Runnable {
                     socket.getOutputStream().write(string.getBytes());
                     socket.getOutputStream().flush();
                 }
-            } catch (
-                    Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -112,7 +106,8 @@ public class ClientMain implements Runnable {
             Log.InfoLog(this, "client start working...");
             Thread inputListener = new Thread(() -> {
                 try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 10240000);
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()),
+                            10240000);
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
                             String jsonStr = null;

@@ -56,7 +56,6 @@ public class UI {
 
     public HealthBar healthBar;
 
-
     public RecordablePage gamePage;
 
     public PLayout settingPage;
@@ -87,12 +86,12 @@ public class UI {
         multiGameSelectPage = new PLayout(null, null, 2, 1, true);
         newMultiMode = new PButton(multiGameSelectPage, null);
         newMultiMode.addBackground(PImage.getPureImage(Color.GRAY));
-        newMultiMode.setText("aNewMultiGame", 1, Color.BLUE);
+        newMultiMode.setText("a new multiGame", 1, Color.BLUE);
         joinMultiMode = new PButton(multiGameSelectPage, null);
         joinMultiMode.addBackground(PImage.getPureImage(Color.GRAY));
-        joinMultiMode.setText("join other player's world", 1, Color.BLUE);
+        joinMultiMode.setText("join another world", 1, Color.BLUE);
 
-        addressInput = new TextInput(null, null, "Please input another player's ip address there:");
+        addressInput = new TextInput(null, null, "Please input another player's ip address there");
         addressInput.addBackground(PImage.getPureImage(Color.GRAY));
 
         this.gamePage = new RecordablePage(null, null, 3, 3, false);
@@ -121,11 +120,9 @@ public class UI {
 
         healthBar = new HealthBar(gamePage, Position.getPosition(3, 2));
 
-
         PWidget coinImage = new PImage(rightUpPanel, Position.getPosition(1, 1), "image/coin.png");
         coinValueLabel = new PLabel(rightUpPanel, Position.getPosition(1, 2));
         coinValueLabel.setText("x0", 2, Color.WHITE);
-
 
         this.settingPage = new PLayout(null, null);
 
@@ -172,7 +169,6 @@ public class UI {
         this.gamePage.addBackground(view);
     }
 
-
     public void setPage(int page) {
         switch (page) {
             case 0 -> ui.resetLayout(startPage);
@@ -190,7 +186,7 @@ public class UI {
         setPage(UI.START_PAGE);
         startPage.addChildWidget(mainMenu, Position.getPosition(2, 2));
 
-        //try stop server and client socket
+        // try stop server and client socket
         if (clientMain != null) {
             clientThread.interrupt();
             clientMain = null;
@@ -202,7 +198,6 @@ public class UI {
         }
     }
 
-
     public void setCoinValue(int n) {
         this.coinValueLabel.setText("x" + n, 2, Color.WHITE);
     }
@@ -213,8 +208,7 @@ public class UI {
         if (gamePage.isRecording()) {
             gamePage.finishRecord();
             sendMessage("record finish");
-        }
-        else {
+        } else {
             gamePage.startRecord();
             sendMessage("record start");
         }
@@ -229,7 +223,8 @@ public class UI {
         if (World.multiPlayerMode) {
             new Thread(() -> {
                 gameWorld.gamePause();
-                int option = PDialog.Dialog("Do you hope to save your game?", "Yes,I want to continue when next time I open this game.", "No,I will start a new game later.");
+                int option = PDialog.Dialog("Do you hope to save your game progress?",
+                        "Yes", "No");
                 if (option == 1) {
                     gameWorld.gameSaveData();
                     sendMessage("This module waits implementation...");
@@ -285,31 +280,50 @@ public class UI {
     Thread clientThread;
 
     public void newMultiplayerGame() {
-        serverMain = new ServerMain();
-        serverMain.start();
-        clientMain = ClientMain.getInstance();
-        clientMain.connect("127.0.0.1", 9000);
-        clientThread = new Thread(clientMain);
-        clientThread.start();
-        clientMain.ui = this;
+        try {
+            serverMain = new ServerMain();
+            serverMain.start();
+            clientMain = ClientMain.getInstance();
+            clientMain.connect("127.0.0.1", 9000);
+            clientThread = new Thread(clientMain);
+            clientThread.start();
+            clientMain.ui = this;
 
-        World.multiPlayerMode = true;
-        World.mainClient = true;
-        this.setPage(UI.GAME_PAGE);
+            World.multiPlayerMode = true;
+            World.mainClient = true;
+            this.setPage(UI.GAME_PAGE);
+        } catch (Exception e) {
+            new Thread(() -> {
+                PDialog.Dialog(e.getMessage(), "Yes", "I konw");
+            }).start();
+            if (serverMain != null)
+                serverMain.stop();
+            if (clientThread != null)
+                clientThread.interrupt();
+            this.setPage(UI.START_PAGE);
+        }
     }
 
     public void joinMultiplayerGame(String str) {
-        clientMain = ClientMain.getInstance();
-        clientMain.connect(str, 9000);
-        clientThread = new Thread(clientMain);
-        clientThread.start();
-        clientMain.ui = this;
+        try {
+            clientMain = ClientMain.getInstance();
+            clientMain.connect(str, 9000);
+            clientThread = new Thread(clientMain);
+            clientThread.start();
+            clientMain.ui = this;
 
-        World.multiPlayerMode = true;
-        World.mainClient = false;
-        this.setPage(UI.GAME_PAGE);
+            World.multiPlayerMode = true;
+            World.mainClient = false;
+            this.setPage(UI.GAME_PAGE);
+        } catch (Exception e) {
+            new Thread(() -> {
+                PDialog.Dialog(e.getMessage(), "Yes", "I konw");
+            }).start();
+            if (clientThread != null)
+                clientThread.interrupt();
+            this.setPage(UI.START_PAGE);
+        }
     }
-
 
     public void loadSavedDataButtonBeClicked() {
         File file = new File(Config.DataPath + "/saved.json");
@@ -341,13 +355,11 @@ public class UI {
         }
     }
 
-
     public void settingButtonBeClicked() {
         this.setPage(UI.SETTING_PAGE);
     }
 
     public PGraphicView mapView;
-
 
     public void MapButtonBeClicked() {
         if (mapView == null) {
@@ -373,5 +385,3 @@ public class UI {
         healthBar.display(health, healthLimit);
     }
 }
-
-

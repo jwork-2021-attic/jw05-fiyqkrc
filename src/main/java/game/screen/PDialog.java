@@ -28,7 +28,7 @@ public class PDialog {
     }
 
     protected PDialog(String message, String option1, String option2) {
-        pHeadWidget = new PHeadWidget(null, null);
+        pHeadWidget = new PHeadWidget(null, null, 200, 150);
         pHeadWidget.getLayout().setRCNumStyle(2, 1, "3x,1x", "1x");
         pLayout = new PLayout(pHeadWidget, Position.getPosition(2, 1), 1, 2);
         pButton1 = new PButton(pLayout, null);
