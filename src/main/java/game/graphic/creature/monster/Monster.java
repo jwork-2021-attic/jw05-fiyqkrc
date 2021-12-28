@@ -76,7 +76,7 @@ abstract public class Monster extends Creature {
         if (height > 1) {
             for (int b = 0; b < width; b++) {
                 if (b < length) {
-                    pixels[0][b] = Pixel.getPixel(Color.GREEN, (char) 0xf0);
+                    pixels[0][b] = Pixel.getPixel(Color.RED, (char) 0xf0);
                 } else
                     pixels[0][b] = null;
             }

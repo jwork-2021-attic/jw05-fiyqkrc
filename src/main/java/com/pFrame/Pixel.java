@@ -236,7 +236,6 @@ public class Pixel {
                         image.setRGB(j, i, rgb);
                     } else {
                         image.setRGB(j, i, 0x00000000);
-
                     }
                 }
             }
