@@ -347,6 +347,8 @@ public class UI {
     }
 
     public void loadSavedData(String path) {
+        World.multiPlayerMode=false;
+        World.mainClient=false;
         File file = new File(path);
         if (file.exists()) {
             FileInputStream stream;
