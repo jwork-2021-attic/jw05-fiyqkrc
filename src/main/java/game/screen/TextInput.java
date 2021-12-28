@@ -18,7 +18,7 @@ public class TextInput extends PLabel {
     public TextInput(PWidget parent, Position p, String foreText) {
         super(parent, p);
         this.foreText = foreText;
-        setText(foreText + ":\n", 1, Color.WHITE);
+        setText(foreText + ":\n", 1, Color.white);
     }
 
     @Override

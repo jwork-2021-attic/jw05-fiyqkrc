@@ -92,7 +92,7 @@ public class UI {
         joinMultiMode.addBackground(PImage.getPureImage(Color.GRAY));
         joinMultiMode.setText("join other player's world", 1, Color.BLUE);
 
-        addressInput = new TextInput(null, null, "please input other player's ip here");
+        addressInput = new TextInput(null, null, "Please input another player's ip address there:");
         addressInput.addBackground(PImage.getPureImage(Color.GRAY));
 
         this.gamePage = new RecordablePage(null, null, 3, 3, false);

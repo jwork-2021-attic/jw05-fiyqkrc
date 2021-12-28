@@ -6,10 +6,10 @@ public class PFont {
 
     public static Pixel[][] fontImagePixels;
     private static final Pixel[][][] fontsPixels = new Pixel[256][][];
-    public static int fontBaseSize = 8;
+    public static int fontBaseSize = 10;
 
     static {
-        fontImagePixels = GraphicItemGenerator.generateItem("cp437_8x8.png", 16*PFont.fontBaseSize, 16*PFont.fontBaseSize).getPixels();
+        fontImagePixels = GraphicItemGenerator.generateItem("cp437_10x10.png", 16*PFont.fontBaseSize, 16*PFont.fontBaseSize).getPixels();
     }
 
     public static Pixel[][] getCharByPixels(char ch) {

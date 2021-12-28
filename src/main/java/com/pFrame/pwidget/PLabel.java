@@ -20,10 +20,11 @@ public class PLabel extends PWidget {
 
     @Override
     public Pixel[][] displayOutput() {
+        pixels=super.displayOutput();
         if (this.getWidgetHeight() <= 0 || this.getWidgetWidth() <= 0) {
-            return null;
+            return pixels;
         } else {
-            return this.content;
+            return Pixel.pixelsAdd(pixels, this.content, Position.getPosition(0, 0));
         }
     }
 

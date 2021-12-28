@@ -36,8 +36,13 @@ public class ObjectTransFormer {
             return null;
         }
 
-        Image image2 = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        BufferedImage bufferImage = ObjectTransFormer.toBufferedImage(image2);
+        BufferedImage bufferImage;
+        if (width != image.getWidth() || height != image.getHeight()) {
+            Image image2 = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            bufferImage = ObjectTransFormer.toBufferedImage(image2);
+        } else {
+            bufferImage = image;
+        }
 
         Pixel[][] pixels = new Pixel[height][width];
         for (int i = 0; i < height; i++) {
