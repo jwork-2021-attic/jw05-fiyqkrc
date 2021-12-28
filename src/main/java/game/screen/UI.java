@@ -220,7 +220,7 @@ public class UI {
     }
 
     public void QuitButtonClicked() {
-        if (World.multiPlayerMode) {
+        if (!World.multiPlayerMode) {
             new Thread(() -> {
                 gameWorld.gamePause();
                 int option = PDialog.Dialog("Do you hope to save your game progress?",
