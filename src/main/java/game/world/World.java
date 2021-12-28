@@ -27,6 +27,7 @@ import game.server.client.ClientMain;
 import log.Log;
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -568,6 +569,15 @@ public class World extends PGraphicScene {
             }
         }).start();
 
+        //if role dead,game finish,delete archive
+        if (controlRole.isDead() && !multiPlayerMode) {
+            try {
+                new File(path).delete();
+            } catch (Exception ep) {
+                ep.printStackTrace();
+                Log.ErrorLog(this, "delete archive failed");
+            }
+        }
     }
 
     public void gameSaveData() {

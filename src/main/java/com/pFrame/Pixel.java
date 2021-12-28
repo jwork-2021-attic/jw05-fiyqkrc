@@ -130,7 +130,7 @@ public class Pixel {
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
                 try {
-                    if ((p.getX() + i < h && p.getX() + i >= 0) && (p.getY() + j < w && p.getY() + j > 0)) {
+                    if ((p.getX() + i < h && p.getX() + i >= 0) && (p.getY() + j < w && p.getY() + j >= 0)) {
                         res[i][j] = pixels[p.getX() + i][p.getY() + j];
                     }
                 }
@@ -206,7 +206,7 @@ public class Pixel {
             for (int i = 0; i < h; i++)
                 for (int j = 0; j < w; j++) {
                     if (pixels[i][j] != null)
-                        pixels[i][j].setColor(color);
+                        pixels[i][j]=Pixel.getPixel(color,(char)0xf0);
                 }
             return pixels;
         }

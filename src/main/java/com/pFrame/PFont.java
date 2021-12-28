@@ -18,7 +18,7 @@ public class PFont {
 
     public static Pixel[][] getCharByPixels(int ch) {
         if (fontsPixels[ch] != null) {
-            return fontsPixels[ch];
+            return Pixel.pixelsCopy(fontsPixels[ch]);
         } else {
             Pixel[][] res = Pixel.subPixels(fontImagePixels, Position.getPosition(ch / 16 * PFont.fontBaseSize, (ch % 16) * PFont.fontBaseSize), PFont.fontBaseSize, PFont.fontBaseSize);
             for (int i = 0; i < fontBaseSize; i++) {
@@ -29,8 +29,7 @@ public class PFont {
                 }
             }
             fontsPixels[ch] = res;
-            return res;
+            return Pixel.pixelsCopy(res);
         }
     }
-
 }

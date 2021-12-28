@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 public class UI {
     public static int START_PAGE = 0;
@@ -34,6 +35,7 @@ public class UI {
     public PButton startGameButton;
     public PButton settingButton;
     public PButton loadSavedDataButton;
+    public ArchiveListView archiveListView;
 
     public PLayout gameModeSelectPage;
     public PButton singleMode;
@@ -51,6 +53,8 @@ public class UI {
     public PButton QuitButton;
     public PButton ScreenShotButton;
     public PButton RecordButton;
+
+    public PButton HomeButton;
 
     public MessageLabel messageLabel;
 
@@ -75,6 +79,11 @@ public class UI {
         settingButton.addBackground(PImage.getPureImage(Color.GRAY));
         settingButton.setText("Setting", 1, Color.BLUE);
 
+        PLayout pLayout=new PLayout(startPage,Position.getPosition(1,1),3,2,true);
+        HomeButton=new PButton(pLayout,Position.getPosition(1,1));
+        HomeButton.addBackground(PImage.getPureImage(Color.GRAY));
+        HomeButton.setText("Home",1,Color.GREEN);
+
         gameModeSelectPage = new PLayout(null, null, 2, 1, true);
         singleMode = new PButton(gameModeSelectPage, null);
         singleMode.addBackground(PImage.getPureImage(Color.GRAY));
@@ -82,6 +91,8 @@ public class UI {
         multiMode = new PButton(gameModeSelectPage, null);
         multiMode.addBackground(PImage.getPureImage(Color.GRAY));
         multiMode.setText("multiMode", 1, Color.BLUE);
+
+        archiveListView=new ArchiveListView(null,null,Config.DataPath+"/archive",this);
 
         multiGameSelectPage = new PLayout(null, null, 2, 1, true);
         newMultiMode = new PButton(multiGameSelectPage, null);
@@ -154,6 +165,7 @@ public class UI {
             newMultiMode.setClickFunc(this, this.getClass().getMethod("newMultiplayerGame"));
             joinMultiMode.setClickFunc(this, this.getClass().getMethod("joinMultiModeSelected"));
             addressInput.setInputFinishFunc(this, this.getClass().getMethod("addressInputFinished", String.class));
+            HomeButton.setClickFunc(this,this.getClass().getMethod("HomeButtonBeClicked"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -203,6 +215,10 @@ public class UI {
     }
 
     public World gameWorld;
+
+    public void HomeButtonBeClicked(){
+        startPage.addChildWidget(mainMenu,Position.getPosition(2,2));
+    }
 
     public void RecordButtonClicked() {
         if (gamePage.isRecording()) {
@@ -262,7 +278,7 @@ public class UI {
     public void newSingleGame() {
         World.multiPlayerMode = false;
         World.mainClient = false;
-        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, null, 2);
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath+"/archive/"+ new Date(), 2);
         gameArchiveGenerator.generateWorldData();
         JSONObject jsonObject = gameArchiveGenerator.getWorldData();
         Calabash calabash = new Calabash();
@@ -325,8 +341,13 @@ public class UI {
         }
     }
 
-    public void loadSavedDataButtonBeClicked() {
-        File file = new File(Config.DataPath + "/saved.json");
+    public void loadSavedDataButtonBeClicked(){
+        startPage.removeWidget(mainMenu);
+        startPage.addChildWidget(archiveListView,Position.getPosition(2,2));
+    }
+
+    public void loadSavedData(String path) {
+        File file = new File(path);
         if (file.exists()) {
             FileInputStream stream;
             try {
