@@ -324,8 +324,6 @@ public class World extends PGraphicScene {
     }
 
     public void frameSync(JSONArray jsonArray) {
-        // long start = System.currentTimeMillis();
-
         for (Object jsonObject : jsonArray) {
             try {
                 JSONObject command = (JSONObject) jsonObject;
@@ -348,7 +346,6 @@ public class World extends PGraphicScene {
                 e.printStackTrace();
             }
         }
-        // System.out.println("frame sync cost:"+(System.currentTimeMillis()-start));
     }
 
     public void addMultiPlayer(JSONObject jsonObject) {
@@ -382,14 +379,12 @@ public class World extends PGraphicScene {
     }
 
     public JSONArray getCurrentState() {
-        long start = System.currentTimeMillis();
         JSONArray jsonArray = new JSONArray();
         synchronized (activeCreature) {
             for (Creature creature : activeCreature.values()) {
                 jsonArray.add(creature.saveState());
             }
         }
-        System.out.println("get state cost" + (System.currentTimeMillis() - start));
         return jsonArray;
     }
 
