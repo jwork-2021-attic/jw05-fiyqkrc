@@ -1,10 +1,5 @@
 package game.graphic.creature.operational;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Position;
 
@@ -14,6 +9,8 @@ import org.junit.Test;
 import game.controller.KeyBoardController;
 import game.graphic.drop.buff.Addition;
 import game.graphic.drop.buff.AttackBuff;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CalabashTest {
     Calabash calabash;
@@ -33,10 +30,10 @@ public class CalabashTest {
     public void testAddAddition() throws InterruptedException {
         calabash.setPosition(Position.getPosition(0, 0));
         calabash.addAddition(new Addition(new AttackBuff(), calabash ,-100, 100, 100, 0.5));
-        assertFalse(calabash.getAttack()==calabash.getAttackLimit());
-        assertFalse(calabash.getHealth()==calabash.getHealthLimit());
+        assertNotEquals(calabash.getAttack(), calabash.getAttackLimit(), 0.0);
+        assertNotEquals(calabash.getHealth(), calabash.getHealthLimit(), 0.0);
         assertTrue(calabash.getAdditions().isEmpty());
-        assertFalse(calabash.getSpeed()==calabash.getSpeedLimit());
+        assertNotEquals(calabash.getSpeed(), calabash.getSpeedLimit());
     }
 
     @Test
@@ -102,6 +99,6 @@ public class CalabashTest {
 
     @Test
     public void testSearchAim() {
-        assertTrue(calabash.searchAim()==null);
+        assertNull(calabash.searchAim());
     }
 }
