@@ -29,7 +29,7 @@ abstract public class Operational extends Creature {
     @Override
     public void addCoin(int n) {
         super.addCoin(n);
-        if (world.screen != null && world.getControlRole() == this) {
+        if (world != null && world.screen != null && world.getControlRole() == this) {
             world.screen.setCoinValue(coin);
         }
 
