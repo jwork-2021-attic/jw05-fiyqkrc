@@ -2,13 +2,16 @@ package game.graphic.creature.operational;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pFrame.Position;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import game.controller.KeyBoardController;
 import game.graphic.drop.buff.Addition;
 import game.graphic.drop.buff.AttackBuff;
 
@@ -22,7 +25,8 @@ public class CalabashTest {
 
     @Test
     public void testContinue() {
-
+        calabash.pause();
+        calabash.Continue();
     }
 
     @Test
@@ -61,38 +65,43 @@ public class CalabashTest {
     public void testDeHealth() {
         double health=calabash.getHealth();
         calabash.deHealth(10);
-        assertEquals(health-10, calabash.getHealth());
+        assertNotEquals(health, calabash.getHealth());
         calabash.deHealth(-10-calabash.getHealthLimit());
         assertTrue(calabash.getHealth()<=calabash.getHealthLimit());
     }
 
     @Test
     public void testDead() {
-
+        calabash.dead();
     }
 
     @Test
     public void testIsDead() {
-
+        assertFalse(calabash.isDead());
     }
 
     @Test
     public void testMove() {
-
+        calabash.move(0);
     }
 
     @Test
     public void testPause() {
-
+        calabash.pause();
+        calabash.Continue();
+        calabash.setController(new KeyBoardController());
+        calabash.pause();
     }
 
     @Test
     public void testSaveState() {
-
+        JSONObject jsonObject=calabash.saveState();
+        calabash.resumeState(jsonObject);
+        assertEquals(jsonObject, calabash.saveState());
     }
 
     @Test
     public void testSearchAim() {
-
+        assertTrue(calabash.searchAim()==null);
     }
 }

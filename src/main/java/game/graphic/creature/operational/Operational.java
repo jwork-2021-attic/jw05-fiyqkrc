@@ -38,20 +38,22 @@ abstract public class Operational extends Creature {
     @Override
     public void dead() {
         super.dead();
-        if (!World.multiPlayerMode) {
-            if (world.getControlRole() == this)
-                world.gameFinish();
-        } else {
-            if (World.mainClient) {
-                this.deHealth(-healthLimit / 2);
-                this.coin = 0;
-                while (true) {
-                    int x = new Random().nextInt(world.getWidth());
-                    int y = new Random().nextInt(world.getHeight());
-                    if (world.isLocationReachable(this, Position.getPosition(y, x))) {
-                        setPosition(Position.getPosition(y - height / 2, x - width / 2));
-                        if (world.addItem(this))
-                            break;
+        if (world != null) {
+            if (!World.multiPlayerMode) {
+                if (world.getControlRole() == this)
+                    world.gameFinish();
+            } else {
+                if (World.mainClient) {
+                    this.deHealth(-healthLimit / 2);
+                    this.coin = 0;
+                    while (true) {
+                        int x = new Random().nextInt(world.getWidth());
+                        int y = new Random().nextInt(world.getHeight());
+                        if (world.isLocationReachable(this, Position.getPosition(y, x))) {
+                            setPosition(Position.getPosition(y - height / 2, x - width / 2));
+                            if (world.addItem(this))
+                                break;
+                        }
                     }
                 }
             }
