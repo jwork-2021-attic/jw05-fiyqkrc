@@ -277,7 +277,7 @@ public class UI {
     public void newSingleGame() {
         World.multiPlayerMode = false;
         World.mainClient = false;
-        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, Config.DataPath+"/archive/"+System.currentTimeMillis(), 2);
+        GameArchiveGenerator gameArchiveGenerator = new GameArchiveGenerator(2000, 2000, null, 2);
         gameArchiveGenerator.generateWorldData();
         JSONObject jsonObject = gameArchiveGenerator.getWorldData();
         Calabash calabash = new Calabash();
